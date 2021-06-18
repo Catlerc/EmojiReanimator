@@ -1,4 +1,4 @@
-var canvas = createCanvas(256, 256)
+var canvas = createCanvas(128, 128)
 
 fabric.Object.prototype.transparentCorners = false;
 
@@ -12,8 +12,6 @@ input.addEventListener('change', function (event) {
   var file = fileList.item(0);
   var reader = new FileReader();
   reader.onloadend = function () {
-
-
     createEmoji(
       {
         width: 128,
@@ -22,11 +20,13 @@ input.addEventListener('change', function (event) {
         length: 1
       },
       reader.result,
-      (canvas, imageURL, t) =>
-        createImage(imageURL)
-          .then((image) => canvas.add(image.set({left: canvas.width * t, top: 0})))
-          .then(() => createImage(imageURL))
-          .then((image) => canvas.add(image.set({left: canvas.width * (t - 1), top: 0})))
+      async (canvas, relativeImage, t) => {
+
+        relativeImage.setPos(t + relativeImage.width / 2, 0.5);
+        const clone = await relativeImage.copy()
+        clone.setPos((t - 1) + relativeImage.width / 2, 0.5);
+
+      }
     ).then(emoji =>
       document.getElementById('output').src = URL.createObjectURL(emoji)
     )
