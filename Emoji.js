@@ -10,8 +10,8 @@ async function createEmoji(options, imageURL, func) {// func: (canvas, image, t)
   const gif = new GIF({
     workers: 2,
     quality: 1,
-    background: 0xFEFEFE,
-    transparent: 0xFEFEFE,
+    background: 0xFFFFFF,
+    //transparent: 0xFEFEFE,
     width: options.width,
     height: options.height
   });
@@ -25,7 +25,7 @@ async function createEmoji(options, imageURL, func) {// func: (canvas, image, t)
 
   for (let frameIndex = 0; frameIndex < totalFrames; frameIndex++) {
     canvas.clear();
-    canvas.setBackgroundColor('#FEFEFE', null);
+    canvas.setBackgroundColor('#FFFFFF', null);
     relativeImage.attach(canvas);
     await func(canvas, relativeImage, frameIndex / totalFrames);
     canvas.renderAll();
