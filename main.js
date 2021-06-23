@@ -1,4 +1,3 @@
-var canvas = createCanvas(128, 128)
 
 fabric.Object.prototype.transparentCorners = false;
 

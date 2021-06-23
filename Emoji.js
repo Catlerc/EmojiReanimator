@@ -13,7 +13,8 @@ async function createEmoji(options, imageURL, func) {// func: (canvas, image, t)
     background: 0xFFFFFF,
     //transparent: 0xFEFEFE,
     width: options.width,
-    height: options.height
+    height: options.height,
+    workerScript: "./vendor/gif.worker.js"
   });
   const totalFrames = Math.floor(options.length * options.fps);
   const delay = 1000 / options.fps;

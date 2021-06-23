@@ -28,8 +28,8 @@ class RelativeImage {
 
   setPos(xn, yn) {
     this.fabricImage.set({
-      left: canvas.width * xn - this.centerOffset.x,
-      top: canvas.height * yn - this.centerOffset.y
+      left: this.canvas.width * xn - this.centerOffset.x,
+      top: this.canvas.height * yn - this.centerOffset.y
     })
   }
 
