@@ -1,47 +1,53 @@
-import {fabric, GifEncoder} from "./Vendor.js"
-import {FabricCanvas, FabricImage, RelativeFabricImage, RelativeImage} from "./RelativeImage.js"
-import {AnimatedImage} from "./Image/AnimatedImage.js";
-import {Image} from "./Image/Image.js";
-import {Milliseconds, Utils} from "./Domain.js";
-import {StaticImage} from "./Image/StaticImage";
+import {GifEncoder} from "./Vendor.js"
+import {FabricCanvas, RelativeFabricImage, RelativeImage} from "./RelativeImage.js"
+import {AnimatedImage, FrameType, ImageUpdateFrame} from "./AnimatedImage.js";
+import {Utils} from "./Domain.js";
 
 
 interface Options {
     width: number,
     height: number,
-    length: number,
-    fps: number
 }
 
 export async function createEmoji(
     options: Options,
-    image: Image,
-    func: (canvas: FabricCanvas, image: RelativeImage, time: Milliseconds, timeNormalized: number) => Promise<void>
+    image: AnimatedImage,
+    func: (canvas: FabricCanvas, image: RelativeFabricImage, timeNormalized: number) => Promise<void>
 ) {
     const canvas = Utils.createCanvas(options.width, options.height)
     const gifEncoder = new GifEncoder({
         workers: 2,
-        quality: 1,
+        quality: 100,
         background: 0xFFFFFF,
-        //transparent: 0xFEFEFE,
         width: options.width,
         height: options.height,
         workerScript: "./vendor/gif.worker.js"
     })
-    const totalFrames = Math.floor(options.length * options.fps)
-    const delay = 1000 / options.fps
 
     const relativeImage = new RelativeImage(image)
     relativeImage.attach(canvas)
-    relativeImage.rescaleToFit(canvas.width, canvas.height)
+    relativeImage.rescaleToFit(options.width, options.height)
 
-    for (let frameIndex = 0; frameIndex < totalFrames; frameIndex++) {
+    let oldImage: RelativeFabricImage
+    for (let frameIndex = 0; frameIndex < image.timeline.length - 1; frameIndex++) {
+        const frame = image.timeline[frameIndex]
+        const nextFrame = image.timeline[frameIndex + 1]
+        const delay = (nextFrame.time - frame.time) * 1000
+        const timeNormalized = frameIndex / image.timeline.length
+
+        if (frame.type == FrameType.ImageUpdate) oldImage = await relativeImage.getFabricImageForFrame(frame as ImageUpdateFrame)
+
         canvas.clear()
         canvas.setBackgroundColor('#FFFFFF', null)
-        let timeNormalized = frameIndex / totalFrames
-        await func(canvas, relativeImage, options.length * timeNormalized, timeNormalized)
+
+        await func(canvas, oldImage, timeNormalized)
+
         canvas.renderAll()
-        gifEncoder.addFrame(canvas.contextContainer.getImageData(0, 0, options.width, options.height), {delay: delay})
+
+        gifEncoder.addFrame(
+            canvas.contextContainer.getImageData(0, 0, options.width, options.height),
+            {delay: delay}
+        )
     }
 
     return new Promise(
@@ -49,14 +55,4 @@ export async function createEmoji(
             gifEncoder.on('finished', resolve)
             gifEncoder.render()
         })
-}
-
-export async function createEmojiDynamic(
-    options: Options,
-    image: AnimatedImage,
-    func: (canvas: FabricCanvas, image: RelativeImage, time: Milliseconds, timeNormalized: number) => Promise<void>
-) {
-    options.length = image.length()
-    options.fps = Math.floor(image.frames.length / options.length)
-    return createEmoji(options, image, func)
 }

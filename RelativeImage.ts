@@ -1,6 +1,6 @@
 import {Milliseconds, Seconds, Utils} from "./Domain.js";
 import {fabric} from "./Vendor.js";
-import {Image} from "./Image/Image.js";
+import {AnimatedImage, ImageUpdateFrame} from "./AnimatedImage";
 
 export interface Point {
     x: number,
@@ -38,7 +38,7 @@ export interface FabricCanvas {
 }
 
 export class RelativeImage {
-    image: Image
+    image: AnimatedImage
     fabricImage: FabricImage
     centerOffset: Offset
     canvas?: FabricCanvas
@@ -46,14 +46,14 @@ export class RelativeImage {
     height: number
     scale: number = 1
 
-    constructor(image: Image) {
+    constructor(image: AnimatedImage) {
         this.image = image
         this.width = image.width
         this.height = image.height
     }
 
-    async getFabricImage(time: Seconds): Promise<RelativeFabricImage> {
-        let fabricImage = await createImage(Utils.imageDataToDataUrl(this.image.frameByTime(time).image))
+    async getFabricImageForFrame(frame: ImageUpdateFrame): Promise<RelativeFabricImage> {
+        let fabricImage = await createImage(Utils.imageDataToDataUrl(frame.image))
         return new RelativeFabricImage(fabricImage.scale(this.scale), this.canvas, this.centerOffset)
     }
 
@@ -91,6 +91,8 @@ export class RelativeFabricImage {
     underlying: FabricImage
     canvas: FabricCanvas
     centerOffset: Offset
+    width: number
+    height: number
 
     constructor(underlying: FabricImage,
                 canvas: FabricCanvas,
@@ -98,6 +100,8 @@ export class RelativeFabricImage {
         this.underlying = underlying
         this.canvas = canvas
         this.centerOffset = centerOffset
+        this.width = underlying.getScaledWidth()
+        this.height = underlying.getScaledHeight()
     }
 
     setPos(xn: number, yn: number) {

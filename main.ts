@@ -1,7 +1,8 @@
 import {fabric} from "./Vendor.js"
-import {createEmoji, createEmojiDynamic} from "./Emoji.js"
-import {Image} from "./Image/Image.js";
-import {AnimatedImage} from "./Image/AnimatedImage";
+import {createEmoji} from "./Emoji.js"
+import {AnimatedImage} from "./AnimatedImage.js";
+
+
 
 fabric.Object.prototype.transparentCorners = false
 
@@ -12,21 +13,19 @@ input.addEventListener('change', (event: any) => {
     const file: File = fileList.item(0)
     const reader = new FileReader()
     reader.onloadend = async () => {
-        const image = await Image.fromImage(reader.result as ArrayBuffer, file.name.split('.').pop())
-        createEmojiDynamic(
+        const fileExtension = file.name.split('.').pop()
+        const image = await AnimatedImage.fromImage(reader.result as ArrayBuffer, fileExtension)
+        createEmoji(
             {
                 width: 64,
-                height: 64,
-                fps: 60,
-                length: 1
+                height: 64
             },
-            image.right as AnimatedImage, //???
-            async (canvas, relativeImage, time, timeNormalized) => {
-                let image = await relativeImage.getFabricImage(time)
+            image.right,
+            async (canvas, image, time) => {
                 const clone = await image.copy()
 
-                image.setPos(timeNormalized + relativeImage.width / 2, 0.5)
-                clone.setPos((timeNormalized - 1) + relativeImage.width / 2, 0.5)
+                image.setPos(time + 0.5, 0.5)
+                clone.setPos((time - 1) + 0.5, 0.5)
 
                 canvas.add(image.underlying)
                 canvas.add(clone.underlying)
