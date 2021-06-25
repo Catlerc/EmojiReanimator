@@ -1,20 +1,18 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "type": "module",
+    "module": "ES6",
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "inlineSources": true
-  },
-  "include": [
-    "src/**/*",
-    "index.html"
-  ],
-  "files": [
-    "Peka.ts"
-  ],
-  "hooks": [
-    "copy-files"
-  ]
+    "inlineSources": true,
+    "lib": [
+      "ES2015",
+      "DOM"
+    ],
+    "typeRoots": [
+      "./types"
+    ]
+  }
 }
