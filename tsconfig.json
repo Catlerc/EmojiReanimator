@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "type": "module",
     "module": "ES6",
     "noImplicitAny": true,
     "removeComments": true,
