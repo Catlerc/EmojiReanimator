@@ -31,7 +31,7 @@ export class ImageUpdateFrame implements Frame {
 }
 
 class EndFrame implements Frame {
-    type = FrameType.ImageUpdate
+    type = FrameType.End
     time: Seconds
 
     constructor(time: Seconds) {
@@ -57,6 +57,26 @@ export class AnimatedImage {
         this.height = height
     }
 
+    expandTimeline(length: Seconds, fps: number) {
+        const lastFrame = this.timeline[this.timeline.length - 1]
+        if (length <= lastFrame.time) return this
+
+        let newTimeline = this.timeline.slice()
+        newTimeline.pop() // remove EndFrame
+
+        const step = length / fps
+        let timer = 0
+        for (let i = 0; i < Math.floor(length * fps) - 1; i++) {
+            timer += step
+            newTimeline.push(new UpdateFrame(timer))
+        }
+        newTimeline.push(new EndFrame(length))
+        return new AnimatedImage(this.width, this.height, newTimeline.sort((a, b) => {
+            if (a.time < b.time) return -1
+            if (a.time > b.time) return 1
+            return 0
+        }))
+    }
 
     static fromGIF(gifBuffer: ArrayBuffer) {
         const file = new GifFile(gifBuffer)

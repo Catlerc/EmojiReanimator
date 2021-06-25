@@ -1,19 +1,29 @@
 import {GifEncoder} from "./Vendor.js"
 import {FabricCanvas, RelativeFabricImage, RelativeImage} from "./RelativeImage.js"
 import {AnimatedImage, FrameType, ImageUpdateFrame} from "./AnimatedImage.js";
-import {Utils} from "./Domain.js";
+import {Seconds, Utils} from "./Domain.js";
 
+
+interface ExpandTimelineOptions {
+    length: Seconds,
+    fps: number
+}
 
 interface Options {
     width: number,
     height: number,
+    expandTimeline?: ExpandTimelineOptions
 }
 
 export async function createEmoji(
     options: Options,
-    image: AnimatedImage,
+    imageRaw: AnimatedImage,
     func: (canvas: FabricCanvas, image: RelativeFabricImage, timeNormalized: number) => Promise<void>
 ) {
+    let image = imageRaw
+    if (options.expandTimeline !== undefined) image = image.expandTimeline(options.expandTimeline.length, options.expandTimeline.fps)
+
+
     const canvas = Utils.createCanvas(options.width, options.height)
     const gifEncoder = new GifEncoder({
         workers: 2,
@@ -33,9 +43,11 @@ export async function createEmoji(
         const frame = image.timeline[frameIndex]
         const nextFrame = image.timeline[frameIndex + 1]
         const delay = (nextFrame.time - frame.time) * 1000
-        const timeNormalized = frameIndex / image.timeline.length
+        const timeNormalized = frameIndex / (image.timeline.length-1)
 
-        if (frame.type == FrameType.ImageUpdate) oldImage = await relativeImage.getFabricImageForFrame(frame as ImageUpdateFrame)
+        if (frame.type == FrameType.ImageUpdate) {
+            oldImage = await relativeImage.getFabricImageForFrame(frame as ImageUpdateFrame)
+        }
 
         canvas.clear()
         canvas.setBackgroundColor('#FFFFFF', null)

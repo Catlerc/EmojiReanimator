@@ -3,7 +3,6 @@ import {createEmoji} from "./Emoji.js"
 import {AnimatedImage} from "./AnimatedImage.js";
 
 
-
 fabric.Object.prototype.transparentCorners = false
 
 var input = document.getElementById('file-input')
@@ -18,7 +17,11 @@ input.addEventListener('change', (event: any) => {
         createEmoji(
             {
                 width: 64,
-                height: 64
+                height: 64,
+                expandTimeline: {
+                    length: 1,
+                    fps: 20
+                }
             },
             image.right,
             async (canvas, image, time) => {
