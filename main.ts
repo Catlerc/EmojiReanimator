@@ -1,7 +1,8 @@
-
 import {fabric} from "./Vendor.js"
-import {createEmoji} from "./Emoji.js"
-import {AnimatedImage} from "./AnimatedImage.js"
+import {createEmoji, createEmojiDynamic} from "./Emoji.js"
+import {Image} from "./Image/Image.js";
+import {AnimatedImage} from "./Image/AnimatedImage";
+
 fabric.Object.prototype.transparentCorners = false
 
 var input = document.getElementById('file-input')
@@ -10,37 +11,35 @@ input.addEventListener('change', (event: any) => {
     const fileList = event.target.files
     const file: File = fileList.item(0)
     const reader = new FileReader()
-    reader.onloadend = () => {
+    reader.onloadend = async () => {
+        const image = await Image.fromImage(reader.result as ArrayBuffer, file.name.split('.').pop())
+        createEmojiDynamic(
+            {
+                width: 64,
+                height: 64,
+                fps: 60,
+                length: 1
+            },
+            image.right as AnimatedImage, //???
+            async (canvas, relativeImage, time, timeNormalized) => {
+                let image = await relativeImage.getFabricImage(time)
+                const clone = await image.copy()
 
-        // @ts-ignore
-        globalThis.test = AnimatedImage.fromImage(reader.result, file.name.split('.').pop()).then(console.log)
-        // @ts-ignore
+                image.setPos(timeNormalized + relativeImage.width / 2, 0.5)
+                clone.setPos((timeNormalized - 1) + relativeImage.width / 2, 0.5)
 
-        // createEmoji(
-        //     {
-        //         width: 128,
-        //         height: 128,
-        //         fps: 20,
-        //         length: 1
-        //     },
-        //     reader.result.toString(),
-        //     async (canvas, relativeImage, t) => {
-        //
-        //         relativeImage.setPos(t + relativeImage.width / 2, 0.5)
-        //         const clone = await relativeImage.copy()
-        //         clone.setPos((t - 1) + relativeImage.width / 2, 0.5)
-        //
-        //     }
-        // ).then(emoji => {
-        //         const output = <HTMLImageElement>document.getElementById('output')
-        //         output.src = URL.createObjectURL(emoji)
-        //     }
-        // )
+                canvas.add(image.underlying)
+                canvas.add(clone.underlying)
+
+            }
+        ).then(emoji => {
+                const output = <HTMLImageElement>document.getElementById('output')
+                output.src = URL.createObjectURL(emoji)
+            }
+        )
 
 
     }
     reader.readAsArrayBuffer(file)
 
 })
-
-
