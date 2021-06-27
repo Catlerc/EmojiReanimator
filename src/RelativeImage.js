@@ -34,8 +34,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { Utils } from "./Domain.js";
 import { fabric } from "./Vendor.js";
+import { Utils } from "./Utils/Utils.js";
 function createImage(imageUrl) {
     return new Promise(function (resolve) { return fabric.Image.fromURL(imageUrl, resolve); });
 }
@@ -54,17 +54,17 @@ var RelativeImage = (function () {
                     case 0: return [4, createImage(Utils.imageDataToDataUrl(frame.image))];
                     case 1:
                         fabricImage = _a.sent();
-                        return [2, new RelativeFabricImage(fabricImage.scale(this.scale), this.canvas, this.centerOffset)];
+                        fabricImage.set({
+                            originX: "center",
+                            originY: "center",
+                        });
+                        return [2, new RelativeFabricImage(fabricImage.scale(this.scale), this.canvas)];
                 }
             });
         });
     };
     RelativeImage.prototype.rescaleToFit = function (width, height) {
         this.scale = Math.min(width / this.image.width, height / this.image.height);
-        this.centerOffset = {
-            x: this.width * this.scale / 2,
-            y: this.height * this.scale / 2
-        };
         this.width = this.width * this.scale / this.canvas.width;
         this.height = this.height * this.scale / this.canvas.height;
     };
@@ -73,7 +73,6 @@ var RelativeImage = (function () {
     };
     RelativeImage.prototype.copy = function () {
         var clonedRelativeImage = new RelativeImage(this.image);
-        clonedRelativeImage.centerOffset = this.centerOffset;
         clonedRelativeImage.canvas = this.canvas;
         clonedRelativeImage.width = this.width;
         clonedRelativeImage.height = this.height;
@@ -85,17 +84,16 @@ var RelativeImage = (function () {
 }());
 export { RelativeImage };
 var RelativeFabricImage = (function () {
-    function RelativeFabricImage(underlying, canvas, centerOffset) {
+    function RelativeFabricImage(underlying, canvas) {
         this.underlying = underlying;
         this.canvas = canvas;
-        this.centerOffset = centerOffset;
         this.width = underlying.getScaledWidth();
         this.height = underlying.getScaledHeight();
     }
     RelativeFabricImage.prototype.setPos = function (xn, yn) {
         this.underlying.set({
-            left: this.canvas.width * xn - this.centerOffset.x,
-            top: this.canvas.height * yn - this.centerOffset.y
+            left: this.canvas.width * xn,
+            top: this.canvas.height * yn
         });
     };
     RelativeFabricImage.prototype.getPos = function () {
@@ -113,8 +111,7 @@ var RelativeFabricImage = (function () {
                     case 0: return [4, new Promise(function (resolve) { return _this.underlying.clone(resolve); })];
                     case 1:
                         clonedFabricImage = _a.sent();
-                        clonedRelativeImage = new RelativeFabricImage(clonedFabricImage, this.canvas, this.centerOffset);
-                        clonedRelativeImage.centerOffset = this.centerOffset;
+                        clonedRelativeImage = new RelativeFabricImage(clonedFabricImage, this.canvas);
                         clonedRelativeImage.canvas = this.canvas;
                         return [2, clonedRelativeImage];
                 }

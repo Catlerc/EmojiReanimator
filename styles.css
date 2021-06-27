@@ -1,0 +1,92 @@
+body {
+    font-family: Tahoma, "sans-serif";
+    color: #263238;
+    background-color: #ffffff;
+}
+
+.verticalFlex {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+}
+
+.horizontalFlex {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+}
+
+table {
+    text-align: left;
+    height: 140pt;
+}
+
+#mainBlock {
+    width: 800pt;
+    margin: auto;
+}
+
+#output {
+    width: 130pt;
+    height: 130pt;
+    border-style: solid;
+    border-color: #90A4AE;
+    border-width: 3pt;
+}
+
+.inputDecoration {
+    border-style: solid;
+    border-color: #90A4AE;
+    border-width: 3pt;
+    background-color: #ECEFF1;
+    margin: 0 0 0 0;
+    height: 100%;
+    width: 100pt;
+}
+
+.labelDecoration {
+    margin: 0 0 0 0;
+}
+
+#file-input {
+    width: 130pt;
+    height: 20pt;
+}
+
+#inputButton
+{
+    position:relative;
+
+    width:136pt;
+
+    text-align:center;
+    color:#fff;
+    font-size: 15px;
+    background-color: #F44336;
+
+    overflow:hidden;
+}
+
+input[type="file"]
+{
+    /* Apply absolute positioning and move it to top-left corner of parent div element */
+    position:absolute;
+
+
+    /* Making the file input element to cover the whole div element */
+    right:0px;
+    bottom:0px;
+    width:136pt;
+
+    /* Hiding the tap color when it is clicked on touch devices ( this is not widely supported ) */
+    -webkit-tap-highlight-color:transparent;
+    /* Make it invisible ( it is present at it's position but just invisible ) */
+    opacity:0;
+
+    /* Move it to the upper layer above the container div's layer to ensure that it is always clickable */
+    z-index:1;
+}
+
+.settingsBlock {
+    padding: 5pt;
+}

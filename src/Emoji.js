@@ -37,59 +37,83 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 import { GifEncoder } from "./Vendor.js";
 import { RelativeImage } from "./RelativeImage.js";
 import { FrameType } from "./AnimatedImage.js";
-import { Utils } from "./Domain.js";
-export function createEmoji(options, imageRaw, func) {
-    return __awaiter(this, void 0, void 0, function () {
-        var image, canvas, gifEncoder, relativeImage, oldImage, frameIndex, frame, nextFrame, delay, timeNormalized;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    image = imageRaw;
-                    if (options.expandTimeline !== undefined)
-                        image = image.expandTimeline(options.expandTimeline.length, options.expandTimeline.fps);
-                    canvas = Utils.createCanvas(options.width, options.height);
-                    gifEncoder = new GifEncoder({
-                        workers: 2,
-                        quality: 100,
-                        background: 0xFFFFFF,
-                        width: options.width,
-                        height: options.height,
-                        workerScript: "./vendor/gif.worker.js"
-                    });
-                    relativeImage = new RelativeImage(image);
-                    relativeImage.attach(canvas);
-                    relativeImage.rescaleToFit(options.width, options.height);
-                    frameIndex = 0;
-                    _a.label = 1;
-                case 1:
-                    if (!(frameIndex < image.timeline.length - 1)) return [3, 6];
-                    frame = image.timeline[frameIndex];
-                    nextFrame = image.timeline[frameIndex + 1];
-                    delay = (nextFrame.time - frame.time) * 1000;
-                    timeNormalized = frameIndex / (image.timeline.length - 1);
-                    if (!(frame.type == FrameType.ImageUpdate)) return [3, 3];
-                    return [4, relativeImage.getFabricImageForFrame(frame)];
-                case 2:
-                    oldImage = _a.sent();
-                    _a.label = 3;
-                case 3:
-                    canvas.clear();
-                    canvas.setBackgroundColor('#FFFFFF', null);
-                    return [4, func(canvas, oldImage, timeNormalized)];
-                case 4:
-                    _a.sent();
-                    canvas.renderAll();
-                    gifEncoder.addFrame(canvas.contextContainer.getImageData(0, 0, options.width, options.height), { delay: delay });
-                    _a.label = 5;
-                case 5:
-                    frameIndex++;
-                    return [3, 1];
-                case 6: return [2, new Promise(function (resolve) {
-                        gifEncoder.on('finished', resolve);
-                        gifEncoder.render();
-                    })];
-            }
+import { Option } from "./Utils/Option.js";
+import { Utils } from "./Utils/Utils.js";
+var Emoji = (function () {
+    function Emoji(namePostfix, renderer) {
+        this.renderedGif = Option.none();
+        this.imageElement = Option.none();
+        this.namePostfix = namePostfix;
+        this.renderer = renderer;
+    }
+    Emoji.prototype.attach = function (imageElement) {
+        this.imageElement = Option.some(imageElement);
+    };
+    Emoji.prototype.updateAttachedImageElement = function () {
+        var _this = this;
+        this.imageElement.flatMap(function (imageElement) { return _this.renderedGif.map(function (gif) { return imageElement.src = Utils.imageBlobToDataUrl(gif); }); });
+    };
+    Emoji.prototype.render = function (options, imageRaw) {
+        return __awaiter(this, void 0, void 0, function () {
+            var image, canvas, gifEncoder, relativeImage, oldImage, frameIndex, frame, nextFrame, delay, timeNormalized;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        image = imageRaw;
+                        options.expandTimeline.map(function (expandTimelineOptions) {
+                            return image = image.expandTimeline(expandTimelineOptions.length, expandTimelineOptions.fps);
+                        });
+                        canvas = Utils.createCanvas(options.width, options.height);
+                        gifEncoder = new GifEncoder({
+                            workers: 2,
+                            quality: 100,
+                            background: 0xFFFFFF,
+                            width: options.width,
+                            height: options.height,
+                            workerScript: "./vendor/gif.worker.js"
+                        });
+                        relativeImage = new RelativeImage(image);
+                        relativeImage.attach(canvas);
+                        relativeImage.rescaleToFit(options.width, options.height);
+                        frameIndex = 0;
+                        _a.label = 1;
+                    case 1:
+                        if (!(frameIndex < image.timeline.length - 1)) return [3, 6];
+                        frame = image.timeline[frameIndex];
+                        nextFrame = image.timeline[frameIndex + 1];
+                        delay = (nextFrame.time - frame.time) * 1000;
+                        timeNormalized = frameIndex / (image.timeline.length - 1);
+                        if (!(frame.type == FrameType.ImageUpdate)) return [3, 3];
+                        return [4, relativeImage.getFabricImageForFrame(frame)];
+                    case 2:
+                        oldImage = _a.sent();
+                        _a.label = 3;
+                    case 3:
+                        canvas.clear();
+                        canvas.setBackgroundColor('#FFFFFF', null);
+                        return [4, this.renderer(canvas, oldImage, timeNormalized)];
+                    case 4:
+                        _a.sent();
+                        canvas.renderAll();
+                        gifEncoder.addFrame(canvas.contextContainer.getImageData(0, 0, options.width, options.height), { delay: delay });
+                        _a.label = 5;
+                    case 5:
+                        frameIndex++;
+                        return [3, 1];
+                    case 6: return [2, new Promise(function (resolve) {
+                            gifEncoder.on('finished', function (gif) {
+                                _this.renderedGif = Option.some(gif);
+                                _this.updateAttachedImageElement();
+                                resolve(gif);
+                            });
+                            gifEncoder.render();
+                        })];
+                }
+            });
         });
-    });
-}
+    };
+    return Emoji;
+}());
+export { Emoji };
 //# sourceMappingURL=Emoji.js.map

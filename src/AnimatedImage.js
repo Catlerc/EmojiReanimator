@@ -35,8 +35,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import { GifFile } from "./Vendor.js";
-import { Left, Right } from "./Either.js";
-import { ImageType, StaticImageType, Utils } from "./Domain.js";
+import { Left, Right } from "./Utils/Either.js";
+import { ImageType, StaticImageType } from "./Domain.js";
+import { Utils } from "./Utils/Utils.js";
 export var FrameType;
 (function (FrameType) {
     FrameType[FrameType["ImageUpdate"] = 0] = "ImageUpdate";

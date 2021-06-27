@@ -1,7 +1,60 @@
+<link rel="stylesheet" type="text/css" href="styles.css" media="screen"/>
+
 <script type="text/javascript" src="vendor/fabric.min.js"></script>
 <script type="text/javascript" src="vendor/gif.js"></script>
 <script type="text/javascript" src="vendor/gifdecode.js"></script>
-<script type="module" src="src/main.js"></script>
+<script type="module" src="src/Main.js"></script>
 
-<input id="file-input" type="file" name="name"/>
-<img id="output" width="128" height="128" src="" alt=""/>
+
+<div class="verticalFlex" id="mainBlock">
+    <div class="settingsBlock horizontalFlex">
+        <div class="verticalFlex">
+            <img id="output" width="128" height="128" src="resources/transparent.png"/>
+        </div>
+        <table>
+            <tr>
+                <th class="labelDecoration">Smile size (px)</th>
+                <th>
+                    <input type="number" class="inputDecoration" id="SmileSizeInput" min="1" max="1000" value="64">
+                </th>
+            </tr>
+            <tr>
+                <th class="labelDecoration">Compression</th>
+                <th>
+                    <input type="number" class="inputDecoration" id="GifCompressionInput" min="1" max="100" value="1">
+                </th>
+            </tr>
+            <tr>
+                <th class="labelDecoration">Force animate</th>
+                <th>
+                    <input type="checkbox" class="inputDecoration" id="ForceAnimateInput">
+                </th>
+            </tr>
+            <tr>
+                <th class="labelDecoration">Animation length (sec)</th>
+                <th>
+                    <input type="number" class="inputDecoration" id="AnimationLengthInput" min="0" value="1">
+                </th>
+            </tr>
+            <tr>
+                <th class="labelDecoration">Frame per second</th>
+                <th>
+                    <input type="number" class="inputDecoration" id="GifFpsInput" min="1" value="64">
+                </th>
+            </tr>
+        </table>
+    </div>
+    <div class="horizontalFlex">
+        <div id="inputButton">
+            Choose file for reanimating<input id="file-input" type="file" name="name"/>
+        </div>
+        <button id="redrawButton"> reload</button>
+    </div>
+    <table>
+        <tr>
+            <th>
+                <img src="resources/transparent.png" width="30" height="30" class="emoji" renderer="leftToRight">
+            </th>
+        </tr>
+    </table>
+</div>
