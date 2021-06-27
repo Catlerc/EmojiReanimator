@@ -36,8 +36,14 @@ export class Emoji {
   }
 
   updateAttachedImageElement() {
-    this.imageElement.flatMap(
-      imageElement => this.renderedGif.map(gif => imageElement.src = Utils.imageBlobToDataUrl(gif))
+    this.imageElement.forEach(
+      imageElement => this.renderedGif.forEach(gif => {
+        imageElement.src = Utils.imageBlobToDataUrl(gif)
+        if (gif.size > 128 * 1024)
+          imageElement.setAttribute("sizefailure", null)
+        else
+          imageElement.removeAttribute("sizefailure")
+      })
     )
   }
 

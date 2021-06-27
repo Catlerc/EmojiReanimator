@@ -51,7 +51,13 @@ var Emoji = (function () {
     };
     Emoji.prototype.updateAttachedImageElement = function () {
         var _this = this;
-        this.imageElement.flatMap(function (imageElement) { return _this.renderedGif.map(function (gif) { return imageElement.src = Utils.imageBlobToDataUrl(gif); }); });
+        this.imageElement.forEach(function (imageElement) { return _this.renderedGif.forEach(function (gif) {
+            imageElement.src = Utils.imageBlobToDataUrl(gif);
+            if (gif.size > 128 * 1024)
+                imageElement.setAttribute("sizefailure", null);
+            else
+                imageElement.removeAttribute("sizefailure");
+        }); });
     };
     Emoji.prototype.render = function (options, imageRaw) {
         return __awaiter(this, void 0, void 0, function () {

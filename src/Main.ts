@@ -7,6 +7,7 @@ const compressionInput = document.getElementById("GifCompressionInput") as HTMLI
 const forceAnimateInput = document.getElementById("ForceAnimateInput") as HTMLInputElement
 const animationLengthInput = document.getElementById("AnimationLengthInput") as HTMLInputElement
 const fpsInput = document.getElementById("GifFpsInput") as HTMLInputElement
+const previewImage = document.getElementById("imagePreview") as HTMLImageElement
 
-const app = new Application(input, redrawButton, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput)
+const app = new Application(input, redrawButton, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, previewImage)
 app.initializeEvents()

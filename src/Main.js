@@ -6,6 +6,7 @@ var compressionInput = document.getElementById("GifCompressionInput");
 var forceAnimateInput = document.getElementById("ForceAnimateInput");
 var animationLengthInput = document.getElementById("AnimationLengthInput");
 var fpsInput = document.getElementById("GifFpsInput");
-var app = new Application(input, redrawButton, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput);
+var previewImage = document.getElementById("imagePreview");
+var app = new Application(input, redrawButton, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, previewImage);
 app.initializeEvents();
 //# sourceMappingURL=Main.js.map

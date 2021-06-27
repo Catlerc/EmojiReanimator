@@ -53,40 +53,44 @@ table {
     height: 20pt;
 }
 
-#inputButton
-{
-    position:relative;
+#inputButton {
+    position: relative;
 
-    width:136pt;
+    width: 136pt;
 
-    text-align:center;
-    color:#fff;
+    text-align: center;
+    color: #fff;
     font-size: 15px;
     background-color: #F44336;
 
-    overflow:hidden;
+    overflow: hidden;
 }
 
-input[type="file"]
-{
+input[type="file"] {
     /* Apply absolute positioning and move it to top-left corner of parent div element */
-    position:absolute;
+    position: absolute;
 
 
     /* Making the file input element to cover the whole div element */
-    right:0px;
-    bottom:0px;
-    width:136pt;
+    right: 0px;
+    bottom: 0px;
+    width: 136pt;
 
     /* Hiding the tap color when it is clicked on touch devices ( this is not widely supported ) */
-    -webkit-tap-highlight-color:transparent;
+    -webkit-tap-highlight-color: transparent;
     /* Make it invisible ( it is present at it's position but just invisible ) */
-    opacity:0;
+    opacity: 0;
 
     /* Move it to the upper layer above the container div's layer to ensure that it is always clickable */
-    z-index:1;
+    z-index: 1;
 }
 
 .settingsBlock {
     padding: 5pt;
+}
+
+.emoji[sizefailure] {
+    border-style: dotted;
+    border-color: #f6715a;
+    border-width: 2pt;
 }

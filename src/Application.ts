@@ -3,6 +3,7 @@ import {renderers} from "./Renderers/Renderers.js"
 import {Seconds} from "./Domain.js"
 import {AnimatedImage} from "./AnimatedImage.js"
 import {Option} from "./Utils/Option.js";
+import {Utils} from "./Utils/Utils.js";
 
 export interface ExpandTimelineOptions {
   length: Seconds,
@@ -35,6 +36,7 @@ export class Application {
     private forceAnimateInput: HTMLInputElement,
     private animationLengthInput: HTMLInputElement,
     private fpsInput: HTMLInputElement,
+    private imagePreview: HTMLImageElement
   ) {
     this.reloadOptions()
   }
@@ -79,7 +81,7 @@ export class Application {
     const oldOptions = this.options
     const size = Number(this.smileSizeInput.value)
     let expandTimelineOptions = Option.none<ExpandTimelineOptions>()
-    if (this.forceAnimateInput.value == "on")
+    if (this.forceAnimateInput.checked)
       expandTimelineOptions = Option.some(
         {
           length: Number(this.animationLengthInput.value),
@@ -106,6 +108,8 @@ export class Application {
   async onFileSelection(file: File, data: ArrayBuffer) {
     const fileExtension = file.name.split('.').pop()
     const image = await AnimatedImage.fromImage(data, fileExtension)
+
+    this.imagePreview.src = Utils.arrayBufferToUrl(data, fileExtension)
     this.image = Option.some(image.right)
     this.redraw()
   }
