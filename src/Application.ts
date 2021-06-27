@@ -59,11 +59,12 @@ export class Application {
       this.reloadOptions()
     }
     this.fileInput.onchange = (event: any) => {
+      this.imagePreview.src = "resources/loading.gif"
       const fileList = event.target.files
       const file: File = fileList.item(0)
       const reader = new FileReader()
       reader.onloadend = () => this.onFileSelection(file, reader.result as ArrayBuffer)
-      reader.readAsArrayBuffer(file)
+      setTimeout(() => reader.readAsArrayBuffer(file), 10)
     }
 
     this.emojies = Array.from(document.getElementsByClassName("Emoji")).map(
@@ -105,12 +106,12 @@ export class Application {
 
   }
 
-  async onFileSelection(file: File, data: ArrayBuffer) {
+  onFileSelection(file: File, data: ArrayBuffer) {
     const fileExtension = file.name.split('.').pop()
-    const image = await AnimatedImage.fromImage(data, fileExtension)
-
-    this.imagePreview.src = Utils.arrayBufferToUrl(data, fileExtension)
-    this.image = Option.some(image.right)
-    this.redraw()
+    AnimatedImage.fromImage(data, fileExtension).then(image => {
+      this.imagePreview.src = Utils.arrayBufferToUrl(data, fileExtension)
+      this.image = Option.some(image.right)
+      this.redraw()
+    })
   }
 }

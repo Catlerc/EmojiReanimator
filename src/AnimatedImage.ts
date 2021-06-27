@@ -100,12 +100,15 @@ export class AnimatedImage {
     return new AnimatedImage(file.canvasWidth, file.canvasHeight, newTimeline)
   }
 
-  static async fromImage(imageBuffer: ArrayBuffer, extension: string): Promise<Either<Error, AnimatedImage>> {
-    if (extension == "gif")
-      return new Right(AnimatedImage.fromGIF(imageBuffer))
-    if (extension in StaticImageType)
-      return new Right(await AnimatedImage.fromStaticImage(imageBuffer, extension as unknown as StaticImageType))
-    return new Left(new Error(`unsupported file extension '${extension}'`))
+  static fromImage(imageBuffer: ArrayBuffer, extension: string): Promise<Either<Error, AnimatedImage>> {
+    return new Promise(async resolve => {
+      if (extension == "gif")
+        resolve(new Right(AnimatedImage.fromGIF(imageBuffer)))
+      else if (extension in StaticImageType)
+        resolve(new Right(await AnimatedImage.fromStaticImage(imageBuffer, extension as unknown as StaticImageType)))
+      else
+        resolve(new Left(new Error(`unsupported file extension '${extension}'`)))
+    })
   }
 
   static fromStaticImage(imageBuffer: ArrayBuffer, type: StaticImageType) {

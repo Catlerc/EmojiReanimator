@@ -94,3 +94,7 @@ input[type="file"] {
     border-color: #f6715a;
     border-width: 2pt;
 }
+
+#imagePreview {
+    object-fit: contain;
+}

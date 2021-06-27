@@ -116,21 +116,30 @@ var AnimatedImage = (function () {
         return new AnimatedImage(file.canvasWidth, file.canvasHeight, newTimeline);
     };
     AnimatedImage.fromImage = function (imageBuffer, extension) {
-        return __awaiter(this, void 0, void 0, function () {
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+        var _this = this;
+        return new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
-                        if (extension == "gif")
-                            return [2, new Right(AnimatedImage.fromGIF(imageBuffer))];
-                        if (!(extension in StaticImageType)) return [3, 2];
-                        _a = Right.bind;
+                        if (!(extension == "gif")) return [3, 1];
+                        resolve(new Right(AnimatedImage.fromGIF(imageBuffer)));
+                        return [3, 4];
+                    case 1:
+                        if (!(extension in StaticImageType)) return [3, 3];
+                        _a = resolve;
+                        _b = Right.bind;
                         return [4, AnimatedImage.fromStaticImage(imageBuffer, extension)];
-                    case 1: return [2, new (_a.apply(Right, [void 0, _b.sent()]))()];
-                    case 2: return [2, new Left(new Error("unsupported file extension '" + extension + "'"))];
+                    case 2:
+                        _a.apply(void 0, [new (_b.apply(Right, [void 0, _c.sent()]))()]);
+                        return [3, 4];
+                    case 3:
+                        resolve(new Left(new Error("unsupported file extension '" + extension + "'")));
+                        _c.label = 4;
+                    case 4: return [2];
                 }
             });
-        });
+        }); });
     };
     AnimatedImage.fromStaticImage = function (imageBuffer, type) {
         var imageUrl = Utils.arrayBufferToUrl(imageBuffer, type.toString());
