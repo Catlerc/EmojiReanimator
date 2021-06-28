@@ -4,21 +4,21 @@ export class Option<T> {
 
   static some<T>(value: T) {
     if (!value) {
-      throw Error("Provided value must not be empty");
+      throw Error("Provided value must not be empty")
     }
-    return new Option(value);
+    return new Option(value)
   }
 
   static none<T>() {
-    return new Option<T>(null);
+    return new Option<T>(null)
   }
 
   static fromValue<T>(value: T) {
-    return value ? Option.some(value) : Option.none<T>();
+    return value ? Option.some(value) : Option.none<T>()
   }
 
   getOrElse(defaultValue: T) {
-    return this.value === null ? defaultValue : this.value;
+    return this.value === null ? defaultValue : this.value
   }
 
   forEach<B>(func: (a: T) => B): void {

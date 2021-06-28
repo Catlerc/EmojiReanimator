@@ -16,7 +16,7 @@ body {
     flex-direction: row;
 }
 
-table {
+.optionsTable {
     text-align: left;
     height: 140pt;
 }
@@ -97,4 +97,9 @@ input[type="file"] {
 
 #imagePreview {
     object-fit: contain;
+}
+
+.emoji {
+    width: 30px;
+    height: 30px;
 }

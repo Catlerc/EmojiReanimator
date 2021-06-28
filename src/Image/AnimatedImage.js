@@ -34,10 +34,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { GifFile } from "./Vendor.js";
-import { Left, Right } from "./Utils/Either.js";
-import { ImageType, StaticImageType } from "./Domain.js";
-import { Utils } from "./Utils/Utils.js";
+import { GifFile } from "../Vendor.js";
+import { Left, Right } from "../Utils/Either.js";
+import { ImageType, StaticImageType } from "../Domain.js";
+import { Utils } from "../Utils/Utils.js";
 export var FrameType;
 (function (FrameType) {
     FrameType[FrameType["ImageUpdate"] = 0] = "ImageUpdate";
@@ -51,6 +51,7 @@ var UpdateFrame = (function () {
     }
     return UpdateFrame;
 }());
+export { UpdateFrame };
 var ImageUpdateFrame = (function () {
     function ImageUpdateFrame(image, time) {
         this.type = FrameType.ImageUpdate;
@@ -67,6 +68,7 @@ var EndFrame = (function () {
     }
     return EndFrame;
 }());
+export { EndFrame };
 var AnimatedImage = (function () {
     function AnimatedImage(width, height, timeline) {
         this.type = ImageType.gif;
@@ -100,14 +102,14 @@ var AnimatedImage = (function () {
         var newTimeline = [];
         var timer = 0;
         file.frames.forEach(function (frame) {
-            var renderer = document.createElement('canvas');
+            var renderer = document.createElement("canvas");
             renderer.width = file.canvasWidth;
             renderer.height = file.canvasHeight;
-            var rendererContext = renderer.getContext('2d');
-            for (var pixel = 0; pixel < frame.pixelColors.length; pixel++) {
+            var rendererContext = renderer.getContext("2d");
+            frame.pixelColors.forEach(function (pixel) {
                 rendererContext.fillStyle = frame.pixelColors[pixel];
                 rendererContext.fillRect(pixel % file.canvasWidth, Math.floor(pixel / file.canvasWidth), 1, 1);
-            }
+            });
             var imageData = rendererContext.getImageData(0, 0, renderer.width, renderer.height);
             newTimeline.push(new ImageUpdateFrame(imageData, timer));
             timer += frame.delayTime;
@@ -147,7 +149,7 @@ var AnimatedImage = (function () {
         image.src = imageUrl;
         return new Promise(function (resolve) {
             image.onload = function () {
-                var canvas = document.createElement('canvas');
+                var canvas = document.createElement("canvas");
                 canvas.width = image.width;
                 canvas.height = image.height;
                 var canvasContext = canvas.getContext("2d");

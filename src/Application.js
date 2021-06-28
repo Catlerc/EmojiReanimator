@@ -1,8 +1,8 @@
-import { Emoji } from "./Emoji.js";
-import { renderers } from "./Renderers/Renderers.js";
-import { AnimatedImage } from "./AnimatedImage.js";
+import { Emoji } from "./Image/Emoji.js";
+import { AnimatedImage } from "./Image/AnimatedImage.js";
 import { Option } from "./Utils/Option.js";
 import { Utils } from "./Utils/Utils.js";
+import { EmojiGenerator } from "./EmojiGenerator/EmojiGenerator.js";
 var Application = (function () {
     function Application(fileInput, redrawButton, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, imagePreview) {
         this.fileInput = fileInput;
@@ -50,8 +50,8 @@ var Application = (function () {
         };
         this.emojies = Array.from(document.getElementsByClassName("Emoji")).map(function (element) {
             var rendererType = element.getAttribute("renderer");
-            var renderer = renderers.get(rendererType);
-            var emoji = new Emoji(rendererType, renderer);
+            var renderer = EmojiGenerator.allGenerators.get(rendererType);
+            var emoji = new Emoji(renderer);
             emoji.attach(element);
             return emoji;
         });
@@ -83,12 +83,36 @@ var Application = (function () {
     };
     Application.prototype.onFileSelection = function (file, data) {
         var _this = this;
-        var fileExtension = file.name.split('.').pop();
+        var fileExtension = file.name.split(".").pop();
         AnimatedImage.fromImage(data, fileExtension).then(function (image) {
             _this.imagePreview.src = Utils.arrayBufferToUrl(data, fileExtension);
             _this.image = Option.some(image.right);
             _this.redraw();
         });
+    };
+    Application.prototype.generateEmojiTable = function (map) {
+        var table = document.createElement("table");
+        var emojies = [];
+        map.forEach(function (row) {
+            var rowElement = document.createElement("tr");
+            row.forEach(function (emojiRendererName) {
+                var emojiElement = document.createElement("img");
+                emojiElement.src = "resources/transparent.png";
+                emojiElement.className = "emoji";
+                if (emojiRendererName == null) {
+                }
+                else {
+                    var newEmoji = new Emoji(EmojiGenerator.allGenerators.get(emojiRendererName));
+                    emojiElement.setAttribute("renderer", emojiRendererName);
+                    newEmoji.attach(emojiElement);
+                    emojies.push(newEmoji);
+                }
+                rowElement.append(emojiElement);
+            });
+            table.append(rowElement);
+        });
+        this.emojies = emojies;
+        return table;
     };
     return Application;
 }());

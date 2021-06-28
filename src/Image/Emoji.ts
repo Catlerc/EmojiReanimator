@@ -1,10 +1,10 @@
-import {GifEncoder} from "./Vendor.js"
-import {FabricCanvas, RelativeFabricImage, RelativeImage} from "./RelativeImage.js"
-import {AnimatedImage, FrameType, ImageUpdateFrame} from "./AnimatedImage.js";
-import {Milliseconds, Renderer, Seconds} from "./Domain.js";
-import {Option} from "./Utils/Option.js";
-import {Options} from "./Application.js";
-import {Utils} from "./Utils/Utils.js";
+import {GifEncoder} from "../Vendor.js"
+import {AnimatedImage, FrameType, ImageUpdateFrame} from "./AnimatedImage.js"
+import {Milliseconds} from "../Domain.js"
+import {Option} from "../Utils/Option.js"
+import {Options} from "../Application.js"
+import {Utils} from "../Utils/Utils.js"
+import {EmojiGenerator} from "../EmojiGenerator/EmojiGenerator.js"
 
 
 interface GifEncoderFrameOptions {
@@ -21,14 +21,11 @@ interface GifEncoder {
 
 
 export class Emoji {
-  namePostfix: string
   renderedGif: Option<Blob> = Option.none()
-  renderer: Renderer
+  renderedName: Option<string> = Option.none()
   imageElement: Option<HTMLImageElement> = Option.none()
 
-  constructor(namePostfix: string, renderer: Renderer) {
-    this.namePostfix = namePostfix
-    this.renderer = renderer
+  constructor(private generator: EmojiGenerator) {
   }
 
   attach(imageElement: HTMLImageElement) {
@@ -56,8 +53,6 @@ export class Emoji {
       image = image.expandTimeline(expandTimelineOptions.length, expandTimelineOptions.fps)
     )
 
-
-    const canvas = Utils.createCanvas(options.width, options.height)
     const gifEncoder: GifEncoder = new GifEncoder({
       workers: 2,
       quality: 100,
@@ -67,37 +62,22 @@ export class Emoji {
       workerScript: "./vendor/gif.worker.js"
     })
 
-    const relativeImage = new RelativeImage(image)
-    relativeImage.attach(canvas)
-    relativeImage.rescaleToFit(options.width, options.height)
+    const animatedImage = await this.generator.generate(image, options)
 
-    let oldImage: RelativeFabricImage
-    for (let frameIndex = 0; frameIndex < image.timeline.length - 1; frameIndex++) {
-      const frame = image.timeline[frameIndex]
-      const nextFrame = image.timeline[frameIndex + 1]
+    for (let index = 0; index < animatedImage.timeline.length - 1; index++) {
+      const frame = animatedImage.timeline[index] as ImageUpdateFrame
+      const nextFrame = animatedImage.timeline[index + 1]
       const delay = (nextFrame.time - frame.time) * 1000
-      const timeNormalized = frameIndex / (image.timeline.length - 1)
-
-      if (frame.type == FrameType.ImageUpdate) {
-        oldImage = await relativeImage.getFabricImageForFrame(frame as ImageUpdateFrame)
-      }
-
-      canvas.clear()
-      canvas.setBackgroundColor('#FFFFFF', null)
-
-      await this.renderer(canvas, oldImage, timeNormalized)
-
-      canvas.renderAll()
-
       gifEncoder.addFrame(
-        canvas.contextContainer.getImageData(0, 0, options.width, options.height),
+        frame.image,
         {delay: delay}
       )
     }
+    this.renderedName = options.name.map(name => name + "_" + this.generator.namePrefix)
 
     return new Promise(
       resolve => {
-        gifEncoder.on('finished', (gif: Blob) => {
+        gifEncoder.on("finished", (gif: Blob) => {
           this.renderedGif = Option.some(gif)
           this.updateAttachedImageElement()
           resolve(gif)

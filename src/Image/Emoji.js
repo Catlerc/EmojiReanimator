@@ -34,17 +34,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { GifEncoder } from "./Vendor.js";
-import { RelativeImage } from "./RelativeImage.js";
-import { FrameType } from "./AnimatedImage.js";
-import { Option } from "./Utils/Option.js";
-import { Utils } from "./Utils/Utils.js";
+import { GifEncoder } from "../Vendor.js";
+import { Option } from "../Utils/Option.js";
+import { Utils } from "../Utils/Utils.js";
 var Emoji = (function () {
-    function Emoji(namePostfix, renderer) {
+    function Emoji(generator) {
+        this.generator = generator;
         this.renderedGif = Option.none();
+        this.renderedName = Option.none();
         this.imageElement = Option.none();
-        this.namePostfix = namePostfix;
-        this.renderer = renderer;
     }
     Emoji.prototype.attach = function (imageElement) {
         this.imageElement = Option.some(imageElement);
@@ -61,7 +59,7 @@ var Emoji = (function () {
     };
     Emoji.prototype.render = function (options, imageRaw) {
         return __awaiter(this, void 0, void 0, function () {
-            var image, canvas, gifEncoder, relativeImage, oldImage, frameIndex, frame, nextFrame, delay, timeNormalized;
+            var image, gifEncoder, animatedImage, index, frame, nextFrame, delay;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -70,7 +68,6 @@ var Emoji = (function () {
                         options.expandTimeline.map(function (expandTimelineOptions) {
                             return image = image.expandTimeline(expandTimelineOptions.length, expandTimelineOptions.fps);
                         });
-                        canvas = Utils.createCanvas(options.width, options.height);
                         gifEncoder = new GifEncoder({
                             workers: 2,
                             quality: 100,
@@ -79,42 +76,24 @@ var Emoji = (function () {
                             height: options.height,
                             workerScript: "./vendor/gif.worker.js"
                         });
-                        relativeImage = new RelativeImage(image);
-                        relativeImage.attach(canvas);
-                        relativeImage.rescaleToFit(options.width, options.height);
-                        frameIndex = 0;
-                        _a.label = 1;
+                        return [4, this.generator.generate(image, options)];
                     case 1:
-                        if (!(frameIndex < image.timeline.length - 1)) return [3, 6];
-                        frame = image.timeline[frameIndex];
-                        nextFrame = image.timeline[frameIndex + 1];
-                        delay = (nextFrame.time - frame.time) * 1000;
-                        timeNormalized = frameIndex / (image.timeline.length - 1);
-                        if (!(frame.type == FrameType.ImageUpdate)) return [3, 3];
-                        return [4, relativeImage.getFabricImageForFrame(frame)];
-                    case 2:
-                        oldImage = _a.sent();
-                        _a.label = 3;
-                    case 3:
-                        canvas.clear();
-                        canvas.setBackgroundColor('#FFFFFF', null);
-                        return [4, this.renderer(canvas, oldImage, timeNormalized)];
-                    case 4:
-                        _a.sent();
-                        canvas.renderAll();
-                        gifEncoder.addFrame(canvas.contextContainer.getImageData(0, 0, options.width, options.height), { delay: delay });
-                        _a.label = 5;
-                    case 5:
-                        frameIndex++;
-                        return [3, 1];
-                    case 6: return [2, new Promise(function (resolve) {
-                            gifEncoder.on('finished', function (gif) {
-                                _this.renderedGif = Option.some(gif);
-                                _this.updateAttachedImageElement();
-                                resolve(gif);
-                            });
-                            gifEncoder.render();
-                        })];
+                        animatedImage = _a.sent();
+                        for (index = 0; index < animatedImage.timeline.length - 1; index++) {
+                            frame = animatedImage.timeline[index];
+                            nextFrame = animatedImage.timeline[index + 1];
+                            delay = (nextFrame.time - frame.time) * 1000;
+                            gifEncoder.addFrame(frame.image, { delay: delay });
+                        }
+                        this.renderedName = options.name.map(function (name) { return name + "_" + _this.generator.namePrefix; });
+                        return [2, new Promise(function (resolve) {
+                                gifEncoder.on("finished", function (gif) {
+                                    _this.renderedGif = Option.some(gif);
+                                    _this.updateAttachedImageElement();
+                                    resolve(gif);
+                                });
+                                gifEncoder.render();
+                            })];
                 }
             });
         });

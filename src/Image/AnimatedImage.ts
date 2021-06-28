@@ -1,7 +1,7 @@
-import {GifFile} from "./Vendor.js"
-import {Either, Left, Right} from "./Utils/Either.js"
-import {ImageType, Seconds, StaticImageType} from "./Domain.js"
-import {Utils} from "./Utils/Utils.js"
+import {GifFile} from "../Vendor.js"
+import {Either, Left, Right} from "../Utils/Either.js"
+import {ImageType, Seconds, StaticImageType} from "../Domain.js"
+import {Utils} from "../Utils/Utils.js"
 
 
 export enum FrameType {
@@ -10,9 +10,9 @@ export enum FrameType {
   End
 }
 
-class UpdateFrame implements Frame {
+export class UpdateFrame implements Frame {
   type = FrameType.Update
-  time: Seconds;
+  time: Seconds
 
   constructor(time: Seconds) {
     this.time = time
@@ -31,7 +31,7 @@ export class ImageUpdateFrame implements Frame {
   }
 }
 
-class EndFrame implements Frame {
+export class EndFrame implements Frame {
   type = FrameType.End
   time: Seconds
 
@@ -84,14 +84,14 @@ export class AnimatedImage {
     let newTimeline: Array<Frame> = []
     let timer = 0
     file.frames.forEach((frame: any) => {
-      let renderer = document.createElement('canvas')
+      let renderer = document.createElement("canvas")
       renderer.width = file.canvasWidth
       renderer.height = file.canvasHeight
-      let rendererContext = renderer.getContext('2d');
-      for (let pixel = 0; pixel < frame.pixelColors.length; pixel++) {
-        rendererContext.fillStyle = frame.pixelColors[pixel];
-        rendererContext.fillRect(pixel % file.canvasWidth, Math.floor(pixel / file.canvasWidth), 1, 1);
-      }
+      let rendererContext = renderer.getContext("2d")
+      frame.pixelColors.forEach((pixel: any) => {
+        rendererContext.fillStyle = frame.pixelColors[pixel]
+        rendererContext.fillRect(pixel % file.canvasWidth, Math.floor(pixel / file.canvasWidth), 1, 1)
+      })
       const imageData = rendererContext.getImageData(0, 0, renderer.width, renderer.height)
       newTimeline.push(new ImageUpdateFrame(imageData, timer))
       timer += frame.delayTime
@@ -118,7 +118,7 @@ export class AnimatedImage {
     image.src = imageUrl
     return new Promise<AnimatedImage>(resolve => {
       image.onload = () => {
-        const canvas = document.createElement('canvas')
+        const canvas = document.createElement("canvas")
         canvas.width = image.width
         canvas.height = image.height
 

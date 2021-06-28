@@ -34,11 +34,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { fabric } from "./Vendor.js";
-import { Utils } from "./Utils/Utils.js";
-function createImage(imageUrl) {
-    return new Promise(function (resolve) { return fabric.Image.fromURL(imageUrl, resolve); });
-}
+import { Utils } from "../../Utils/Utils.js";
+import { RelativeFabricImage } from "./RelativeFabricImage.js";
 var RelativeImage = (function () {
     function RelativeImage(image) {
         this.scale = 1;
@@ -51,7 +48,7 @@ var RelativeImage = (function () {
             var fabricImage;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4, createImage(Utils.imageDataToDataUrl(frame.image))];
+                    case 0: return [4, Utils.fabricImageFromDataUrl(Utils.imageDataToDataUrl(frame.image))];
                     case 1:
                         fabricImage = _a.sent();
                         fabricImage.set({
@@ -65,8 +62,8 @@ var RelativeImage = (function () {
     };
     RelativeImage.prototype.rescaleToFit = function (width, height) {
         this.scale = Math.min(width / this.image.width, height / this.image.height);
-        this.width = this.width * this.scale / this.canvas.width;
-        this.height = this.height * this.scale / this.canvas.height;
+        this.width = this.width * this.scale / width;
+        this.height = this.height * this.scale / height;
     };
     RelativeImage.prototype.attach = function (canvas) {
         this.canvas = canvas;
@@ -83,42 +80,4 @@ var RelativeImage = (function () {
     return RelativeImage;
 }());
 export { RelativeImage };
-var RelativeFabricImage = (function () {
-    function RelativeFabricImage(underlying, canvas) {
-        this.underlying = underlying;
-        this.canvas = canvas;
-        this.width = underlying.getScaledWidth();
-        this.height = underlying.getScaledHeight();
-    }
-    RelativeFabricImage.prototype.setPos = function (xn, yn) {
-        this.underlying.set({
-            left: this.canvas.width * xn,
-            top: this.canvas.height * yn
-        });
-    };
-    RelativeFabricImage.prototype.getPos = function () {
-        return {
-            xr: this.underlying.get('left') / this.canvas.width,
-            yr: this.underlying.get('top') / this.canvas.height
-        };
-    };
-    RelativeFabricImage.prototype.copy = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var clonedFabricImage, clonedRelativeImage;
-            var _this = this;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4, new Promise(function (resolve) { return _this.underlying.clone(resolve); })];
-                    case 1:
-                        clonedFabricImage = _a.sent();
-                        clonedRelativeImage = new RelativeFabricImage(clonedFabricImage, this.canvas);
-                        clonedRelativeImage.canvas = this.canvas;
-                        return [2, clonedRelativeImage];
-                }
-            });
-        });
-    };
-    return RelativeFabricImage;
-}());
-export { RelativeFabricImage };
 //# sourceMappingURL=RelativeImage.js.map

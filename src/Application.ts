@@ -1,9 +1,9 @@
-import {Emoji} from "./Emoji.js"
-import {renderers} from "./Renderers/Renderers.js"
+import {Emoji} from "./Image/Emoji.js"
 import {Seconds} from "./Domain.js"
-import {AnimatedImage} from "./AnimatedImage.js"
-import {Option} from "./Utils/Option.js";
-import {Utils} from "./Utils/Utils.js";
+import {AnimatedImage} from "./Image/AnimatedImage.js"
+import {Option} from "./Utils/Option.js"
+import {Utils} from "./Utils/Utils.js"
+import {EmojiGenerator} from "./EmojiGenerator/EmojiGenerator.js"
 
 export interface ExpandTimelineOptions {
   length: Seconds,
@@ -70,8 +70,8 @@ export class Application {
     this.emojies = Array.from(document.getElementsByClassName("Emoji")).map(
       element => {
         const rendererType = element.getAttribute("renderer")
-        const renderer = renderers.get(rendererType)
-        const emoji = new Emoji(rendererType, renderer)
+        const renderer = EmojiGenerator.allGenerators.get(rendererType)
+        const emoji = new Emoji(renderer)
         emoji.attach(element as HTMLImageElement)
         return emoji
       }
@@ -107,11 +107,35 @@ export class Application {
   }
 
   onFileSelection(file: File, data: ArrayBuffer) {
-    const fileExtension = file.name.split('.').pop()
+    const fileExtension = file.name.split(".").pop()
     AnimatedImage.fromImage(data, fileExtension).then(image => {
       this.imagePreview.src = Utils.arrayBufferToUrl(data, fileExtension)
       this.image = Option.some(image.right)
       this.redraw()
     })
+  }
+
+  generateEmojiTable(map: (string | null)[][]): HTMLTableElement {
+    const table = document.createElement("table")
+    const emojies: Emoji[] = []
+    map.forEach(row => {
+      const rowElement = document.createElement("tr")
+      row.forEach(emojiRendererName => {
+        const emojiElement = document.createElement("img")
+        emojiElement.src = "resources/transparent.png"
+        emojiElement.className = "emoji"
+        if (emojiRendererName == null) {
+        } else {
+          const newEmoji = new Emoji(EmojiGenerator.allGenerators.get(emojiRendererName))
+          emojiElement.setAttribute("renderer", emojiRendererName)
+          newEmoji.attach(emojiElement)
+          emojies.push(newEmoji)
+        }
+        rowElement.append(emojiElement)
+      })
+      table.append(rowElement)
+    })
+    this.emojies = emojies
+    return table
   }
 }
