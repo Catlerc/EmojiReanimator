@@ -90,9 +90,8 @@ input[type="file"] {
 }
 
 .emoji[sizefailure] {
-    border-style: dotted;
-    border-color: #f6715a;
-    border-width: 2pt;
+    outline:2pt dotted red;
+    outline-offset:-1pt;
 }
 
 #imagePreview {

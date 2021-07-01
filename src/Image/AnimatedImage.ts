@@ -80,24 +80,24 @@ export class AnimatedImage {
   }
 
   static fromGIF(gifBuffer: ArrayBuffer) {
-    const file = new GifFile(gifBuffer)
+    const rgbRegex = /rgb\((\d+),(\d+),(\d+)\)/
+
+    const gifFile = new GifFile(gifBuffer)
     let newTimeline: Array<Frame> = []
     let timer = 0
-    file.frames.forEach((frame: any) => {
-      let renderer = document.createElement("canvas")
-      renderer.width = file.canvasWidth
-      renderer.height = file.canvasHeight
-      let rendererContext = renderer.getContext("2d")
-      frame.pixelColors.forEach((pixel: any) => {
-        rendererContext.fillStyle = frame.pixelColors[pixel]
-        rendererContext.fillRect(pixel % file.canvasWidth, Math.floor(pixel / file.canvasWidth), 1, 1)
+    gifFile.frames.forEach((frame: any) => {
+      const frameImageData: number[] = []
+      const regexResults: RegExpMatchArray[] = frame.pixelColors.map((pixelColor: string) => pixelColor.match(rgbRegex))
+      regexResults.forEach(pixelRegexResult => {
+        for (let i = 1; i <= 3; i++) frameImageData.push(Number(pixelRegexResult[i]))
+        frameImageData.push(255)
       })
-      const imageData = rendererContext.getImageData(0, 0, renderer.width, renderer.height)
+      const imageData = new ImageData(new Uint8ClampedArray(frameImageData), gifFile.canvasWidth, gifFile.canvasHeight)
       newTimeline.push(new ImageUpdateFrame(imageData, timer))
       timer += frame.delayTime
     })
     newTimeline.push(new EndFrame(timer))
-    return new AnimatedImage(file.canvasWidth, file.canvasHeight, newTimeline)
+    return new AnimatedImage(gifFile.canvasWidth, gifFile.canvasHeight, newTimeline)
   }
 
   static fromImage(imageBuffer: ArrayBuffer, extension: string): Promise<Either<Error, AnimatedImage>> {

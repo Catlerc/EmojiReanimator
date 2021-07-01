@@ -98,24 +98,24 @@ var AnimatedImage = (function () {
         }));
     };
     AnimatedImage.fromGIF = function (gifBuffer) {
-        var file = new GifFile(gifBuffer);
+        var rgbRegex = /rgb\((\d+),(\d+),(\d+)\)/;
+        var gifFile = new GifFile(gifBuffer);
         var newTimeline = [];
         var timer = 0;
-        file.frames.forEach(function (frame) {
-            var renderer = document.createElement("canvas");
-            renderer.width = file.canvasWidth;
-            renderer.height = file.canvasHeight;
-            var rendererContext = renderer.getContext("2d");
-            frame.pixelColors.forEach(function (pixel) {
-                rendererContext.fillStyle = frame.pixelColors[pixel];
-                rendererContext.fillRect(pixel % file.canvasWidth, Math.floor(pixel / file.canvasWidth), 1, 1);
+        gifFile.frames.forEach(function (frame) {
+            var frameImageData = [];
+            var regexResults = frame.pixelColors.map(function (pixelColor) { return pixelColor.match(rgbRegex); });
+            regexResults.forEach(function (pixelRegexResult) {
+                for (var i = 1; i <= 3; i++)
+                    frameImageData.push(Number(pixelRegexResult[i]));
+                frameImageData.push(255);
             });
-            var imageData = rendererContext.getImageData(0, 0, renderer.width, renderer.height);
+            var imageData = new ImageData(new Uint8ClampedArray(frameImageData), gifFile.canvasWidth, gifFile.canvasHeight);
             newTimeline.push(new ImageUpdateFrame(imageData, timer));
             timer += frame.delayTime;
         });
         newTimeline.push(new EndFrame(timer));
-        return new AnimatedImage(file.canvasWidth, file.canvasHeight, newTimeline);
+        return new AnimatedImage(gifFile.canvasWidth, gifFile.canvasHeight, newTimeline);
     };
     AnimatedImage.fromImage = function (imageBuffer, extension) {
         var _this = this;
