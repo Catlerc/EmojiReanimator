@@ -106,9 +106,14 @@ var AnimatedImage = (function () {
             var frameImageData = [];
             var regexResults = frame.pixelColors.map(function (pixelColor) { return pixelColor.match(rgbRegex); });
             regexResults.forEach(function (pixelRegexResult) {
-                for (var i = 1; i <= 3; i++)
-                    frameImageData.push(Number(pixelRegexResult[i]));
-                frameImageData.push(255);
+                if (pixelRegexResult !== null) {
+                    for (var i = 1; i <= 3; i++)
+                        frameImageData.push(Number(pixelRegexResult[i]));
+                    frameImageData.push(255);
+                }
+                else
+                    for (var i = 0; i < 4; i++)
+                        frameImageData.push(255);
             });
             var imageData = new ImageData(new Uint8ClampedArray(frameImageData), gifFile.canvasWidth, gifFile.canvasHeight);
             newTimeline.push(new ImageUpdateFrame(imageData, timer));

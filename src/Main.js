@@ -4,16 +4,8 @@ var emojiTable = [
     [null, null, "ud"],
     [null, null, null]
 ];
-var input = document.getElementById("file-input");
-var redrawButton = document.getElementById("redrawButton");
-var smileSizeInput = document.getElementById("SmileSizeInput");
-var compressionInput = document.getElementById("GifCompressionInput");
-var forceAnimateInput = document.getElementById("ForceAnimateInput");
-var animationLengthInput = document.getElementById("AnimationLengthInput");
-var fpsInput = document.getElementById("GifFpsInput");
-var previewImage = document.getElementById("imagePreview");
-var mainBlock = document.getElementById("mainBlock");
-var app = new Application(input, redrawButton, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, previewImage);
+var emojiTableContainer = document.getElementById("emojiTableContainer");
+var app = new Application(document.getElementById("file-input"), document.getElementById("redrawButton"), document.getElementById("SmileSizeInput"), document.getElementById("GifCompressionInput"), document.getElementById("ForceAnimateInput"), document.getElementById("AnimationLengthInput"), document.getElementById("GifFpsInput"), document.getElementById("imagePreview"), document.getElementById("downloadButton"));
 app.initializeEvents();
-mainBlock.append(app.generateEmojiTable(emojiTable));
+emojiTableContainer.append(app.generateEmojiTable(emojiTable));
 //# sourceMappingURL=Main.js.map

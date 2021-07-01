@@ -44,45 +44,41 @@ export class Emoji {
     )
   }
 
-  async render(
-    options: Options,
-    imageRaw: AnimatedImage
-  ) {
-    let image = imageRaw
-    options.expandTimeline.map(expandTimelineOptions =>
-      image = image.expandTimeline(expandTimelineOptions.length, expandTimelineOptions.fps)
-    )
-
-    const gifEncoder: GifEncoder = new GifEncoder({
-      workers: 2,
-      quality: 100,
-      background: 0xFFFFFF,
-      width: options.width,
-      height: options.height,
-      workerScript: "./vendor/gif.worker.js"
-    })
-
-    const animatedImage = await this.generator.generate(image, options)
-
-    for (let index = 0; index < animatedImage.timeline.length - 1; index++) {
-      const frame = animatedImage.timeline[index] as ImageUpdateFrame
-      const nextFrame = animatedImage.timeline[index + 1]
-      const delay = (nextFrame.time - frame.time) * 1000
-      gifEncoder.addFrame(
-        frame.image,
-        {delay: delay}
+  async render(options: Options) {
+    // noinspection ES6MissingAwait
+    options.sourceImage.forEach(async imageOptions => {
+      let image = imageOptions.image
+      options.expandTimeline.map(expandTimelineOptions =>
+        image = image.expandTimeline(expandTimelineOptions.length, expandTimelineOptions.fps)
       )
-    }
-    this.renderedName = options.name.map(name => name + "_" + this.generator.namePrefix)
 
-    return new Promise(
-      resolve => {
-        gifEncoder.on("finished", (gif: Blob) => {
-          this.renderedGif = Option.some(gif)
-          this.updateAttachedImageElement()
-          resolve(gif)
-        })
-        gifEncoder.render()
+      const gifEncoder: GifEncoder = new GifEncoder({
+        workers: 2,
+        quality: 100,
+        background: 0xFFFFFF,
+        width: options.width,
+        height: options.height,
+        workerScript: "./vendor/gif.worker.js"
       })
+
+      const animatedImage = await this.generator.generate(image, options)
+
+      for (let index = 0; index < animatedImage.timeline.length - 1; index++) {
+        const frame = animatedImage.timeline[index] as ImageUpdateFrame
+        const nextFrame = animatedImage.timeline[index + 1]
+        const delay = (nextFrame.time - frame.time) * 1000
+        gifEncoder.addFrame(
+          frame.image,
+          {delay: delay}
+        )
+      }
+      this.renderedName = options.sourceImage.map(imageOptions => imageOptions.name + "_" + this.generator.namePrefix)
+
+      gifEncoder.on("finished", (gif: Blob) => {
+        this.renderedGif = Option.some(gif)
+        this.updateAttachedImageElement()
+      })
+      gifEncoder.render()
+    })
   }
 }

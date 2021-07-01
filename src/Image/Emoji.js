@@ -57,44 +57,48 @@ var Emoji = (function () {
                 imageElement.removeAttribute("sizefailure");
         }); });
     };
-    Emoji.prototype.render = function (options, imageRaw) {
+    Emoji.prototype.render = function (options) {
         return __awaiter(this, void 0, void 0, function () {
-            var image, gifEncoder, animatedImage, index, frame, nextFrame, delay;
             var _this = this;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        image = imageRaw;
-                        options.expandTimeline.map(function (expandTimelineOptions) {
-                            return image = image.expandTimeline(expandTimelineOptions.length, expandTimelineOptions.fps);
-                        });
-                        gifEncoder = new GifEncoder({
-                            workers: 2,
-                            quality: 100,
-                            background: 0xFFFFFF,
-                            width: options.width,
-                            height: options.height,
-                            workerScript: "./vendor/gif.worker.js"
-                        });
-                        return [4, this.generator.generate(image, options)];
-                    case 1:
-                        animatedImage = _a.sent();
-                        for (index = 0; index < animatedImage.timeline.length - 1; index++) {
-                            frame = animatedImage.timeline[index];
-                            nextFrame = animatedImage.timeline[index + 1];
-                            delay = (nextFrame.time - frame.time) * 1000;
-                            gifEncoder.addFrame(frame.image, { delay: delay });
-                        }
-                        this.renderedName = options.name.map(function (name) { return name + "_" + _this.generator.namePrefix; });
-                        return [2, new Promise(function (resolve) {
+                options.sourceImage.forEach(function (imageOptions) { return __awaiter(_this, void 0, void 0, function () {
+                    var image, gifEncoder, animatedImage, index, frame, nextFrame, delay;
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                image = imageOptions.image;
+                                options.expandTimeline.map(function (expandTimelineOptions) {
+                                    return image = image.expandTimeline(expandTimelineOptions.length, expandTimelineOptions.fps);
+                                });
+                                gifEncoder = new GifEncoder({
+                                    workers: 2,
+                                    quality: 100,
+                                    background: 0xFFFFFF,
+                                    width: options.width,
+                                    height: options.height,
+                                    workerScript: "./vendor/gif.worker.js"
+                                });
+                                return [4, this.generator.generate(image, options)];
+                            case 1:
+                                animatedImage = _a.sent();
+                                for (index = 0; index < animatedImage.timeline.length - 1; index++) {
+                                    frame = animatedImage.timeline[index];
+                                    nextFrame = animatedImage.timeline[index + 1];
+                                    delay = (nextFrame.time - frame.time) * 1000;
+                                    gifEncoder.addFrame(frame.image, { delay: delay });
+                                }
+                                this.renderedName = options.sourceImage.map(function (imageOptions) { return imageOptions.name + "_" + _this.generator.namePrefix; });
                                 gifEncoder.on("finished", function (gif) {
                                     _this.renderedGif = Option.some(gif);
                                     _this.updateAttachedImageElement();
-                                    resolve(gif);
                                 });
                                 gifEncoder.render();
-                            })];
-                }
+                                return [2];
+                        }
+                    });
+                }); });
+                return [2];
             });
         });
     };

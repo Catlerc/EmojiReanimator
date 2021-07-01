@@ -1,9 +1,15 @@
 import {Emoji} from "./Image/Emoji.js"
-import {Seconds} from "./Domain.js"
+import {DataUrl, Seconds} from "./Domain.js"
 import {AnimatedImage} from "./Image/AnimatedImage.js"
 import {Option} from "./Utils/Option.js"
 import {Utils} from "./Utils/Utils.js"
 import {EmojiGenerator} from "./EmojiGenerator/EmojiGenerator.js"
+
+
+export interface ImageOptions {
+  image: AnimatedImage,
+  name: string
+}
 
 export interface ExpandTimelineOptions {
   length: Seconds,
@@ -11,7 +17,7 @@ export interface ExpandTimelineOptions {
 }
 
 export interface Options {
-  name: Option<string>
+  sourceImage: Option<ImageOptions>
   width: number
   height: number
   expandTimeline: Option<ExpandTimelineOptions>
@@ -19,12 +25,11 @@ export interface Options {
 
 
 export class Application {
-  emojies: Emoji[]
-  image: Option<AnimatedImage> = Option.none()
+  emojies: Emoji[] = []
   options: Options = {
-    name: Option.none(),
     width: 64,
     height: 64,
+    sourceImage: Option.none(),
     expandTimeline: Option.none()
   }
 
@@ -36,7 +41,8 @@ export class Application {
     private forceAnimateInput: HTMLInputElement,
     private animationLengthInput: HTMLInputElement,
     private fpsInput: HTMLInputElement,
-    private imagePreview: HTMLImageElement
+    private imagePreview: HTMLImageElement,
+    private downloadButton: HTMLButtonElement
   ) {
     this.reloadOptions()
   }
@@ -76,6 +82,8 @@ export class Application {
         return emoji
       }
     )
+
+    this.downloadButton.onclick = () => this.downloadRenderedEmojies()
   }
 
   reloadOptions() {
@@ -90,7 +98,7 @@ export class Application {
         }
       )
     this.options = {
-      name: oldOptions.name,
+      sourceImage: oldOptions.sourceImage,
       width: size,
       height: size,
       expandTimeline: expandTimelineOptions
@@ -98,19 +106,25 @@ export class Application {
   }
 
   redraw() {
-    this.image.forEach(image =>
+    this.options.sourceImage.forEach(imageOptions =>
       this.emojies.forEach(emoji => {
         emoji.imageElement.map(element => element.src = "resources/loading.gif")
-        emoji.render(this.options, image)
+        // noinspection JSIgnoredPromiseFromCall
+        emoji.render(this.options)
       }))
 
   }
 
   onFileSelection(file: File, data: ArrayBuffer) {
-    const fileExtension = file.name.split(".").pop()
+    const fileName = file.name.split(".")
+    const fileExtension = fileName.pop()
+
     AnimatedImage.fromImage(data, fileExtension).then(image => {
       this.imagePreview.src = Utils.arrayBufferToUrl(data, fileExtension)
-      this.image = Option.some(image.right)
+      this.options.sourceImage = Option.some({
+        name: fileName[0],
+        image: image.right
+      })
       this.redraw()
     })
   }
@@ -135,7 +149,29 @@ export class Application {
       })
       table.append(rowElement)
     })
+
     this.emojies = emojies
     return table
+  }
+
+  downloadBlobAsFile(blob: Blob, filename: string) {
+    const fakeMouseEvent = document.createEvent('MouseEvents')
+    const fakeElement = document.createElement('a')
+
+    fakeElement.download = filename
+    fakeElement.href = window.URL.createObjectURL(blob)
+    fakeElement.dataset.downloadurl = [blob.type, fakeElement.download, fakeElement.href].join(':')
+    fakeMouseEvent.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+    fakeElement.dispatchEvent(fakeMouseEvent)
+  }
+
+  downloadRenderedEmojies() {
+    this.emojies.forEach(emoji =>
+      emoji.renderedGif.forEach(gifBlob =>
+        emoji.renderedName.forEach(name =>
+          this.downloadBlobAsFile(gifBlob, name)
+        )
+      )
+    )
   }
 }

@@ -4,7 +4,7 @@ import { Option } from "./Utils/Option.js";
 import { Utils } from "./Utils/Utils.js";
 import { EmojiGenerator } from "./EmojiGenerator/EmojiGenerator.js";
 var Application = (function () {
-    function Application(fileInput, redrawButton, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, imagePreview) {
+    function Application(fileInput, redrawButton, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, imagePreview, downloadButton) {
         this.fileInput = fileInput;
         this.redrawButton = redrawButton;
         this.smileSizeInput = smileSizeInput;
@@ -13,11 +13,12 @@ var Application = (function () {
         this.animationLengthInput = animationLengthInput;
         this.fpsInput = fpsInput;
         this.imagePreview = imagePreview;
-        this.image = Option.none();
+        this.downloadButton = downloadButton;
+        this.emojies = [];
         this.options = {
-            name: Option.none(),
             width: 64,
             height: 64,
+            sourceImage: Option.none(),
             expandTimeline: Option.none()
         };
         this.reloadOptions();
@@ -55,6 +56,7 @@ var Application = (function () {
             emoji.attach(element);
             return emoji;
         });
+        this.downloadButton.onclick = function () { return _this.downloadRenderedEmojies(); };
     };
     Application.prototype.reloadOptions = function () {
         var oldOptions = this.options;
@@ -66,7 +68,7 @@ var Application = (function () {
                 fps: Number(this.fpsInput.value)
             });
         this.options = {
-            name: oldOptions.name,
+            sourceImage: oldOptions.sourceImage,
             width: size,
             height: size,
             expandTimeline: expandTimelineOptions
@@ -74,19 +76,23 @@ var Application = (function () {
     };
     Application.prototype.redraw = function () {
         var _this = this;
-        this.image.forEach(function (image) {
+        this.options.sourceImage.forEach(function (imageOptions) {
             return _this.emojies.forEach(function (emoji) {
                 emoji.imageElement.map(function (element) { return element.src = "resources/loading.gif"; });
-                emoji.render(_this.options, image);
+                emoji.render(_this.options);
             });
         });
     };
     Application.prototype.onFileSelection = function (file, data) {
         var _this = this;
-        var fileExtension = file.name.split(".").pop();
+        var fileName = file.name.split(".");
+        var fileExtension = fileName.pop();
         AnimatedImage.fromImage(data, fileExtension).then(function (image) {
             _this.imagePreview.src = Utils.arrayBufferToUrl(data, fileExtension);
-            _this.image = Option.some(image.right);
+            _this.options.sourceImage = Option.some({
+                name: fileName[0],
+                image: image.right
+            });
             _this.redraw();
         });
     };
@@ -113,6 +119,25 @@ var Application = (function () {
         });
         this.emojies = emojies;
         return table;
+    };
+    Application.prototype.downloadBlobAsFile = function (blob, filename) {
+        var fakeMouseEvent = document.createEvent('MouseEvents');
+        var fakeElement = document.createElement('a');
+        fakeElement.download = filename;
+        fakeElement.href = window.URL.createObjectURL(blob);
+        fakeElement.dataset.downloadurl = [blob.type, fakeElement.download, fakeElement.href].join(':');
+        fakeMouseEvent.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        fakeElement.dispatchEvent(fakeMouseEvent);
+    };
+    Application.prototype.downloadRenderedEmojies = function () {
+        var _this = this;
+        this.emojies.forEach(function (emoji) {
+            return emoji.renderedGif.forEach(function (gifBlob) {
+                return emoji.renderedName.forEach(function (name) {
+                    return _this.downloadBlobAsFile(gifBlob, name);
+                });
+            });
+        });
     };
     return Application;
 }());

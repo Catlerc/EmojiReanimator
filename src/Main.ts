@@ -6,16 +6,18 @@ const emojiTable: (string | null)[][] = [
   [null, null, null]
 ]
 
-const input = document.getElementById("file-input") as HTMLInputElement
-const redrawButton = document.getElementById("redrawButton") as HTMLButtonElement
-const smileSizeInput = document.getElementById("SmileSizeInput") as HTMLInputElement
-const compressionInput = document.getElementById("GifCompressionInput") as HTMLInputElement
-const forceAnimateInput = document.getElementById("ForceAnimateInput") as HTMLInputElement
-const animationLengthInput = document.getElementById("AnimationLengthInput") as HTMLInputElement
-const fpsInput = document.getElementById("GifFpsInput") as HTMLInputElement
-const previewImage = document.getElementById("imagePreview") as HTMLImageElement
-const mainBlock = document.getElementById("mainBlock")
+const emojiTableContainer = document.getElementById("emojiTableContainer")
 
-const app = new Application(input, redrawButton, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, previewImage)
+const app = new Application(
+  document.getElementById("file-input") as HTMLInputElement,
+  document.getElementById("redrawButton") as HTMLButtonElement,
+  document.getElementById("SmileSizeInput") as HTMLInputElement,
+  document.getElementById("GifCompressionInput") as HTMLInputElement,
+  document.getElementById("ForceAnimateInput") as HTMLInputElement,
+  document.getElementById("AnimationLengthInput") as HTMLInputElement,
+  document.getElementById("GifFpsInput") as HTMLInputElement,
+  document.getElementById("imagePreview") as HTMLImageElement,
+  document.getElementById("downloadButton") as HTMLButtonElement
+)
 app.initializeEvents()
-mainBlock.append(app.generateEmojiTable(emojiTable))
+emojiTableContainer.append(app.generateEmojiTable(emojiTable))
