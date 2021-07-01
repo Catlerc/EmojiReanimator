@@ -113,7 +113,7 @@ var AnimatedImage = (function () {
                 }
                 else
                     for (var i = 0; i < 4; i++)
-                        frameImageData.push(255);
+                        frameImageData.push(0);
             });
             var imageData = new ImageData(new Uint8ClampedArray(frameImageData), gifFile.canvasWidth, gifFile.canvasHeight);
             newTimeline.push(new ImageUpdateFrame(imageData, timer));

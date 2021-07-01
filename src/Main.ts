@@ -9,6 +9,7 @@ const emojiTable: (string | null)[][] = [
 const emojiTableContainer = document.getElementById("emojiTableContainer")
 
 const app = new Application(
+  document.getElementById("EmojiNameInput") as HTMLInputElement,
   document.getElementById("file-input") as HTMLInputElement,
   document.getElementById("redrawButton") as HTMLButtonElement,
   document.getElementById("SmileSizeInput") as HTMLInputElement,

@@ -34,6 +34,7 @@ export class Application {
   }
 
   constructor(
+    private emojiNameInput: HTMLInputElement,
     private fileInput: HTMLInputElement,
     private redrawButton: HTMLButtonElement,
     private smileSizeInput: HTMLInputElement,
@@ -49,6 +50,7 @@ export class Application {
   }
 
   initializeEvents() {
+    this.emojiNameInput.onchange = () => this.reloadOptions()
     this.redrawButton.onclick = () => this.redraw()
     this.smileSizeInput.onchange = () => this.reloadOptions()
     this.compressionInput.onchange = () => this.reloadOptions()
@@ -102,8 +104,12 @@ export class Application {
           fps: Number(this.fpsInput.value)
         }
       )
+    const newEmojiName = this.emojiNameInput.value
     this.options = {
-      sourceImage: oldOptions.sourceImage,
+      sourceImage: oldOptions.sourceImage.map(options => {
+        options.name = newEmojiName
+        return options
+      }),
       width: size,
       height: size,
       expandTimeline: expandTimelineOptions
@@ -126,6 +132,8 @@ export class Application {
 
     AnimatedImage.fromImage(data, fileExtension).then(image => {
       this.imagePreview.src = Utils.arrayBufferToUrl(data, fileExtension)
+      this.emojiNameInput.value = fileName[0].substr(0, 96)
+      this.emojiNameInput.disabled = false
       this.options.sourceImage = Option.some({
         name: fileName[0],
         image: image.right

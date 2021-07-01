@@ -4,7 +4,8 @@ import { Option } from "./Utils/Option.js";
 import { Utils } from "./Utils/Utils.js";
 import { EmojiGenerator } from "./EmojiGenerator/EmojiGenerator.js";
 var Application = (function () {
-    function Application(fileInput, redrawButton, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, imagePreview, downloadButton, syncGifsButton) {
+    function Application(emojiNameInput, fileInput, redrawButton, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, imagePreview, downloadButton, syncGifsButton) {
+        this.emojiNameInput = emojiNameInput;
         this.fileInput = fileInput;
         this.redrawButton = redrawButton;
         this.smileSizeInput = smileSizeInput;
@@ -26,6 +27,7 @@ var Application = (function () {
     }
     Application.prototype.initializeEvents = function () {
         var _this = this;
+        this.emojiNameInput.onchange = function () { return _this.reloadOptions(); };
         this.redrawButton.onclick = function () { return _this.redraw(); };
         this.smileSizeInput.onchange = function () { return _this.reloadOptions(); };
         this.compressionInput.onchange = function () { return _this.reloadOptions(); };
@@ -71,8 +73,12 @@ var Application = (function () {
                 length: Number(this.animationLengthInput.value),
                 fps: Number(this.fpsInput.value)
             });
+        var newEmojiName = this.emojiNameInput.value;
         this.options = {
-            sourceImage: oldOptions.sourceImage,
+            sourceImage: oldOptions.sourceImage.map(function (options) {
+                options.name = newEmojiName;
+                return options;
+            }),
             width: size,
             height: size,
             expandTimeline: expandTimelineOptions
@@ -93,6 +99,8 @@ var Application = (function () {
         var fileExtension = fileName.pop();
         AnimatedImage.fromImage(data, fileExtension).then(function (image) {
             _this.imagePreview.src = Utils.arrayBufferToUrl(data, fileExtension);
+            _this.emojiNameInput.value = fileName[0].substr(0, 96);
+            _this.emojiNameInput.disabled = false;
             _this.options.sourceImage = Option.some({
                 name: fileName[0],
                 image: image.right

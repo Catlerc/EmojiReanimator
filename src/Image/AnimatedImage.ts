@@ -93,7 +93,7 @@ export class AnimatedImage {
           for (let i = 1; i <= 3; i++) frameImageData.push(Number(pixelRegexResult[i]))
           frameImageData.push(255)
         } else
-          for (let i = 0; i < 4; i++) frameImageData.push(255)
+          for (let i = 0; i < 4; i++) frameImageData.push(0)
       })
       const imageData = new ImageData(new Uint8ClampedArray(frameImageData), gifFile.canvasWidth, gifFile.canvasHeight)
       newTimeline.push(new ImageUpdateFrame(imageData, timer))
