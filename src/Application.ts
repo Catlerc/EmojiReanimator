@@ -42,7 +42,8 @@ export class Application {
     private animationLengthInput: HTMLInputElement,
     private fpsInput: HTMLInputElement,
     private imagePreview: HTMLImageElement,
-    private downloadButton: HTMLButtonElement
+    private downloadButton: HTMLButtonElement,
+    private syncGifsButton: HTMLButtonElement
   ) {
     this.reloadOptions()
   }
@@ -84,6 +85,10 @@ export class Application {
     )
 
     this.downloadButton.onclick = () => this.downloadRenderedEmojies()
+    this.syncGifsButton.onclick = () => {
+      // noinspection SillyAssignmentJS
+      this.emojies.forEach(emoji => emoji.imageElement.forEach(imgElement => imgElement.src = imgElement.src))
+    }
   }
 
   reloadOptions() {
@@ -131,6 +136,7 @@ export class Application {
 
   generateEmojiTable(map: (string | null)[][]): HTMLTableElement {
     const table = document.createElement("table")
+    table.className = "emojiTable"
     const emojies: Emoji[] = []
     map.forEach(row => {
       const rowElement = document.createElement("tr")

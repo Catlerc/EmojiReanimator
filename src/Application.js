@@ -4,7 +4,7 @@ import { Option } from "./Utils/Option.js";
 import { Utils } from "./Utils/Utils.js";
 import { EmojiGenerator } from "./EmojiGenerator/EmojiGenerator.js";
 var Application = (function () {
-    function Application(fileInput, redrawButton, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, imagePreview, downloadButton) {
+    function Application(fileInput, redrawButton, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, imagePreview, downloadButton, syncGifsButton) {
         this.fileInput = fileInput;
         this.redrawButton = redrawButton;
         this.smileSizeInput = smileSizeInput;
@@ -14,6 +14,7 @@ var Application = (function () {
         this.fpsInput = fpsInput;
         this.imagePreview = imagePreview;
         this.downloadButton = downloadButton;
+        this.syncGifsButton = syncGifsButton;
         this.emojies = [];
         this.options = {
             width: 64,
@@ -57,6 +58,9 @@ var Application = (function () {
             return emoji;
         });
         this.downloadButton.onclick = function () { return _this.downloadRenderedEmojies(); };
+        this.syncGifsButton.onclick = function () {
+            _this.emojies.forEach(function (emoji) { return emoji.imageElement.forEach(function (imgElement) { return imgElement.src = imgElement.src; }); });
+        };
     };
     Application.prototype.reloadOptions = function () {
         var oldOptions = this.options;
@@ -98,6 +102,7 @@ var Application = (function () {
     };
     Application.prototype.generateEmojiTable = function (map) {
         var table = document.createElement("table");
+        table.className = "emojiTable";
         var emojies = [];
         map.forEach(function (row) {
             var rowElement = document.createElement("tr");

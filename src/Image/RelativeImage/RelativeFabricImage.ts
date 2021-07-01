@@ -1,5 +1,6 @@
 import {FabricImage} from "../../FabricWrapper/FabricImage.js"
 import {FabricCanvas} from "../../FabricWrapper/FabricCanvas.js"
+import {KeyValuePair} from "../../Domain";
 
 export class RelativeFabricImage {
   underlying: FabricImage
@@ -22,6 +23,10 @@ export class RelativeFabricImage {
     })
   }
 
+  set(options: any) {
+    this.underlying.set(options)
+  }
+
   getPos() {
     return {
       xr: this.underlying.get("left") / this.canvas.width,
@@ -31,8 +36,15 @@ export class RelativeFabricImage {
 
   async copy() {
     const clonedFabricImage = await new Promise<FabricImage>(resolve => this.underlying.clone(resolve))
-    const clonedRelativeImage = new RelativeFabricImage(clonedFabricImage, this.canvas)
-    clonedRelativeImage.canvas = this.canvas
-    return clonedRelativeImage
+    return new RelativeFabricImage(clonedFabricImage, this.canvas)
+  }
+
+  async copyN(n: number): Promise<Array<KeyValuePair<number, RelativeFabricImage>>> {
+    let copies: Array<KeyValuePair<number, RelativeFabricImage>> = []
+    for (let i = 0; i < n; i++) {
+      const copy = await this.copy()
+      copies.push({key: i, value: copy})
+    }
+    return copies
   }
 }

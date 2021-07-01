@@ -1,9 +1,9 @@
 import {Application} from "./Application.js"
 
 const emojiTable: (string | null)[][] = [
-  [null, "lr", null],
-  [null, null, "ud"],
-  [null, null, null]
+  ["dr", "lr", "ld"],
+  ["du", null, "ud"],
+  ["ru", "rl", "ul"]
 ]
 
 const emojiTableContainer = document.getElementById("emojiTableContainer")
@@ -17,7 +17,8 @@ const app = new Application(
   document.getElementById("AnimationLengthInput") as HTMLInputElement,
   document.getElementById("GifFpsInput") as HTMLInputElement,
   document.getElementById("imagePreview") as HTMLImageElement,
-  document.getElementById("downloadButton") as HTMLButtonElement
+  document.getElementById("downloadButton") as HTMLButtonElement,
+  document.getElementById("syncGifs") as HTMLButtonElement
 )
 app.initializeEvents()
 emojiTableContainer.append(app.generateEmojiTable(emojiTable))

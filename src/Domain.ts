@@ -15,4 +15,8 @@ export enum StaticImageType {
   jpg
 }
 
+export interface KeyValuePair<K, V> {
+  key: K
+  value: V
+}
 

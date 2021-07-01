@@ -98,7 +98,15 @@ input[type="file"] {
     object-fit: contain;
 }
 
+
+
 .emoji {
     width: 30px;
     height: 30px;
+    padding: 0 0 0 0;
+    margin: 0 0 0 0;
+}
+
+.emojiTable {
+    border-collapse: collapse;
 }

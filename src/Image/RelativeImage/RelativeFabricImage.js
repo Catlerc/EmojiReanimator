@@ -47,6 +47,9 @@ var RelativeFabricImage = (function () {
             top: this.canvas.height * yn
         });
     };
+    RelativeFabricImage.prototype.set = function (options) {
+        this.underlying.set(options);
+    };
     RelativeFabricImage.prototype.getPos = function () {
         return {
             xr: this.underlying.get("left") / this.canvas.width,
@@ -55,16 +58,38 @@ var RelativeFabricImage = (function () {
     };
     RelativeFabricImage.prototype.copy = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var clonedFabricImage, clonedRelativeImage;
+            var clonedFabricImage;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4, new Promise(function (resolve) { return _this.underlying.clone(resolve); })];
                     case 1:
                         clonedFabricImage = _a.sent();
-                        clonedRelativeImage = new RelativeFabricImage(clonedFabricImage, this.canvas);
-                        clonedRelativeImage.canvas = this.canvas;
-                        return [2, clonedRelativeImage];
+                        return [2, new RelativeFabricImage(clonedFabricImage, this.canvas)];
+                }
+            });
+        });
+    };
+    RelativeFabricImage.prototype.copyN = function (n) {
+        return __awaiter(this, void 0, void 0, function () {
+            var copies, i, copy;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        copies = [];
+                        i = 0;
+                        _a.label = 1;
+                    case 1:
+                        if (!(i < n)) return [3, 4];
+                        return [4, this.copy()];
+                    case 2:
+                        copy = _a.sent();
+                        copies.push({ key: i, value: copy });
+                        _a.label = 3;
+                    case 3:
+                        i++;
+                        return [3, 1];
+                    case 4: return [2, copies];
                 }
             });
         });

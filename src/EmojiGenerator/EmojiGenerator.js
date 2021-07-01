@@ -34,18 +34,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { LinearGenerator } from "./FrameGenerator.js";
+import { LinearGenerator, RotationGenerator } from "./FrameGenerator.js";
 import { AnimatedImage, FrameType, ImageUpdateFrame } from "../Image/AnimatedImage.js";
 import { RelativeImage } from "../Image/RelativeImage/RelativeImage.js";
 import { Utils } from "../Utils/Utils.js";
 var EmojiGenerator = (function () {
-    function EmojiGenerator(namePrefix, frameGenerator, rotation) {
+    function EmojiGenerator(namePrefix, frameGenerator, rotation, flipX, flipY) {
         if (rotation === void 0) { rotation = 0; }
+        if (flipX === void 0) { flipX = false; }
+        if (flipY === void 0) { flipY = false; }
         this.namePrefix = namePrefix;
         this.frameGenerator = frameGenerator;
         this.rotation = rotation;
+        this.flipX = flipX;
+        this.flipY = flipY;
     }
-    EmojiGenerator.prototype.prepareCanvas = function (canvas) {
+    EmojiGenerator.prepareCanvas = function (canvas) {
         canvas.clear();
         canvas.setBackgroundColor("#FFFFFF", null);
     };
@@ -74,14 +78,14 @@ var EmojiGenerator = (function () {
                                         currentImage = _c.sent();
                                         _c.label = 2;
                                     case 2:
-                                        this_1.prepareCanvas(canvas_1);
+                                        EmojiGenerator.prepareCanvas(canvas_1);
                                         return [4, this_1.frameGenerator(currentImage, timeNormalized)];
                                     case 3:
                                         relativeFabricImages = _c.sent();
                                         relativeFabricImages.forEach(function (img) { return canvas_1.add(img.underlying); });
                                         canvas_1.renderAll();
                                         imageData = canvas_1.contextContainer.getImageData(0, 0, options.width, options.height);
-                                        this_1.prepareCanvas(canvas_1);
+                                        EmojiGenerator.prepareCanvas(canvas_1);
                                         return [4, Utils.fabricImageFromDataUrl(Utils.imageDataToDataUrl(imageData))];
                                     case 4:
                                         imageForRotation = _c.sent();
@@ -90,7 +94,9 @@ var EmojiGenerator = (function () {
                                             originY: "center",
                                             angle: this_1.rotation,
                                             left: canvas_1.width / 2,
-                                            top: canvas_1.height / 2
+                                            top: canvas_1.height / 2,
+                                            flipX: this_1.flipX,
+                                            flipY: this_1.flipY
                                         });
                                         canvas_1.add(imageForRotation);
                                         canvas_1.renderAll();
@@ -124,7 +130,13 @@ var EmojiGenerator = (function () {
     };
     EmojiGenerator.allGenerators = new Map([
         new EmojiGenerator("lr", LinearGenerator),
-        new EmojiGenerator("ud", LinearGenerator, 90)
+        new EmojiGenerator("ud", LinearGenerator, 90),
+        new EmojiGenerator("rl", LinearGenerator, 180),
+        new EmojiGenerator("du", LinearGenerator, 270),
+        new EmojiGenerator("ld", RotationGenerator),
+        new EmojiGenerator("ul", RotationGenerator, 90),
+        new EmojiGenerator("ru", RotationGenerator, 180),
+        new EmojiGenerator("dr", RotationGenerator, 270),
     ].map(function (renderer) { return [renderer.namePrefix, renderer]; }));
     return EmojiGenerator;
 }());

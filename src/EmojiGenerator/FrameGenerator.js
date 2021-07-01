@@ -47,4 +47,42 @@ export var LinearGenerator = function (image, time) { return __awaiter(void 0, v
         }
     });
 }); };
+export var RotationGenerator = function (image, time) { return __awaiter(void 0, void 0, void 0, function () {
+    var copy0, copy;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, image.copy()];
+            case 1:
+                copy0 = _a.sent();
+                return [4, image.copy()];
+            case 2:
+                copy = _a.sent();
+                if (time <= 0.5)
+                    copy0.setPos(time - 0.5, 0.5);
+                else {
+                    copy0.setPos(0, 1);
+                    copy0.set({
+                        originX: "center",
+                        originY: "bottom",
+                        angle: 90 * (time - 0.5)
+                    });
+                }
+                if (time >= 0.5) {
+                    copy.set({
+                        angle: 90
+                    });
+                    copy.setPos(0.5, time + 0.5);
+                }
+                else {
+                    copy.setPos(0, 1);
+                    copy.set({
+                        originX: "center",
+                        originY: "bottom",
+                        angle: 90 * (time + 0.5)
+                    });
+                }
+                return [2, [copy0, copy]];
+        }
+    });
+}); };
 //# sourceMappingURL=FrameGenerator.js.map
