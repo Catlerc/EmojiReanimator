@@ -1,6 +1,6 @@
 import {FabricImage} from "../../FabricWrapper/FabricImage.js"
 import {FabricCanvas} from "../../FabricWrapper/FabricCanvas.js"
-import {KeyValuePair} from "../../Domain";
+import {KeyValuePair} from "../../Domain.js";
 
 export class RelativeFabricImage {
   underlying: FabricImage
@@ -25,6 +25,8 @@ export class RelativeFabricImage {
 
   set(options: any) {
     this.underlying.set(options)
+    this.width = this.underlying.getScaledWidth()
+    this.height = this.underlying.getScaledHeight()
   }
 
   getPos() {
@@ -46,5 +48,9 @@ export class RelativeFabricImage {
       copies.push({key: i, value: copy})
     }
     return copies
+  }
+
+  get(parameterName: string): any {
+    return this.underlying.get(parameterName)
   }
 }

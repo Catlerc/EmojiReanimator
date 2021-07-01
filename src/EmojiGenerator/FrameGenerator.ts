@@ -1,4 +1,6 @@
 import {RelativeFabricImage} from "../Image/RelativeImage/RelativeFabricImage.js"
+import {fabric} from "../Vendor.js";
+import {KeyValuePair} from "../Domain";
 
 export type FrameGenerator = (image: RelativeFabricImage, timeNormalized: number) => Promise<RelativeFabricImage[]>
 
@@ -37,9 +39,61 @@ export const RotationGenerator: FrameGenerator =
       copy.set({
         originX: "center",
         originY: "bottom",
-        angle: 90 * (time+0.5)
+        angle: 90 * (time + 0.5)
       })
     }
 
     return [copy0, copy]
   }
+
+const linesN = 20
+export const RotationGeneratorFlex: FrameGenerator =
+  async (image, time) => {
+    function createSlices(copies: Array<KeyValuePair<number, RelativeFabricImage>>, time: number) {
+      const sliceWidth = image.underlying.width / linesN
+      return copies.map(pair => {
+        const index = pair.key
+        const copy = pair.value
+        copy.set({
+          originX: index / linesN,
+          angle: 90 * time + 90 * (index / linesN)
+        })
+        copy.setPos(0, 1)
+
+        copy.underlying.clipPath = new fabric.Rect({
+          originX: "center",
+          width: Math.floor(sliceWidth * 1.5),
+          height: copy.underlying.height,
+          top: -copy.underlying.height / 2,
+          left: sliceWidth * index - copy.underlying.width / 2
+        })
+        return copy
+      })
+    }
+
+    image.setPos(0, 1)
+    image.set({
+      originX: 0,
+      originY: "bottom",
+      angle: 90 * time
+    })
+    const copies1 = await image.copyN(linesN)
+    const copies2 = await image.copyN(linesN)
+
+
+    const layers1 = createSlices(copies1, time - 1)
+    const layers2 = createSlices(copies2, time)
+
+    return [...layers1, ...layers2]
+  }
+
+export function Reverse(underlying: FrameGenerator): FrameGenerator {
+  return async (image: RelativeFabricImage, timeNormalized: number) => {
+    const newImage = await image.copy()
+    newImage.set({
+      flipX: true,
+    })
+
+    return await underlying(newImage, 1 - timeNormalized)
+  }
+}

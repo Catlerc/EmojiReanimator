@@ -34,6 +34,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
+};
+import { fabric } from "../Vendor.js";
 export var LinearGenerator = function (image, time) { return __awaiter(void 0, void 0, void 0, function () {
     var clone;
     return __generator(this, function (_a) {
@@ -85,4 +91,66 @@ export var RotationGenerator = function (image, time) { return __awaiter(void 0,
         }
     });
 }); };
+var linesN = 20;
+export var RotationGeneratorFlex = function (image, time) { return __awaiter(void 0, void 0, void 0, function () {
+    function createSlices(copies, time) {
+        var sliceWidth = image.underlying.width / linesN;
+        return copies.map(function (pair) {
+            var index = pair.key;
+            var copy = pair.value;
+            copy.set({
+                originX: index / linesN,
+                angle: 90 * time + 90 * (index / linesN)
+            });
+            copy.setPos(0, 1);
+            copy.underlying.clipPath = new fabric.Rect({
+                originX: "center",
+                width: Math.floor(sliceWidth * 1.5),
+                height: copy.underlying.height,
+                top: -copy.underlying.height / 2,
+                left: sliceWidth * index - copy.underlying.width / 2
+            });
+            return copy;
+        });
+    }
+    var copies1, copies2, layers1, layers2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                image.setPos(0, 1);
+                image.set({
+                    originX: 0,
+                    originY: "bottom",
+                    angle: 90 * time
+                });
+                return [4, image.copyN(linesN)];
+            case 1:
+                copies1 = _a.sent();
+                return [4, image.copyN(linesN)];
+            case 2:
+                copies2 = _a.sent();
+                layers1 = createSlices(copies1, time - 1);
+                layers2 = createSlices(copies2, time);
+                return [2, __spreadArray(__spreadArray([], layers1), layers2)];
+        }
+    });
+}); };
+export function Reverse(underlying) {
+    var _this = this;
+    return function (image, timeNormalized) { return __awaiter(_this, void 0, void 0, function () {
+        var newImage;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, image.copy()];
+                case 1:
+                    newImage = _a.sent();
+                    newImage.set({
+                        flipX: true,
+                    });
+                    return [4, underlying(newImage, 1 - timeNormalized)];
+                case 2: return [2, _a.sent()];
+            }
+        });
+    }); };
+}
 //# sourceMappingURL=FrameGenerator.js.map

@@ -49,6 +49,8 @@ var RelativeFabricImage = (function () {
     };
     RelativeFabricImage.prototype.set = function (options) {
         this.underlying.set(options);
+        this.width = this.underlying.getScaledWidth();
+        this.height = this.underlying.getScaledHeight();
     };
     RelativeFabricImage.prototype.getPos = function () {
         return {
@@ -93,6 +95,9 @@ var RelativeFabricImage = (function () {
                 }
             });
         });
+    };
+    RelativeFabricImage.prototype.get = function (parameterName) {
+        return this.underlying.get(parameterName);
     };
     return RelativeFabricImage;
 }());

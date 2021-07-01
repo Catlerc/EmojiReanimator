@@ -1,4 +1,4 @@
-import {FrameGenerator, LinearGenerator, RotationGenerator} from "./FrameGenerator.js"
+import {FrameGenerator, LinearGenerator, RotationGenerator, RotationGeneratorFlex} from "./FrameGenerator.js"
 import {AnimatedImage, Frame, FrameType, ImageUpdateFrame} from "../Image/AnimatedImage.js"
 import {Options} from "../Application.js"
 import {RelativeImage} from "../Image/RelativeImage/RelativeImage.js"
@@ -80,10 +80,10 @@ export class EmojiGenerator {
     new EmojiGenerator("ud", LinearGenerator, 90),
     new EmojiGenerator("rl", LinearGenerator, 180),
     new EmojiGenerator("du", LinearGenerator, 270),
-    new EmojiGenerator("ld", RotationGenerator),
-    new EmojiGenerator("ul", RotationGenerator, 90),
-    new EmojiGenerator("ru", RotationGenerator, 180),
-    new EmojiGenerator("dr", RotationGenerator, 270),
+    new EmojiGenerator("ld", RotationGeneratorFlex),
+    new EmojiGenerator("ul", RotationGeneratorFlex, 90),
+    new EmojiGenerator("ru", RotationGeneratorFlex, 180),
+    new EmojiGenerator("dr", RotationGeneratorFlex, 270),
   ].map(renderer => [renderer.namePrefix, renderer]))
 }
 

@@ -34,7 +34,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { LinearGenerator, RotationGenerator } from "./FrameGenerator.js";
+import { LinearGenerator, RotationGeneratorFlex } from "./FrameGenerator.js";
 import { AnimatedImage, FrameType, ImageUpdateFrame } from "../Image/AnimatedImage.js";
 import { RelativeImage } from "../Image/RelativeImage/RelativeImage.js";
 import { Utils } from "../Utils/Utils.js";
@@ -133,10 +133,10 @@ var EmojiGenerator = (function () {
         new EmojiGenerator("ud", LinearGenerator, 90),
         new EmojiGenerator("rl", LinearGenerator, 180),
         new EmojiGenerator("du", LinearGenerator, 270),
-        new EmojiGenerator("ld", RotationGenerator),
-        new EmojiGenerator("ul", RotationGenerator, 90),
-        new EmojiGenerator("ru", RotationGenerator, 180),
-        new EmojiGenerator("dr", RotationGenerator, 270),
+        new EmojiGenerator("ld", RotationGeneratorFlex),
+        new EmojiGenerator("ul", RotationGeneratorFlex, 90),
+        new EmojiGenerator("ru", RotationGeneratorFlex, 180),
+        new EmojiGenerator("dr", RotationGeneratorFlex, 270),
     ].map(function (renderer) { return [renderer.namePrefix, renderer]; }));
     return EmojiGenerator;
 }());

@@ -1,5 +1,6 @@
 export interface FabricImage {
-  width: number,
+  clipPath: any
+  width: number
   height: number
   angle: number
 
