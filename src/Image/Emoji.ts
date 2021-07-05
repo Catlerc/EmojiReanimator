@@ -5,6 +5,7 @@ import {Option} from "../Utils/Option.js"
 import {Options} from "../Application.js"
 import {Utils} from "../Utils/Utils.js"
 import {EmojiGenerator} from "../EmojiGenerator/EmojiGenerator.js"
+import {EmojiSizeWarning} from "../EmojiSizeWarning.js";
 
 
 interface GifEncoderFrameOptions {
@@ -25,21 +26,28 @@ export class Emoji {
   renderedName: Option<string> = Option.none()
   imageElement: Option<HTMLImageElement> = Option.none()
 
-  constructor(private generator: EmojiGenerator) {
+  constructor(private generator: EmojiGenerator, private emojiSizeWarning: EmojiSizeWarning) {
   }
 
   attach(imageElement: HTMLImageElement) {
     this.imageElement = Option.some(imageElement)
+    imageElement.onmouseenter = () => {
+      this.emojiSizeWarning.updatePosition(imageElement)
+      this.renderedGif.forEach(gif => {
+        if (gif.size > 128 * 1024)
+          this.emojiSizeWarning.setText(`The size of the gif (${Math.ceil(gif.size / 1024)} Kb) is larger than\nthe maximum size of Slack emoji (128 Kb).`)
+        else
+          this.emojiSizeWarning.hide()
+      })
+      if (!this.renderedGif.nonEmpty()) this.emojiSizeWarning.hide()
+    }
+    imageElement.onmouseleave = () => this.emojiSizeWarning.hide()
   }
 
   updateAttachedImageElement() {
     this.imageElement.forEach(
       imageElement => this.renderedGif.forEach(gif => {
         imageElement.src = Utils.imageBlobToDataUrl(gif)
-        if (gif.size > 128 * 1024)
-          imageElement.setAttribute("sizefailure", null)
-        else
-          imageElement.removeAttribute("sizefailure")
       })
     )
   }
@@ -76,9 +84,31 @@ export class Emoji {
 
       gifEncoder.on("finished", (gif: Blob) => {
         this.renderedGif = Option.some(gif)
-        this.updateAttachedImageElement()
+        this.afterRender()
       })
       gifEncoder.render()
+    })
+  }
+
+  afterRender() {
+    this.updateAttachedImageElement()
+    this.imageElement.forEach(imageElement => {
+      this.renderedGif.forEach(gif => {
+        const maxSize = 128 * 1024 //128 Kb
+        if (gif.size > maxSize) {
+          imageElement.setAttribute("sizefailure", null)
+          // const sizeWarning = document.createElement("div")
+          // sizeWarning.className = "SizeFailureSign"
+          // sizeWarning.innerText = `The size of the gif (${Math.ceil(gif.size / 1024)} Kb) is larger than the maximum size of Slack emoji (128 Kb).`
+          //
+          // imageElement.append(sizeWarning)
+        } else {
+          imageElement.removeAttribute("sizefailure")
+          // while (imageElement.firstChild) {
+          //   imageElement.removeChild(imageElement.firstChild)
+          // }
+        }
+      })
     })
   }
 }

@@ -2,6 +2,9 @@ var Option = (function () {
     function Option(value) {
         this.value = value;
     }
+    Option.prototype.nonEmpty = function () {
+        return this.value != null;
+    };
     Option.some = function (value) {
         if (!value) {
             throw Error("Provided value must not be empty");

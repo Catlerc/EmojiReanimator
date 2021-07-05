@@ -38,23 +38,33 @@ import { GifEncoder } from "../Vendor.js";
 import { Option } from "../Utils/Option.js";
 import { Utils } from "../Utils/Utils.js";
 var Emoji = (function () {
-    function Emoji(generator) {
+    function Emoji(generator, emojiSizeWarning) {
         this.generator = generator;
+        this.emojiSizeWarning = emojiSizeWarning;
         this.renderedGif = Option.none();
         this.renderedName = Option.none();
         this.imageElement = Option.none();
     }
     Emoji.prototype.attach = function (imageElement) {
+        var _this = this;
         this.imageElement = Option.some(imageElement);
+        imageElement.onmouseenter = function () {
+            _this.emojiSizeWarning.updatePosition(imageElement);
+            _this.renderedGif.forEach(function (gif) {
+                if (gif.size > 128 * 1024)
+                    _this.emojiSizeWarning.setText("The size of the gif (" + Math.ceil(gif.size / 1024) + " Kb) is larger than\nthe maximum size of Slack emoji (128 Kb).");
+                else
+                    _this.emojiSizeWarning.hide();
+            });
+            if (!_this.renderedGif.nonEmpty())
+                _this.emojiSizeWarning.hide();
+        };
+        imageElement.onmouseleave = function () { return _this.emojiSizeWarning.hide(); };
     };
     Emoji.prototype.updateAttachedImageElement = function () {
         var _this = this;
         this.imageElement.forEach(function (imageElement) { return _this.renderedGif.forEach(function (gif) {
             imageElement.src = Utils.imageBlobToDataUrl(gif);
-            if (gif.size > 128 * 1024)
-                imageElement.setAttribute("sizefailure", null);
-            else
-                imageElement.removeAttribute("sizefailure");
         }); });
     };
     Emoji.prototype.render = function (options) {
@@ -91,7 +101,7 @@ var Emoji = (function () {
                                 this.renderedName = options.sourceImage.map(function (imageOptions) { return imageOptions.name + "_" + _this.generator.namePrefix; });
                                 gifEncoder.on("finished", function (gif) {
                                     _this.renderedGif = Option.some(gif);
-                                    _this.updateAttachedImageElement();
+                                    _this.afterRender();
                                 });
                                 gifEncoder.render();
                                 return [2];
@@ -99,6 +109,21 @@ var Emoji = (function () {
                     });
                 }); });
                 return [2];
+            });
+        });
+    };
+    Emoji.prototype.afterRender = function () {
+        var _this = this;
+        this.updateAttachedImageElement();
+        this.imageElement.forEach(function (imageElement) {
+            _this.renderedGif.forEach(function (gif) {
+                var maxSize = 128 * 1024;
+                if (gif.size > maxSize) {
+                    imageElement.setAttribute("sizefailure", null);
+                }
+                else {
+                    imageElement.removeAttribute("sizefailure");
+                }
             });
         });
     };

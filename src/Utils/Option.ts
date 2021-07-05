@@ -2,6 +2,10 @@ export class Option<T> {
   private constructor(private value: T | null) {
   }
 
+  nonEmpty() {
+    return this.value != null
+  }
+
   static some<T>(value: T) {
     if (!value) {
       throw Error("Provided value must not be empty")

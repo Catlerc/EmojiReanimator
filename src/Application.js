@@ -3,6 +3,7 @@ import { AnimatedImage } from "./Image/AnimatedImage.js";
 import { Option } from "./Utils/Option.js";
 import { Utils } from "./Utils/Utils.js";
 import { EmojiGenerator } from "./EmojiGenerator/EmojiGenerator.js";
+import { EmojiSizeWarning } from "./EmojiSizeWarning.js";
 var Application = (function () {
     function Application(emojiNameInput, fileInput, redrawButton, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, imagePreview, downloadButton, syncGifsButton) {
         this.emojiNameInput = emojiNameInput;
@@ -24,6 +25,8 @@ var Application = (function () {
             expandTimeline: Option.none()
         };
         this.reloadOptions();
+        this.emojiSizeWarning = new EmojiSizeWarning();
+        this.emojiSizeWarning.updateRoot(document.body);
     }
     Application.prototype.initializeEvents = function () {
         var _this = this;
@@ -52,13 +55,6 @@ var Application = (function () {
             reader.onloadend = function () { return _this.onFileSelection(file, reader.result); };
             setTimeout(function () { return reader.readAsArrayBuffer(file); }, 10);
         };
-        this.emojies = Array.from(document.getElementsByClassName("Emoji")).map(function (element) {
-            var rendererType = element.getAttribute("renderer");
-            var renderer = EmojiGenerator.allGenerators.get(rendererType);
-            var emoji = new Emoji(renderer);
-            emoji.attach(element);
-            return emoji;
-        });
         this.downloadButton.onclick = function () { return _this.downloadRenderedEmojies(); };
         this.syncGifsButton.onclick = function () {
             _this.emojies.forEach(function (emoji) { return emoji.imageElement.forEach(function (imgElement) { return imgElement.src = imgElement.src; }); });
@@ -109,6 +105,7 @@ var Application = (function () {
         });
     };
     Application.prototype.generateEmojiTable = function (map) {
+        var _this = this;
         var table = document.createElement("table");
         table.className = "emojiTable";
         var emojies = [];
@@ -121,7 +118,7 @@ var Application = (function () {
                 if (emojiRendererName == null) {
                 }
                 else {
-                    var newEmoji = new Emoji(EmojiGenerator.allGenerators.get(emojiRendererName));
+                    var newEmoji = new Emoji(EmojiGenerator.allGenerators.get(emojiRendererName), _this.emojiSizeWarning);
                     emojiElement.setAttribute("renderer", emojiRendererName);
                     newEmoji.attach(emojiElement);
                     emojies.push(newEmoji);

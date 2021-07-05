@@ -4,6 +4,7 @@ import {AnimatedImage} from "./Image/AnimatedImage.js"
 import {Option} from "./Utils/Option.js"
 import {Utils} from "./Utils/Utils.js"
 import {EmojiGenerator} from "./EmojiGenerator/EmojiGenerator.js"
+import {EmojiSizeWarning} from "./EmojiSizeWarning.js"
 
 
 export interface ImageOptions {
@@ -32,6 +33,7 @@ export class Application {
     sourceImage: Option.none(),
     expandTimeline: Option.none()
   }
+  emojiSizeWarning: EmojiSizeWarning
 
   constructor(
     private emojiNameInput: HTMLInputElement,
@@ -47,6 +49,8 @@ export class Application {
     private syncGifsButton: HTMLButtonElement
   ) {
     this.reloadOptions()
+    this.emojiSizeWarning = new EmojiSizeWarning()
+    this.emojiSizeWarning.updateRoot(document.body)
   }
 
   initializeEvents() {
@@ -75,16 +79,6 @@ export class Application {
       reader.onloadend = () => this.onFileSelection(file, reader.result as ArrayBuffer)
       setTimeout(() => reader.readAsArrayBuffer(file), 10)
     }
-
-    this.emojies = Array.from(document.getElementsByClassName("Emoji")).map(
-      element => {
-        const rendererType = element.getAttribute("renderer")
-        const renderer = EmojiGenerator.allGenerators.get(rendererType)
-        const emoji = new Emoji(renderer)
-        emoji.attach(element as HTMLImageElement)
-        return emoji
-      }
-    )
 
     this.downloadButton.onclick = () => this.downloadRenderedEmojies()
     this.syncGifsButton.onclick = () => {
@@ -154,7 +148,7 @@ export class Application {
         emojiElement.className = "emoji"
         if (emojiRendererName == null) {
         } else {
-          const newEmoji = new Emoji(EmojiGenerator.allGenerators.get(emojiRendererName))
+          const newEmoji = new Emoji(EmojiGenerator.allGenerators.get(emojiRendererName), this.emojiSizeWarning)
           emojiElement.setAttribute("renderer", emojiRendererName)
           newEmoji.attach(emojiElement)
           emojies.push(newEmoji)

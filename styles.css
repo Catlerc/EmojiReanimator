@@ -90,14 +90,13 @@ input[type="file"] {
 }
 
 .emoji[sizefailure] {
-    outline:2pt dotted red;
-    outline-offset:-1pt;
+    outline: 2pt dotted red;
+    outline-offset: -1pt;
 }
 
 #imagePreview {
     object-fit: contain;
 }
-
 
 
 .emoji {
@@ -109,4 +108,11 @@ input[type="file"] {
 
 .emojiTable {
     border-collapse: collapse;
+}
+
+.SizeFailureSign {
+    position: absolute;
+    left: 50px;
+    z-index: 9999;
+    background-color: #ECEFF1;
 }
