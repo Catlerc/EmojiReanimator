@@ -5,7 +5,7 @@ import {Option} from "../Utils/Option.js"
 import {Options} from "../Application.js"
 import {Utils} from "../Utils/Utils.js"
 import {EmojiGenerator} from "../EmojiGenerator/EmojiGenerator.js"
-import {EmojiSizeWarning} from "../EmojiSizeWarning.js";
+import {EmojiSizeWarning} from "../EmojiSizeWarning.js"
 
 
 interface GifEncoderFrameOptions {
@@ -97,17 +97,7 @@ export class Emoji {
         const maxSize = 128 * 1024 //128 Kb
         if (gif.size > maxSize) {
           imageElement.setAttribute("sizefailure", null)
-          // const sizeWarning = document.createElement("div")
-          // sizeWarning.className = "SizeFailureSign"
-          // sizeWarning.innerText = `The size of the gif (${Math.ceil(gif.size / 1024)} Kb) is larger than the maximum size of Slack emoji (128 Kb).`
-          //
-          // imageElement.append(sizeWarning)
-        } else {
-          imageElement.removeAttribute("sizefailure")
-          // while (imageElement.firstChild) {
-          //   imageElement.removeChild(imageElement.firstChild)
-          // }
-        }
+        } else imageElement.removeAttribute("sizefailure")
       })
     })
   }

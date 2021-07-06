@@ -91,7 +91,7 @@ export var RotationGenerator = function (image, time) { return __awaiter(void 0,
         }
     });
 }); };
-var linesN = 20;
+var linesN = 30;
 export var RotationGeneratorFlex = function (image, time) { return __awaiter(void 0, void 0, void 0, function () {
     function createSlices(copies, time) {
         var sliceWidth = image.underlying.width / linesN;

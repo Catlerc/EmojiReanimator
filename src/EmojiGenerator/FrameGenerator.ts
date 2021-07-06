@@ -46,7 +46,7 @@ export const RotationGenerator: FrameGenerator =
     return [copy0, copy]
   }
 
-const linesN = 20
+const linesN = 30
 export const RotationGeneratorFlex: FrameGenerator =
   async (image, time) => {
     function createSlices(copies: Array<KeyValuePair<number, RelativeFabricImage>>, time: number) {

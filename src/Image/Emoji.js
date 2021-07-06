@@ -121,9 +121,8 @@ var Emoji = (function () {
                 if (gif.size > maxSize) {
                     imageElement.setAttribute("sizefailure", null);
                 }
-                else {
+                else
                     imageElement.removeAttribute("sizefailure");
-                }
             });
         });
     };
