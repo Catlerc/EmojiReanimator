@@ -20,7 +20,7 @@ export class RelativeImage {
   }
 
   async getFabricImageForFrame(frame: ImageUpdateFrame): Promise<RelativeFabricImage> {
-    let fabricImage = await Utils.fabricImageFromDataUrl(Utils.imageDataToDataUrl(frame.image))
+    let fabricImage = await Utils.fabricImageFromDataUrl(Utils.imageDataToDataUrl(frame.image.toImageData()))
     fabricImage.set({
       originX: "center",
       originY: "center",

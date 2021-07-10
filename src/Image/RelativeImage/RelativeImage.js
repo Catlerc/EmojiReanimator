@@ -48,7 +48,7 @@ var RelativeImage = (function () {
             var fabricImage;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4, Utils.fabricImageFromDataUrl(Utils.imageDataToDataUrl(frame.image))];
+                    case 0: return [4, Utils.fabricImageFromDataUrl(Utils.imageDataToDataUrl(frame.image.toImageData()))];
                     case 1:
                         fabricImage = _a.sent();
                         fabricImage.set({

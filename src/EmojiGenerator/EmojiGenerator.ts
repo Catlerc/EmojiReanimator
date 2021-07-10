@@ -1,18 +1,17 @@
 import {FrameGenerator, LinearGenerator, RotationGenerator, RotationGeneratorFlex} from "./FrameGenerator.js"
-import {AnimatedImage, Frame, FrameType, ImageUpdateFrame} from "../Image/AnimatedImage.js"
+import {AnimatedImage, Frame, FrameType, ImageUpdateFrame, Pixels} from "../Image/AnimatedImage.js"
 import {Options} from "../Application.js"
 import {RelativeImage} from "../Image/RelativeImage/RelativeImage.js"
 import {Utils} from "../Utils/Utils.js"
 import {RelativeFabricImage} from "../Image/RelativeImage/RelativeFabricImage.js"
-import {FabricCanvas} from "../FabricWrapper/FabricCanvas";
+import {FabricCanvas} from "../FabricWrapper/FabricCanvas.js"
 
 export class EmojiGenerator {
   constructor(
     public namePrefix: string,
     public frameGenerator: FrameGenerator,
     public rotation: number = 0,
-    public flipX: Boolean = false,
-    public flipY: Boolean = false,
+    public flipX: Boolean = false
   ) {
   }
 
@@ -36,6 +35,11 @@ export class EmojiGenerator {
         relativeImage.attach(canvas)
         const timeNormalized = index / (image.timeline.length - 1)
 
+        if (this.flipX) {
+
+//FIXME flipx functionality
+        }
+
         if (frame.type == FrameType.ImageUpdate) {
           currentImage = await relativeImage.getFabricImageForFrame(frame as ImageUpdateFrame)
         }
@@ -58,14 +62,11 @@ export class EmojiGenerator {
           angle: this.rotation,
           left: canvas.width / 2,
           top: canvas.height / 2,
-          flipX: this.flipX,
-          flipY: this.flipY
         })
         canvas.add(imageForRotation)
         canvas.renderAll()
 
-
-        timeline.push(new ImageUpdateFrame(canvas.contextContainer.getImageData(0, 0, options.width, options.height), frame.time))
+        timeline.push(new ImageUpdateFrame(Pixels.fromImageData(canvas.contextContainer.getImageData(0, 0, options.width, options.height)), frame.time))
         lastFrameTime = frame.time
       } else
         timeline.push(frame)

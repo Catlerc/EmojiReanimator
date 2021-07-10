@@ -105,7 +105,7 @@ export var RotationGeneratorFlex = function (image, time) { return __awaiter(voi
             copy.setPos(0, 1);
             copy.underlying.clipPath = new fabric.Rect({
                 originX: "center",
-                width: Math.floor(sliceWidth * 1.5),
+                width: Math.floor(sliceWidth * 2),
                 height: copy.underlying.height,
                 top: -copy.underlying.height / 2,
                 left: sliceWidth * index - copy.underlying.width / 2
@@ -123,10 +123,10 @@ export var RotationGeneratorFlex = function (image, time) { return __awaiter(voi
                     originY: "bottom",
                     angle: 90 * time
                 });
-                return [4, image.copyN(linesN)];
+                return [4, image.copyN(linesN + 1)];
             case 1:
                 copies1 = _a.sent();
-                return [4, image.copyN(linesN)];
+                return [4, image.copyN(linesN + 1)];
             case 2:
                 copies2 = _a.sent();
                 layers1 = createSlices(copies1, time - 1);

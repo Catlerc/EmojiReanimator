@@ -35,19 +35,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import { LinearGenerator, RotationGeneratorFlex } from "./FrameGenerator.js";
-import { AnimatedImage, FrameType, ImageUpdateFrame } from "../Image/AnimatedImage.js";
+import { AnimatedImage, FrameType, ImageUpdateFrame, Pixels } from "../Image/AnimatedImage.js";
 import { RelativeImage } from "../Image/RelativeImage/RelativeImage.js";
 import { Utils } from "../Utils/Utils.js";
 var EmojiGenerator = (function () {
-    function EmojiGenerator(namePrefix, frameGenerator, rotation, flipX, flipY) {
+    function EmojiGenerator(namePrefix, frameGenerator, rotation, flipX) {
         if (rotation === void 0) { rotation = 0; }
         if (flipX === void 0) { flipX = false; }
-        if (flipY === void 0) { flipY = false; }
         this.namePrefix = namePrefix;
         this.frameGenerator = frameGenerator;
         this.rotation = rotation;
         this.flipX = flipX;
-        this.flipY = flipY;
     }
     EmojiGenerator.prepareCanvas = function (canvas) {
         canvas.clear();
@@ -72,6 +70,8 @@ var EmojiGenerator = (function () {
                                         canvas_1 = Utils.createCanvas(options.width, options.height);
                                         relativeImage.attach(canvas_1);
                                         timeNormalized = index / (image.timeline.length - 1);
+                                        if (this_1.flipX) {
+                                        }
                                         if (!(frame.type == FrameType.ImageUpdate)) return [3, 2];
                                         return [4, relativeImage.getFabricImageForFrame(frame)];
                                     case 1:
@@ -95,12 +95,10 @@ var EmojiGenerator = (function () {
                                             angle: this_1.rotation,
                                             left: canvas_1.width / 2,
                                             top: canvas_1.height / 2,
-                                            flipX: this_1.flipX,
-                                            flipY: this_1.flipY
                                         });
                                         canvas_1.add(imageForRotation);
                                         canvas_1.renderAll();
-                                        timeline.push(new ImageUpdateFrame(canvas_1.contextContainer.getImageData(0, 0, options.width, options.height), frame.time));
+                                        timeline.push(new ImageUpdateFrame(Pixels.fromImageData(canvas_1.contextContainer.getImageData(0, 0, options.width, options.height)), frame.time));
                                         lastFrameTime = frame.time;
                                         return [3, 6];
                                     case 5:

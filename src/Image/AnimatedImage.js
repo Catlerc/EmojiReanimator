@@ -44,6 +44,42 @@ export var FrameType;
     FrameType[FrameType["Update"] = 1] = "Update";
     FrameType[FrameType["End"] = 2] = "End";
 })(FrameType || (FrameType = {}));
+var Pixels = (function () {
+    function Pixels(data) {
+        this.data = data;
+    }
+    Pixels.fromImageData = function (imageData) {
+        var data = imageData.data;
+        var pixelsData = [];
+        for (var y = 0; y < imageData.height; y++) {
+            var line = [];
+            for (var x = 0; x < imageData.width; x++) {
+                var pixelOffset = (y * imageData.width + x) * 4;
+                var color = [data[pixelOffset], data[pixelOffset + 1], data[pixelOffset + 2], data[pixelOffset + 3]];
+                line.push(color);
+            }
+            pixelsData.push(line);
+        }
+        return new Pixels(pixelsData);
+    };
+    Pixels.prototype.toImageData = function () {
+        var height = this.data.length;
+        var width = this.data[0].length;
+        var data = [];
+        for (var y = 0; y < height; y++) {
+            for (var x = 0; x < width; x++) {
+                var color = this.data[y][x];
+                data.push(color[0]);
+                data.push(color[1]);
+                data.push(color[2]);
+                data.push(color[3]);
+            }
+        }
+        return new ImageData(new Uint8ClampedArray(data), width, height);
+    };
+    return Pixels;
+}());
+export { Pixels };
 var UpdateFrame = (function () {
     function UpdateFrame(time) {
         this.type = FrameType.Update;
@@ -116,7 +152,7 @@ var AnimatedImage = (function () {
                         frameImageData.push(0);
             });
             var imageData = new ImageData(new Uint8ClampedArray(frameImageData), gifFile.canvasWidth, gifFile.canvasHeight);
-            newTimeline.push(new ImageUpdateFrame(imageData, timer));
+            newTimeline.push(new ImageUpdateFrame(Pixels.fromImageData(imageData), timer));
             timer += frame.delayTime;
         });
         newTimeline.push(new EndFrame(timer));
@@ -161,7 +197,7 @@ var AnimatedImage = (function () {
                 canvasContext.drawImage(image, 0, 0);
                 var imageData = canvasContext.getImageData(0, 0, image.width, image.height);
                 resolve(new AnimatedImage(image.width, image.height, [
-                    new ImageUpdateFrame(imageData, 0),
+                    new ImageUpdateFrame(Pixels.fromImageData(imageData), 0),
                     new EndFrame(0)
                 ]));
             };

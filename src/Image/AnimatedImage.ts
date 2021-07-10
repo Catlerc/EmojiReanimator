@@ -10,6 +10,44 @@ export enum FrameType {
   End
 }
 
+export type RGBAColor = [number, number, number, number]
+
+export class Pixels {
+  constructor(public data: RGBAColor[][]) {
+  }
+
+  static fromImageData(imageData: ImageData) {
+    const data = imageData.data
+    let pixelsData: RGBAColor[][] = []
+    for (let y = 0; y < imageData.height; y++) {
+      let line: RGBAColor[] = []
+      for (let x = 0; x < imageData.width; x++) {
+        const pixelOffset = (y * imageData.width + x) * 4
+        const color = [data[pixelOffset], data[pixelOffset + 1], data[pixelOffset + 2], data[pixelOffset + 3]]
+        line.push(color)
+      }
+      pixelsData.push(line)
+    }
+    return new Pixels(pixelsData)
+  }
+
+  toImageData(): ImageData {
+    const height = this.data.length
+    const width = this.data[0].length
+    const data = []
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const color = this.data[y][x]
+        data.push(color[0])
+        data.push(color[1])
+        data.push(color[2])
+        data.push(color[3])
+      }
+    }
+    return new ImageData(new Uint8ClampedArray(data), width, height)
+  }
+}
+
 export class UpdateFrame implements Frame {
   type = FrameType.Update
   time: Seconds
@@ -23,9 +61,9 @@ export class UpdateFrame implements Frame {
 export class ImageUpdateFrame implements Frame {
   type = FrameType.ImageUpdate
   time: Seconds
-  image: ImageData
+  image: Pixels
 
-  constructor(image: ImageData, time: Seconds) {
+  constructor(image: Pixels, time: Seconds) {
     this.time = time
     this.image = image
   }
@@ -96,7 +134,7 @@ export class AnimatedImage {
           for (let i = 0; i < 4; i++) frameImageData.push(0)
       })
       const imageData = new ImageData(new Uint8ClampedArray(frameImageData), gifFile.canvasWidth, gifFile.canvasHeight)
-      newTimeline.push(new ImageUpdateFrame(imageData, timer))
+      newTimeline.push(new ImageUpdateFrame(Pixels.fromImageData(imageData), timer))
       timer += frame.delayTime
     })
     newTimeline.push(new EndFrame(timer))
@@ -131,7 +169,7 @@ export class AnimatedImage {
         const imageData = canvasContext.getImageData(0, 0, image.width, image.height)
 
         resolve(new AnimatedImage(image.width, image.height, [
-          new ImageUpdateFrame(imageData, 0),
+          new ImageUpdateFrame(Pixels.fromImageData(imageData), 0),
           new EndFrame(0)
         ]))
       }

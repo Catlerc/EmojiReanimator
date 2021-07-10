@@ -1,5 +1,5 @@
 import {GifEncoder} from "../Vendor.js"
-import {AnimatedImage, FrameType, ImageUpdateFrame} from "./AnimatedImage.js"
+import {AnimatedImage, FrameType, ImageUpdateFrame, Pixels} from "./AnimatedImage.js"
 import {Milliseconds} from "../Domain.js"
 import {Option} from "../Utils/Option.js"
 import {Options} from "../Application.js"
@@ -75,7 +75,7 @@ export class Emoji {
         const nextFrame = animatedImage.timeline[index + 1]
         const delay = (nextFrame.time - frame.time) * 1000
         gifEncoder.addFrame(
-          frame.image,
+          frame.image.toImageData(),
           {delay: delay}
         )
       }

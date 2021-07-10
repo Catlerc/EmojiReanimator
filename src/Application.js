@@ -143,8 +143,8 @@ var Application = (function () {
         var _this = this;
         this.emojies.forEach(function (emoji) {
             return emoji.renderedGif.forEach(function (gifBlob) {
-                return emoji.renderedName.forEach(function (name) {
-                    return _this.downloadBlobAsFile(gifBlob, name);
+                return _this.options.sourceImage.forEach(function (imageOptions) {
+                    _this.downloadBlobAsFile(gifBlob, imageOptions.name + "_" + emoji.generator.namePrefix);
                 });
             });
         });

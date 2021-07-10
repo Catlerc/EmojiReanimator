@@ -42,7 +42,6 @@ var Emoji = (function () {
         this.generator = generator;
         this.emojiSizeWarning = emojiSizeWarning;
         this.renderedGif = Option.none();
-        this.renderedName = Option.none();
         this.imageElement = Option.none();
     }
     Emoji.prototype.attach = function (imageElement) {
@@ -96,9 +95,8 @@ var Emoji = (function () {
                                     frame = animatedImage.timeline[index];
                                     nextFrame = animatedImage.timeline[index + 1];
                                     delay = (nextFrame.time - frame.time) * 1000;
-                                    gifEncoder.addFrame(frame.image, { delay: delay });
+                                    gifEncoder.addFrame(frame.image.toImageData(), { delay: delay });
                                 }
-                                this.renderedName = options.sourceImage.map(function (imageOptions) { return imageOptions.name + "_" + _this.generator.namePrefix; });
                                 gifEncoder.on("finished", function (gif) {
                                     _this.renderedGif = Option.some(gif);
                                     _this.afterRender();
