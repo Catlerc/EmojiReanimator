@@ -118,20 +118,21 @@ var AnimatedImage = (function () {
             return this;
         var newTimeline = this.timeline.slice();
         newTimeline.pop();
-        var step = length / fps;
+        var step = 1 / fps;
         var timer = 0;
         for (var i = 0; i < Math.floor(length * fps) - 1; i++) {
             timer += step;
             newTimeline.push(new UpdateFrame(timer));
         }
-        newTimeline.push(new EndFrame(length));
-        return new AnimatedImage(this.width, this.height, newTimeline.sort(function (a, b) {
+        var res = new AnimatedImage(this.width, this.height, newTimeline.sort(function (a, b) {
             if (a.time < b.time)
                 return -1;
             if (a.time > b.time)
                 return 1;
             return 0;
         }));
+        newTimeline.push(new EndFrame(Math.max(newTimeline[newTimeline.length - 1].time, length)));
+        return res;
     };
     AnimatedImage.fromGIF = function (gifBuffer) {
         var rgbRegex = /rgb\((\d+),(\d+),(\d+)\)/;

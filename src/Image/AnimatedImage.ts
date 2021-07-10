@@ -23,7 +23,7 @@ export class Pixels {
       let line: RGBAColor[] = []
       for (let x = 0; x < imageData.width; x++) {
         const pixelOffset = (y * imageData.width + x) * 4
-        const color = [data[pixelOffset], data[pixelOffset + 1], data[pixelOffset + 2], data[pixelOffset + 3]]
+        const color: RGBAColor = [data[pixelOffset], data[pixelOffset + 1], data[pixelOffset + 2], data[pixelOffset + 3]]
         line.push(color)
       }
       pixelsData.push(line)
@@ -103,18 +103,19 @@ export class AnimatedImage {
     let newTimeline = this.timeline.slice()
     newTimeline.pop() // remove EndFrame
 
-    const step = length / fps
+    const step = 1 / fps
     let timer = 0
     for (let i = 0; i < Math.floor(length * fps) - 1; i++) {
       timer += step
       newTimeline.push(new UpdateFrame(timer))
     }
-    newTimeline.push(new EndFrame(length))
-    return new AnimatedImage(this.width, this.height, newTimeline.sort((a, b) => {
+    const res = new AnimatedImage(this.width, this.height, newTimeline.sort((a, b) => {
       if (a.time < b.time) return -1
       if (a.time > b.time) return 1
       return 0
     }))
+    newTimeline.push(new EndFrame(Math.max(newTimeline[newTimeline.length - 1].time, length)))
+    return res
   }
 
   static fromGIF(gifBuffer: ArrayBuffer) {

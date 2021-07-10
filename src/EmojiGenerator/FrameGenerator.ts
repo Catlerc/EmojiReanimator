@@ -1,6 +1,6 @@
 import {RelativeFabricImage} from "../Image/RelativeImage/RelativeFabricImage.js"
-import {fabric} from "../Vendor.js";
-import {KeyValuePair} from "../Domain";
+import {fabric} from "../Vendor.js"
+import {KeyValuePair} from "../Domain"
 
 export type FrameGenerator = (image: RelativeFabricImage, timeNormalized: number) => Promise<RelativeFabricImage[]>
 
@@ -14,6 +14,17 @@ export const LinearGenerator: FrameGenerator =
   }
 
 export const RotationGenerator: FrameGenerator =
+  async (image, time) => {
+    image.setPos(.5, .5)
+    image.set({
+      originX: "center",
+      originY: "center",
+      angle: 360 * time
+    })
+    return [image]
+  }
+
+export const TurnGenerator: FrameGenerator =
   async (image, time) => {
     const copy0 = await image.copy()
     const copy = await image.copy()
@@ -47,25 +58,26 @@ export const RotationGenerator: FrameGenerator =
   }
 
 const linesN = 30
-export const RotationGeneratorFlex: FrameGenerator =
+export const TurnGeneratorFlex: FrameGenerator =
   async (image, time) => {
     function createSlices(copies: Array<KeyValuePair<number, RelativeFabricImage>>, time: number) {
+      time = time - 0.002
       const sliceWidth = image.underlying.width / linesN
       return copies.map(pair => {
         const index = pair.key
         const copy = pair.value
         copy.set({
-          originX: index / linesN,
-          angle: 90 * time + 90 * (index / linesN)
+          originX: index / (linesN + 1),
+          angle: 90 * (time + index / (linesN + 1))
         })
         copy.setPos(0, 1)
 
         copy.underlying.clipPath = new fabric.Rect({
-          originX: "center",
+
           width: Math.floor(sliceWidth * 2),
           height: copy.underlying.height,
           top: -copy.underlying.height / 2,
-          left: sliceWidth * index - copy.underlying.width / 2
+          left: sliceWidth * index - copy.underlying.width / 2 - sliceWidth / 2
         })
         return copy
       })
@@ -77,8 +89,8 @@ export const RotationGeneratorFlex: FrameGenerator =
       originY: "bottom",
       angle: 90 * time
     })
-    const copies1 = await image.copyN(linesN+1)
-    const copies2 = await image.copyN(linesN+1)
+    const copies1 = await image.copyN(linesN)
+    const copies2 = await image.copyN(linesN)
 
 
     const layers1 = createSlices(copies1, time - 1)
@@ -90,9 +102,6 @@ export const RotationGeneratorFlex: FrameGenerator =
 export function Reverse(underlying: FrameGenerator): FrameGenerator {
   return async (image: RelativeFabricImage, timeNormalized: number) => {
     const newImage = await image.copy()
-    newImage.set({
-      flipX: true,
-    })
 
     return await underlying(newImage, 1 - timeNormalized)
   }

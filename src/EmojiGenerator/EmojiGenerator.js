@@ -34,18 +34,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { LinearGenerator, RotationGeneratorFlex } from "./FrameGenerator.js";
+import { LinearGenerator, Reverse, RotationGenerator, TurnGeneratorFlex } from "./FrameGenerator.js";
 import { AnimatedImage, FrameType, ImageUpdateFrame, Pixels } from "../Image/AnimatedImage.js";
 import { RelativeImage } from "../Image/RelativeImage/RelativeImage.js";
 import { Utils } from "../Utils/Utils.js";
+import { FlipHorizontal } from "./ImagePreprocess.js";
 var EmojiGenerator = (function () {
-    function EmojiGenerator(namePrefix, frameGenerator, rotation, flipX) {
+    function EmojiGenerator(namePrefix, frameGenerator, rotation, preprocess) {
         if (rotation === void 0) { rotation = 0; }
-        if (flipX === void 0) { flipX = false; }
+        if (preprocess === void 0) { preprocess = []; }
         this.namePrefix = namePrefix;
         this.frameGenerator = frameGenerator;
         this.rotation = rotation;
-        this.flipX = flipX;
+        this.preprocess = preprocess;
     }
     EmojiGenerator.prepareCanvas = function (canvas) {
         canvas.clear();
@@ -61,7 +62,7 @@ var EmojiGenerator = (function () {
                         relativeImage = new RelativeImage(image);
                         relativeImage.rescaleToFit(options.width, options.height);
                         _loop_1 = function (frame) {
-                            var index, canvas_1, timeNormalized, relativeFabricImages, imageData, imageForRotation;
+                            var index, canvas_1, timeNormalized, imageUpdateFrame, pixelsRaw_1, pixels, relativeFabricImages, imageData, imageForRotation;
                             return __generator(this, function (_c) {
                                 switch (_c.label) {
                                     case 0:
@@ -70,10 +71,14 @@ var EmojiGenerator = (function () {
                                         canvas_1 = Utils.createCanvas(options.width, options.height);
                                         relativeImage.attach(canvas_1);
                                         timeNormalized = index / (image.timeline.length - 1);
-                                        if (this_1.flipX) {
-                                        }
                                         if (!(frame.type == FrameType.ImageUpdate)) return [3, 2];
-                                        return [4, relativeImage.getFabricImageForFrame(frame)];
+                                        imageUpdateFrame = frame;
+                                        pixelsRaw_1 = imageUpdateFrame.image;
+                                        this_1.preprocess.forEach(function (preprocess) {
+                                            pixelsRaw_1 = preprocess(pixelsRaw_1);
+                                        });
+                                        pixels = pixelsRaw_1;
+                                        return [4, relativeImage.getFabricImageForFrame(pixels.toImageData())];
                                     case 1:
                                         currentImage = _c.sent();
                                         _c.label = 2;
@@ -94,7 +99,7 @@ var EmojiGenerator = (function () {
                                             originY: "center",
                                             angle: this_1.rotation,
                                             left: canvas_1.width / 2,
-                                            top: canvas_1.height / 2,
+                                            top: canvas_1.height / 2
                                         });
                                         canvas_1.add(imageForRotation);
                                         canvas_1.renderAll();
@@ -127,14 +132,24 @@ var EmojiGenerator = (function () {
         });
     };
     EmojiGenerator.allGenerators = new Map([
-        new EmojiGenerator("lr", LinearGenerator),
+        new EmojiGenerator("lr", LinearGenerator, 0),
         new EmojiGenerator("ud", LinearGenerator, 90),
         new EmojiGenerator("rl", LinearGenerator, 180),
         new EmojiGenerator("du", LinearGenerator, 270),
-        new EmojiGenerator("ld", RotationGeneratorFlex),
-        new EmojiGenerator("ul", RotationGeneratorFlex, 90),
-        new EmojiGenerator("ru", RotationGeneratorFlex, 180),
-        new EmojiGenerator("dr", RotationGeneratorFlex, 270),
+        new EmojiGenerator("ld", TurnGeneratorFlex, 0),
+        new EmojiGenerator("ul", TurnGeneratorFlex, 90),
+        new EmojiGenerator("ru", TurnGeneratorFlex, 180),
+        new EmojiGenerator("dr", TurnGeneratorFlex, 270),
+        new EmojiGenerator("rc", RotationGenerator, 0),
+        new EmojiGenerator("h_lr", Reverse(LinearGenerator), 0, [FlipHorizontal]),
+        new EmojiGenerator("h_ud", Reverse(LinearGenerator), 90, [FlipHorizontal]),
+        new EmojiGenerator("h_rl", Reverse(LinearGenerator), 180, [FlipHorizontal]),
+        new EmojiGenerator("h_du", Reverse(LinearGenerator), 270, [FlipHorizontal]),
+        new EmojiGenerator("h_ld", Reverse(TurnGeneratorFlex), 0, [FlipHorizontal]),
+        new EmojiGenerator("h_ul", Reverse(TurnGeneratorFlex), 90, [FlipHorizontal]),
+        new EmojiGenerator("h_ru", Reverse(TurnGeneratorFlex), 180, [FlipHorizontal]),
+        new EmojiGenerator("h_dr", Reverse(TurnGeneratorFlex), 270, [FlipHorizontal]),
+        new EmojiGenerator("h_rc", Reverse(RotationGenerator), 0, [FlipHorizontal]),
     ].map(function (renderer) { return [renderer.namePrefix, renderer]; }));
     return EmojiGenerator;
 }());

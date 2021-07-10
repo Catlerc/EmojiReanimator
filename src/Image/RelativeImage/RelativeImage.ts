@@ -19,8 +19,8 @@ export class RelativeImage {
     this.height = image.height
   }
 
-  async getFabricImageForFrame(frame: ImageUpdateFrame): Promise<RelativeFabricImage> {
-    let fabricImage = await Utils.fabricImageFromDataUrl(Utils.imageDataToDataUrl(frame.image.toImageData()))
+  async getFabricImageForFrame(frame: ImageData): Promise<RelativeFabricImage> {
+    let fabricImage = await Utils.fabricImageFromDataUrl(Utils.imageDataToDataUrl(frame))
     fabricImage.set({
       originX: "center",
       originY: "center",

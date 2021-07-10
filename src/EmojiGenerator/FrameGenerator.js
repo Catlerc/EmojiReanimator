@@ -54,6 +54,17 @@ export var LinearGenerator = function (image, time) { return __awaiter(void 0, v
     });
 }); };
 export var RotationGenerator = function (image, time) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        image.setPos(.5, .5);
+        image.set({
+            originX: "center",
+            originY: "center",
+            angle: 360 * time
+        });
+        return [2, [image]];
+    });
+}); };
+export var TurnGenerator = function (image, time) { return __awaiter(void 0, void 0, void 0, function () {
     var copy0, copy;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -92,23 +103,23 @@ export var RotationGenerator = function (image, time) { return __awaiter(void 0,
     });
 }); };
 var linesN = 30;
-export var RotationGeneratorFlex = function (image, time) { return __awaiter(void 0, void 0, void 0, function () {
+export var TurnGeneratorFlex = function (image, time) { return __awaiter(void 0, void 0, void 0, function () {
     function createSlices(copies, time) {
+        time = time - 0.002;
         var sliceWidth = image.underlying.width / linesN;
         return copies.map(function (pair) {
             var index = pair.key;
             var copy = pair.value;
             copy.set({
-                originX: index / linesN,
-                angle: 90 * time + 90 * (index / linesN)
+                originX: index / (linesN + 1),
+                angle: 90 * (time + index / (linesN + 1))
             });
             copy.setPos(0, 1);
             copy.underlying.clipPath = new fabric.Rect({
-                originX: "center",
                 width: Math.floor(sliceWidth * 2),
                 height: copy.underlying.height,
                 top: -copy.underlying.height / 2,
-                left: sliceWidth * index - copy.underlying.width / 2
+                left: sliceWidth * index - copy.underlying.width / 2 - sliceWidth / 2
             });
             return copy;
         });
@@ -123,10 +134,10 @@ export var RotationGeneratorFlex = function (image, time) { return __awaiter(voi
                     originY: "bottom",
                     angle: 90 * time
                 });
-                return [4, image.copyN(linesN + 1)];
+                return [4, image.copyN(linesN)];
             case 1:
                 copies1 = _a.sent();
-                return [4, image.copyN(linesN + 1)];
+                return [4, image.copyN(linesN)];
             case 2:
                 copies2 = _a.sent();
                 layers1 = createSlices(copies1, time - 1);
@@ -144,9 +155,6 @@ export function Reverse(underlying) {
                 case 0: return [4, image.copy()];
                 case 1:
                     newImage = _a.sent();
-                    newImage.set({
-                        flipX: true,
-                    });
                     return [4, underlying(newImage, 1 - timeNormalized)];
                 case 2: return [2, _a.sent()];
             }
