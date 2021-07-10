@@ -34,7 +34,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { LinearGenerator, Reverse, RotationGenerator, TurnGeneratorFlex } from "./FrameGenerator.js";
+import { LinearGenerator, Reverse, RotationGenerator, TurnGenerator, TurnGeneratorFlex } from "./FrameGenerator.js";
 import { AnimatedImage, FrameType, ImageUpdateFrame, Pixels } from "../Image/AnimatedImage.js";
 import { RelativeImage } from "../Image/RelativeImage/RelativeImage.js";
 import { Utils } from "../Utils/Utils.js";
@@ -150,6 +150,16 @@ var EmojiGenerator = (function () {
         new EmojiGenerator("h_ru", Reverse(TurnGeneratorFlex), 180, [FlipHorizontal]),
         new EmojiGenerator("h_dr", Reverse(TurnGeneratorFlex), 270, [FlipHorizontal]),
         new EmojiGenerator("h_rc", Reverse(RotationGenerator), 0, [FlipHorizontal]),
+    ].map(function (renderer) { return [renderer.namePrefix, renderer]; }));
+    EmojiGenerator.anotherRotationGenerators = new Map([
+        new EmojiGenerator("ld", TurnGenerator, 0),
+        new EmojiGenerator("ul", TurnGenerator, 90),
+        new EmojiGenerator("ru", TurnGenerator, 180),
+        new EmojiGenerator("dr", TurnGenerator, 270),
+        new EmojiGenerator("h_ld", Reverse(TurnGenerator), 0, [FlipHorizontal]),
+        new EmojiGenerator("h_ul", Reverse(TurnGenerator), 90, [FlipHorizontal]),
+        new EmojiGenerator("h_ru", Reverse(TurnGenerator), 180, [FlipHorizontal]),
+        new EmojiGenerator("h_dr", Reverse(TurnGenerator), 270, [FlipHorizontal]),
     ].map(function (renderer) { return [renderer.namePrefix, renderer]; }));
     return EmojiGenerator;
 }());

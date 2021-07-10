@@ -19,7 +19,8 @@ const app = new Application(
   document.getElementById("GifFpsInput") as HTMLInputElement,
   document.getElementById("imagePreview") as HTMLImageElement,
   document.getElementById("downloadButton") as HTMLButtonElement,
-  document.getElementById("syncGifs") as HTMLButtonElement
+  document.getElementById("syncGifs") as HTMLButtonElement,
+  document.getElementById("AnotherRotation") as HTMLInputElement
 )
 app.initializeEvents()
 emojiTableContainer.append(app.generateEmojiTable(emojiTable))

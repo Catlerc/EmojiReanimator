@@ -105,5 +105,16 @@ export class EmojiGenerator {
     new EmojiGenerator("h_dr", Reverse(TurnGeneratorFlex), 270, [FlipHorizontal]),
     new EmojiGenerator("h_rc", Reverse(RotationGenerator), 0, [FlipHorizontal]),
   ].map(renderer => [renderer.namePrefix, renderer]))
+
+  static anotherRotationGenerators: Map<string, EmojiGenerator> = new Map([
+    new EmojiGenerator("ld", TurnGenerator, 0),
+    new EmojiGenerator("ul", TurnGenerator, 90),
+    new EmojiGenerator("ru", TurnGenerator, 180),
+    new EmojiGenerator("dr", TurnGenerator, 270),
+    new EmojiGenerator("h_ld", Reverse(TurnGenerator), 0, [FlipHorizontal]),
+    new EmojiGenerator("h_ul", Reverse(TurnGenerator), 90, [FlipHorizontal]),
+    new EmojiGenerator("h_ru", Reverse(TurnGenerator), 180, [FlipHorizontal]),
+    new EmojiGenerator("h_dr", Reverse(TurnGenerator), 270, [FlipHorizontal]),
+  ].map(renderer => [renderer.namePrefix, renderer]))
 }
 

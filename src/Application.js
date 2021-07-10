@@ -5,7 +5,7 @@ import { Utils } from "./Utils/Utils.js";
 import { EmojiGenerator } from "./EmojiGenerator/EmojiGenerator.js";
 import { EmojiSizeWarning } from "./EmojiSizeWarning.js";
 var Application = (function () {
-    function Application(emojiNameInput, fileInput, redrawButton, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, imagePreview, downloadButton, syncGifsButton) {
+    function Application(emojiNameInput, fileInput, redrawButton, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, imagePreview, downloadButton, syncGifsButton, anotherRotationInput) {
         this.emojiNameInput = emojiNameInput;
         this.fileInput = fileInput;
         this.redrawButton = redrawButton;
@@ -17,12 +17,14 @@ var Application = (function () {
         this.imagePreview = imagePreview;
         this.downloadButton = downloadButton;
         this.syncGifsButton = syncGifsButton;
+        this.anotherRotationInput = anotherRotationInput;
         this.emojies = [];
         this.options = {
             width: 64,
             height: 64,
             sourceImage: Option.none(),
-            expandTimeline: Option.none()
+            expandTimeline: Option.none(),
+            anotherRotation: false
         };
         this.reloadOptions();
         this.emojiSizeWarning = new EmojiSizeWarning();
@@ -36,6 +38,7 @@ var Application = (function () {
         this.compressionInput.onchange = function () { return _this.reloadOptions(); };
         this.animationLengthInput.onchange = function () { return _this.reloadOptions(); };
         this.fpsInput.onchange = function () { return _this.reloadOptions(); };
+        this.anotherRotationInput.onchange = function () { return _this.reloadOptions(); };
         this.forceAnimateInput.onchange = function () {
             if (_this.forceAnimateInput.checked) {
                 _this.animationLengthInput.disabled = false;
@@ -61,6 +64,7 @@ var Application = (function () {
         };
     };
     Application.prototype.reloadOptions = function () {
+        var _this = this;
         var oldOptions = this.options;
         var size = Number(this.smileSizeInput.value);
         var expandTimelineOptions = Option.none();
@@ -77,8 +81,14 @@ var Application = (function () {
             }),
             width: size,
             height: size,
-            expandTimeline: expandTimelineOptions
+            expandTimeline: expandTimelineOptions,
+            anotherRotation: this.anotherRotationInput.checked
         };
+        this.emojies.forEach(function (emoji) {
+            return emoji.generator = _this.options.anotherRotation ?
+                Option.fromValue(EmojiGenerator.anotherRotationGenerators.get(emoji.generator.namePrefix)).getOrElse(emoji.generator) :
+                Option.fromValue(EmojiGenerator.allGenerators.get(emoji.generator.namePrefix)).getOrElse(emoji.generator);
+        });
     };
     Application.prototype.redraw = function () {
         var _this = this;

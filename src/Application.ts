@@ -1,5 +1,5 @@
 import {Emoji} from "./Image/Emoji.js"
-import {DataUrl, Seconds} from "./Domain.js"
+import {Seconds} from "./Domain.js"
 import {AnimatedImage} from "./Image/AnimatedImage.js"
 import {Option} from "./Utils/Option.js"
 import {Utils} from "./Utils/Utils.js"
@@ -22,6 +22,7 @@ export interface Options {
   width: number
   height: number
   expandTimeline: Option<ExpandTimelineOptions>
+  anotherRotation: boolean
 }
 
 
@@ -31,7 +32,8 @@ export class Application {
     width: 64,
     height: 64,
     sourceImage: Option.none(),
-    expandTimeline: Option.none()
+    expandTimeline: Option.none(),
+    anotherRotation: false
   }
   emojiSizeWarning: EmojiSizeWarning
 
@@ -46,7 +48,8 @@ export class Application {
     private fpsInput: HTMLInputElement,
     private imagePreview: HTMLImageElement,
     private downloadButton: HTMLButtonElement,
-    private syncGifsButton: HTMLButtonElement
+    private syncGifsButton: HTMLButtonElement,
+    private anotherRotationInput: HTMLInputElement,
   ) {
     this.reloadOptions()
     this.emojiSizeWarning = new EmojiSizeWarning()
@@ -60,6 +63,7 @@ export class Application {
     this.compressionInput.onchange = () => this.reloadOptions()
     this.animationLengthInput.onchange = () => this.reloadOptions()
     this.fpsInput.onchange = () => this.reloadOptions()
+    this.anotherRotationInput.onchange = () => this.reloadOptions()
     this.forceAnimateInput.onchange = () => {
       if (this.forceAnimateInput.checked) {
         this.animationLengthInput.disabled = false
@@ -106,8 +110,14 @@ export class Application {
       }),
       width: size,
       height: size,
-      expandTimeline: expandTimelineOptions
+      expandTimeline: expandTimelineOptions,
+      anotherRotation: this.anotherRotationInput.checked
     }
+
+    this.emojies.forEach(emoji =>
+      emoji.generator = this.options.anotherRotation ?
+        Option.fromValue(EmojiGenerator.anotherRotationGenerators.get(emoji.generator.namePrefix)).getOrElse(emoji.generator) :
+        Option.fromValue(EmojiGenerator.allGenerators.get(emoji.generator.namePrefix)).getOrElse(emoji.generator))
   }
 
   redraw() {
