@@ -49,14 +49,14 @@ body {
 }
 
 #file-input {
-    width: 130pt;
+    width: 150pt;
     height: 20pt;
 }
 
 #inputButton {
     position: relative;
 
-    width: 136pt;
+    width: 150pt;
 
     text-align: center;
     color: #fff;

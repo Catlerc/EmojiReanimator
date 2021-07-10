@@ -62,7 +62,7 @@ export const RotationGeneratorFlex: FrameGenerator =
 
         copy.underlying.clipPath = new fabric.Rect({
           originX: "center",
-          width: Math.floor(sliceWidth * 1.5),
+          width: Math.floor(sliceWidth * 2),
           height: copy.underlying.height,
           top: -copy.underlying.height / 2,
           left: sliceWidth * index - copy.underlying.width / 2
@@ -77,8 +77,8 @@ export const RotationGeneratorFlex: FrameGenerator =
       originY: "bottom",
       angle: 90 * time
     })
-    const copies1 = await image.copyN(linesN)
-    const copies2 = await image.copyN(linesN)
+    const copies1 = await image.copyN(linesN+1)
+    const copies2 = await image.copyN(linesN+1)
 
 
     const layers1 = createSlices(copies1, time - 1)
