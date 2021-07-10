@@ -22,11 +22,10 @@ interface GifEncoder {
 
 
 export class Emoji {
-  renderedGif: Option<Blob> = Option.none()
-  renderedName: Option<string> = Option.none()
-  imageElement: Option<HTMLImageElement> = Option.none()
+  renderedGif: Option<Blob> = Option.none<Blob>()
+  imageElement: Option<HTMLImageElement> = Option.none<HTMLImageElement>()
 
-  constructor(private generator: EmojiGenerator, private emojiSizeWarning: EmojiSizeWarning) {
+  constructor(public generator: EmojiGenerator, private emojiSizeWarning: EmojiSizeWarning) {
   }
 
   attach(imageElement: HTMLImageElement) {
@@ -80,7 +79,6 @@ export class Emoji {
           {delay: delay}
         )
       }
-      this.renderedName = options.sourceImage.map(imageOptions => imageOptions.name + "_" + this.generator.namePrefix)
 
       gifEncoder.on("finished", (gif: Blob) => {
         this.renderedGif = Option.some(gif)

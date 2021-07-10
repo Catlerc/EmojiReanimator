@@ -176,9 +176,9 @@ export class Application {
   downloadRenderedEmojies() {
     this.emojies.forEach(emoji =>
       emoji.renderedGif.forEach(gifBlob =>
-        emoji.renderedName.forEach(name =>
-          this.downloadBlobAsFile(gifBlob, name)
-        )
+        this.options.sourceImage.forEach(imageOptions => {
+          this.downloadBlobAsFile(gifBlob, imageOptions.name + "_" + emoji.generator.namePrefix)
+        })
       )
     )
   }
