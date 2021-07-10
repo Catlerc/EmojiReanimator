@@ -1,9 +1,9 @@
 import {Application} from "./Application.js"
 
 const emojiTable: (string | null)[][] = [
-  ["dr", "lr", "ld", "h_dr", "h_lr", "h_ld"],
-  ["du", "rc", "ud", "h_du", "h_rc", "h_ud"],
-  ["ru", "rl", "ul", "h_ru", "h_rl", "h_ul"]
+  ["dr", "lr", "ld", "rd_h", "rl_h", "dl_h"],
+  ["du", "rc", "ud", "ud_h", "rc_h", "du_h"],
+  ["ru", "rl", "ul", "ur_h", "lr_h", "lu_h"]
 ]
 
 const emojiTableContainer = document.getElementById("emojiTableContainer")

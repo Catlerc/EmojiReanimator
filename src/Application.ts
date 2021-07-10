@@ -184,12 +184,14 @@ export class Application {
   }
 
   downloadRenderedEmojies() {
-    this.emojies.forEach(emoji =>
+    let time = 0
+    this.emojies.forEach(emoji => {
+      time += .2
       emoji.renderedGif.forEach(gifBlob =>
         this.options.sourceImage.forEach(imageOptions => {
-          this.downloadBlobAsFile(gifBlob, imageOptions.name + "_" + emoji.generator.namePrefix)
+          setTimeout(() => this.downloadBlobAsFile(gifBlob, imageOptions.name + "_" + emoji.generator.namePrefix), time * 1000)
         })
       )
-    )
+    })
   }
 }

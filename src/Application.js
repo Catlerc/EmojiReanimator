@@ -151,10 +151,12 @@ var Application = (function () {
     };
     Application.prototype.downloadRenderedEmojies = function () {
         var _this = this;
+        var time = 0;
         this.emojies.forEach(function (emoji) {
-            return emoji.renderedGif.forEach(function (gifBlob) {
+            time += .2;
+            emoji.renderedGif.forEach(function (gifBlob) {
                 return _this.options.sourceImage.forEach(function (imageOptions) {
-                    _this.downloadBlobAsFile(gifBlob, imageOptions.name + "_" + emoji.generator.namePrefix);
+                    setTimeout(function () { return _this.downloadBlobAsFile(gifBlob, imageOptions.name + "_" + emoji.generator.namePrefix); }, time * 1000);
                 });
             });
         });

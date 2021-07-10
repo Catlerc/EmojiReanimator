@@ -95,15 +95,15 @@ export class EmojiGenerator {
     new EmojiGenerator("ru", TurnGeneratorFlex, 180),
     new EmojiGenerator("dr", TurnGeneratorFlex, 270),
     new EmojiGenerator("rc", RotationGenerator, 0),
-    new EmojiGenerator("h_lr", Reverse(LinearGenerator), 0, [FlipHorizontal]),
-    new EmojiGenerator("h_ud", Reverse(LinearGenerator), 90, [FlipHorizontal]),
-    new EmojiGenerator("h_rl", Reverse(LinearGenerator), 180, [FlipHorizontal]),
-    new EmojiGenerator("h_du", Reverse(LinearGenerator), 270, [FlipHorizontal]),
-    new EmojiGenerator("h_ld", Reverse(TurnGeneratorFlex), 0, [FlipHorizontal]),
-    new EmojiGenerator("h_ul", Reverse(TurnGeneratorFlex), 90, [FlipHorizontal]),
-    new EmojiGenerator("h_ru", Reverse(TurnGeneratorFlex), 180, [FlipHorizontal]),
-    new EmojiGenerator("h_dr", Reverse(TurnGeneratorFlex), 270, [FlipHorizontal]),
-    new EmojiGenerator("h_rc", Reverse(RotationGenerator), 0, [FlipHorizontal]),
+    new EmojiGenerator("rl_h", Reverse(LinearGenerator), 0, [FlipHorizontal]),
+    new EmojiGenerator("du_h", Reverse(LinearGenerator), 90, [FlipHorizontal]),
+    new EmojiGenerator("lr_h", Reverse(LinearGenerator), 180, [FlipHorizontal]),
+    new EmojiGenerator("ud_h", Reverse(LinearGenerator), 270, [FlipHorizontal]),
+    new EmojiGenerator("dl_h", Reverse(TurnGeneratorFlex), 0, [FlipHorizontal]),
+    new EmojiGenerator("lu_h", Reverse(TurnGeneratorFlex), 90, [FlipHorizontal]),
+    new EmojiGenerator("ur_h", Reverse(TurnGeneratorFlex), 180, [FlipHorizontal]),
+    new EmojiGenerator("rd_h", Reverse(TurnGeneratorFlex), 270, [FlipHorizontal]),
+    new EmojiGenerator("rc_h", Reverse(RotationGenerator), 0, [FlipHorizontal]),
   ].map(renderer => [renderer.namePrefix, renderer]))
 
   static anotherRotationGenerators: Map<string, EmojiGenerator> = new Map([
@@ -111,10 +111,10 @@ export class EmojiGenerator {
     new EmojiGenerator("ul", TurnGenerator, 90),
     new EmojiGenerator("ru", TurnGenerator, 180),
     new EmojiGenerator("dr", TurnGenerator, 270),
-    new EmojiGenerator("h_ld", Reverse(TurnGenerator), 0, [FlipHorizontal]),
-    new EmojiGenerator("h_ul", Reverse(TurnGenerator), 90, [FlipHorizontal]),
-    new EmojiGenerator("h_ru", Reverse(TurnGenerator), 180, [FlipHorizontal]),
-    new EmojiGenerator("h_dr", Reverse(TurnGenerator), 270, [FlipHorizontal]),
+    new EmojiGenerator("dl_h", Reverse(TurnGenerator), 0, [FlipHorizontal]),
+    new EmojiGenerator("lu_h", Reverse(TurnGenerator), 90, [FlipHorizontal]),
+    new EmojiGenerator("ur_h", Reverse(TurnGenerator), 180, [FlipHorizontal]),
+    new EmojiGenerator("rd_h", Reverse(TurnGenerator), 270, [FlipHorizontal]),
   ].map(renderer => [renderer.namePrefix, renderer]))
 }
 
