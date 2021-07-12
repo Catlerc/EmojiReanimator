@@ -16,6 +16,14 @@ export class Pixels {
   constructor(public data: RGBAColor[][]) {
   }
 
+  copy(): Pixels {
+    const copy: RGBAColor[][] = []
+    this.data.forEach(line => {
+      copy.push([...line])
+    })
+    return new Pixels(copy)
+  }
+
   static fromImageData(imageData: ImageData) {
     const data = imageData.data
     let pixelsData: RGBAColor[][] = []

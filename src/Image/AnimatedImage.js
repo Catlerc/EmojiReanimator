@@ -34,6 +34,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
+};
 import { GifFile } from "../Vendor.js";
 import { Left, Right } from "../Utils/Either.js";
 import { ImageType, StaticImageType } from "../Domain.js";
@@ -48,6 +53,13 @@ var Pixels = (function () {
     function Pixels(data) {
         this.data = data;
     }
+    Pixels.prototype.copy = function () {
+        var copy = [];
+        this.data.forEach(function (line) {
+            copy.push(__spreadArray([], line));
+        });
+        return new Pixels(copy);
+    };
     Pixels.fromImageData = function (imageData) {
         var data = imageData.data;
         var pixelsData = [];

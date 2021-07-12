@@ -38,7 +38,7 @@ import { LinearGenerator, Reverse, RotationGenerator, TurnGenerator, TurnGenerat
 import { AnimatedImage, FrameType, ImageUpdateFrame, Pixels } from "../Image/AnimatedImage.js";
 import { RelativeImage } from "../Image/RelativeImage/RelativeImage.js";
 import { Utils } from "../Utils/Utils.js";
-import { FlipHorizontal } from "./ImagePreprocess.js";
+import { FlipHorizontal, FlipVertical } from "./ImagePreprocess.js";
 var EmojiGenerator = (function () {
     function EmojiGenerator(namePrefix, frameGenerator, rotation, preprocess) {
         if (rotation === void 0) { rotation = 0; }
@@ -132,34 +132,30 @@ var EmojiGenerator = (function () {
         });
     };
     EmojiGenerator.allGenerators = new Map([
-        new EmojiGenerator("lr", LinearGenerator, 0),
-        new EmojiGenerator("ud", LinearGenerator, 90),
-        new EmojiGenerator("rl", LinearGenerator, 180),
+        new EmojiGenerator("rc", RotationGenerator, 0),
+        new EmojiGenerator("rc_h", Reverse(RotationGenerator), 0, [FlipHorizontal]),
+        new EmojiGenerator("dr", TurnGeneratorFlex, 270),
         new EmojiGenerator("du", LinearGenerator, 270),
         new EmojiGenerator("ld", TurnGeneratorFlex, 0),
-        new EmojiGenerator("ul", TurnGeneratorFlex, 90),
+        new EmojiGenerator("lr", LinearGenerator, 0),
+        new EmojiGenerator("rl", LinearGenerator, 180),
         new EmojiGenerator("ru", TurnGeneratorFlex, 180),
-        new EmojiGenerator("dr", TurnGeneratorFlex, 270),
-        new EmojiGenerator("rc", RotationGenerator, 0),
-        new EmojiGenerator("rl_h", Reverse(LinearGenerator), 0, [FlipHorizontal]),
-        new EmojiGenerator("du_h", Reverse(LinearGenerator), 90, [FlipHorizontal]),
-        new EmojiGenerator("lr_h", Reverse(LinearGenerator), 180, [FlipHorizontal]),
-        new EmojiGenerator("ud_h", Reverse(LinearGenerator), 270, [FlipHorizontal]),
-        new EmojiGenerator("dl_h", Reverse(TurnGeneratorFlex), 0, [FlipHorizontal]),
-        new EmojiGenerator("lu_h", Reverse(TurnGeneratorFlex), 90, [FlipHorizontal]),
-        new EmojiGenerator("ur_h", Reverse(TurnGeneratorFlex), 180, [FlipHorizontal]),
-        new EmojiGenerator("rd_h", Reverse(TurnGeneratorFlex), 270, [FlipHorizontal]),
-        new EmojiGenerator("rc_h", Reverse(RotationGenerator), 0, [FlipHorizontal]),
+        new EmojiGenerator("ud", LinearGenerator, 90),
+        new EmojiGenerator("ul", TurnGeneratorFlex, 90),
+        new EmojiGenerator("dl", Reverse(TurnGeneratorFlex), 0, [FlipHorizontal, FlipVertical]),
+        new EmojiGenerator("lu", Reverse(TurnGeneratorFlex), 90, [FlipHorizontal, FlipVertical]),
+        new EmojiGenerator("rd", Reverse(TurnGeneratorFlex), 270, [FlipHorizontal, FlipVertical]),
+        new EmojiGenerator("ur", Reverse(TurnGeneratorFlex), 180, [FlipHorizontal, FlipVertical])
     ].map(function (renderer) { return [renderer.namePrefix, renderer]; }));
     EmojiGenerator.anotherRotationGenerators = new Map([
         new EmojiGenerator("ld", TurnGenerator, 0),
         new EmojiGenerator("ul", TurnGenerator, 90),
         new EmojiGenerator("ru", TurnGenerator, 180),
         new EmojiGenerator("dr", TurnGenerator, 270),
-        new EmojiGenerator("dl_h", Reverse(TurnGenerator), 0, [FlipHorizontal]),
-        new EmojiGenerator("lu_h", Reverse(TurnGenerator), 90, [FlipHorizontal]),
-        new EmojiGenerator("ur_h", Reverse(TurnGenerator), 180, [FlipHorizontal]),
-        new EmojiGenerator("rd_h", Reverse(TurnGenerator), 270, [FlipHorizontal]),
+        new EmojiGenerator("dl", Reverse(TurnGenerator), 0, [FlipHorizontal, FlipVertical]),
+        new EmojiGenerator("lu", Reverse(TurnGenerator), 90, [FlipHorizontal, FlipVertical]),
+        new EmojiGenerator("ur", Reverse(TurnGenerator), 180, [FlipHorizontal, FlipVertical]),
+        new EmojiGenerator("rd", Reverse(TurnGenerator), 270, [FlipHorizontal, FlipVertical])
     ].map(function (renderer) { return [renderer.namePrefix, renderer]; }));
     return EmojiGenerator;
 }());
