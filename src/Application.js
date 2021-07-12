@@ -51,12 +51,14 @@ var Application = (function () {
             _this.reloadOptions();
         };
         this.fileInput.onchange = function (event) {
-            _this.imagePreview.src = "resources/loading.gif";
             var fileList = event.target.files;
             var file = fileList.item(0);
             var reader = new FileReader();
-            reader.onloadend = function () { return _this.onFileSelection(file, reader.result); };
-            setTimeout(function () { return reader.readAsArrayBuffer(file); }, 10);
+            if (file) {
+                _this.imagePreview.src = "resources/loading.gif";
+                reader.onloadend = function () { return _this.onFileSelection(file, reader.result); };
+                setTimeout(function () { return reader.readAsArrayBuffer(file); }, 10);
+            }
         };
         this.downloadButton.onclick = function () { return _this.downloadRenderedEmojies(); };
         this.syncGifsButton.onclick = function () {

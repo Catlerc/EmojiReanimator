@@ -61,23 +61,22 @@ const linesN = 30
 export const TurnGeneratorFlex: FrameGenerator =
   async (image, time) => {
     function createSlices(copies: Array<KeyValuePair<number, RelativeFabricImage>>, time: number) {
-      time = time - 0.002
+       // time = time - 0.002
       const sliceWidth = image.underlying.width / linesN
       return copies.map(pair => {
         const index = pair.key
         const copy = pair.value
         copy.set({
-          originX: index / (linesN + 1),
-          angle: 90 * (time + index / (linesN + 1))
+          originX: index / (linesN),
+          angle: 90 * (time + index / (linesN ))
         })
         copy.setPos(0, 1)
 
         copy.underlying.clipPath = new fabric.Rect({
-
-          width: Math.floor(sliceWidth * 2),
+          width: Math.floor(sliceWidth * 3),
           height: copy.underlying.height,
           top: -copy.underlying.height / 2,
-          left: sliceWidth * index - copy.underlying.width / 2 - sliceWidth / 2
+          left: sliceWidth * index - copy.underlying.width / 2 - sliceWidth/3*2
         })
         return copy
       })

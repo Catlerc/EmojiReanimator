@@ -30,8 +30,8 @@ export class RelativeImage {
 
   rescaleToFit(width: number, height: number): void {
     this.scale = Math.min(width / this.image.width, height / this.image.height)
-    this.width = this.width * this.scale / width
-    this.height = this.height * this.scale / height
+    this.width = this.width * this.scale
+    this.height = this.height * this.scale
   }
 
 

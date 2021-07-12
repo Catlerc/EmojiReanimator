@@ -62,8 +62,8 @@ var RelativeImage = (function () {
     };
     RelativeImage.prototype.rescaleToFit = function (width, height) {
         this.scale = Math.min(width / this.image.width, height / this.image.height);
-        this.width = this.width * this.scale / width;
-        this.height = this.height * this.scale / height;
+        this.width = this.width * this.scale;
+        this.height = this.height * this.scale;
     };
     RelativeImage.prototype.attach = function (canvas) {
         this.canvas = canvas;

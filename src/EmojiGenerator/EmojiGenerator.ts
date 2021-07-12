@@ -87,8 +87,6 @@ export class EmojiGenerator {
 
   static allGenerators: Map<string, EmojiGenerator> = new Map([
     new EmojiGenerator("rc", RotationGenerator, 0),
-    new EmojiGenerator("rc_h", Reverse(RotationGenerator), 0, [FlipHorizontal]),
-
     new EmojiGenerator("dr", TurnGeneratorFlex, 270),
     new EmojiGenerator("du", LinearGenerator, 270),
     new EmojiGenerator("ld", TurnGeneratorFlex, 0),

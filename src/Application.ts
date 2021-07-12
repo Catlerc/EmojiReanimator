@@ -76,12 +76,16 @@ export class Application {
       this.reloadOptions()
     }
     this.fileInput.onchange = (event: any) => {
-      this.imagePreview.src = "resources/loading.gif"
+
       const fileList = event.target.files
       const file: File = fileList.item(0)
       const reader = new FileReader()
-      reader.onloadend = () => this.onFileSelection(file, reader.result as ArrayBuffer)
-      setTimeout(() => reader.readAsArrayBuffer(file), 10)
+      if (file)
+      {
+        this.imagePreview.src = "resources/loading.gif"
+        reader.onloadend = () => this.onFileSelection(file, reader.result as ArrayBuffer)
+        setTimeout(() => reader.readAsArrayBuffer(file), 10)
+      }
     }
 
     this.downloadButton.onclick = () => this.downloadRenderedEmojies()
