@@ -46,7 +46,7 @@ export class Emoji {
       this.emojiSizeWarning.updatePosition(imageElement)
       this.renderedGif.forEach(gif => {
         if (gif.size > 128 * 1024)
-          this.emojiSizeWarning.setText(`The size of the gif (${Math.ceil(gif.size / 1024)} Kb) is larger than\nthe maximum size of Slack emoji (128 Kb).`)
+          this.emojiSizeWarning.setText(`Размер эмодзи превышает лимит slack'a (${Math.ceil(gif.size / 1024)} Kb > 128 kb).`)
         else
           this.emojiSizeWarning.hide()
       })

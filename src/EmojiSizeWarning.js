@@ -4,6 +4,7 @@ var EmojiSizeWarning = (function () {
         this.rootElement = Option.none();
         this.element = document.createElement("div");
         this.element.className = "SizeFailureSign";
+        this.hide();
     }
     EmojiSizeWarning.prototype.updateRoot = function (rootElement) {
         var _this = this;

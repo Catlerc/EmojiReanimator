@@ -7,6 +7,7 @@ export class EmojiSizeWarning {
   constructor() {
     this.element = document.createElement("div")
     this.element.className = "SizeFailureSign"
+    this.hide()
   }
 
   updateRoot(rootElement: HTMLElement) {

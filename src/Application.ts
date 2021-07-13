@@ -60,7 +60,7 @@ export class Application {
   }
 
   initializeEvents() {
-    this.emojiNameInput.onchange = () => this.inputChange()
+    this.emojiNameInput.onchange = () => this.reloadOptions()
     this.smileSizeInput.onchange = () => this.inputChange()
     this.compressionInput.onchange = () => this.inputChange()
     this.animationLengthInput.onchange = () => this.inputChange()

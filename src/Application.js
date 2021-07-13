@@ -34,7 +34,7 @@ var Application = (function () {
     };
     Application.prototype.initializeEvents = function () {
         var _this = this;
-        this.emojiNameInput.onchange = function () { return _this.inputChange(); };
+        this.emojiNameInput.onchange = function () { return _this.reloadOptions(); };
         this.smileSizeInput.onchange = function () { return _this.inputChange(); };
         this.compressionInput.onchange = function () { return _this.inputChange(); };
         this.animationLengthInput.onchange = function () { return _this.inputChange(); };

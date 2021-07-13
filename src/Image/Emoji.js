@@ -59,7 +59,7 @@ var Emoji = (function () {
             _this.emojiSizeWarning.updatePosition(imageElement);
             _this.renderedGif.forEach(function (gif) {
                 if (gif.size > 128 * 1024)
-                    _this.emojiSizeWarning.setText("The size of the gif (" + Math.ceil(gif.size / 1024) + " Kb) is larger than\nthe maximum size of Slack emoji (128 Kb).");
+                    _this.emojiSizeWarning.setText("\u0420\u0430\u0437\u043C\u0435\u0440 \u044D\u043C\u043E\u0434\u0437\u0438 \u043F\u0440\u0435\u0432\u044B\u0448\u0430\u0435\u0442 \u043B\u0438\u043C\u0438\u0442 slack'a (" + Math.ceil(gif.size / 1024) + " Kb > 128 kb).");
                 else
                     _this.emojiSizeWarning.hide();
             });
