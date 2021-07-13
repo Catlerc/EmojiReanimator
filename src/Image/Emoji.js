@@ -37,12 +37,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 import { GifEncoder } from "../Vendor.js";
 import { Option } from "../Utils/Option.js";
 import { Utils } from "../Utils/Utils.js";
+export var EmojiState;
+(function (EmojiState) {
+    EmojiState[EmojiState["Idle"] = 0] = "Idle";
+    EmojiState[EmojiState["Rendering"] = 1] = "Rendering";
+    EmojiState[EmojiState["Stopping"] = 2] = "Stopping";
+})(EmojiState || (EmojiState = {}));
 var Emoji = (function () {
     function Emoji(generator, emojiSizeWarning) {
         this.generator = generator;
         this.emojiSizeWarning = emojiSizeWarning;
         this.renderedGif = Option.none();
         this.imageElement = Option.none();
+        this.state = EmojiState.Idle;
+        this.gifEncoder = Option.none();
     }
     Emoji.prototype.attach = function (imageElement) {
         var _this = this;
@@ -66,53 +74,80 @@ var Emoji = (function () {
             imageElement.src = Utils.imageBlobToDataUrl(gif);
         }); });
     };
+    Emoji.prototype.stopRender = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                return [2, new Promise(function (resolve) {
+                        var refreshIntervalId = setInterval(function () {
+                            _this.gifEncoder.forEach(function (gifEncoder) { return gifEncoder.abort; });
+                            if (_this.state == EmojiState.Idle) {
+                                _this.gifEncoder.forEach(function (gifEncoder) { return gifEncoder.freeWorkers.forEach(function (worker) { return worker.terminate(); }); });
+                                clearInterval(refreshIntervalId);
+                                resolve();
+                            }
+                            else
+                                _this.state = EmojiState.Stopping;
+                        }, 100);
+                    })];
+            });
+        });
+    };
     Emoji.prototype.render = function (options) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
-                options.sourceImage.forEach(function (imageOptions) { return __awaiter(_this, void 0, void 0, function () {
-                    var image, gifEncoder, animatedImage, index, frame, nextFrame, delay;
-                    var _this = this;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                image = imageOptions.image;
-                                options.expandTimeline.map(function (expandTimelineOptions) {
-                                    return image = image.expandTimeline(expandTimelineOptions.length, expandTimelineOptions.fps);
-                                });
-                                gifEncoder = new GifEncoder({
-                                    workers: 2,
-                                    quality: 100,
-                                    background: 0xFFFFFF,
-                                    width: options.width,
-                                    height: options.height,
-                                    workerScript: "./vendor/gif.worker.js"
-                                });
-                                return [4, this.generator.generate(image, options)];
-                            case 1:
-                                animatedImage = _a.sent();
-                                for (index = 0; index < animatedImage.timeline.length - 1; index++) {
-                                    frame = animatedImage.timeline[index];
-                                    nextFrame = animatedImage.timeline[index + 1];
-                                    delay = (nextFrame.time - frame.time) * 1000;
-                                    gifEncoder.addFrame(frame.image.toImageData(), { delay: delay });
+                this.state = EmojiState.Rendering;
+                return [2, new Promise(function (resolve) {
+                        return options.sourceImage.forEach(function (imageOptions) { return __awaiter(_this, void 0, void 0, function () {
+                            var image, gifEncoder, animatedImage, index, frame, nextFrame, delay;
+                            var _this = this;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        image = imageOptions.image;
+                                        options.expandTimeline.map(function (expandTimelineOptions) {
+                                            return image = image.expandTimeline(expandTimelineOptions.length, expandTimelineOptions.fps);
+                                        });
+                                        gifEncoder = new GifEncoder({
+                                            workers: 2,
+                                            quality: 100,
+                                            background: 0xFFFFFF,
+                                            width: options.width,
+                                            height: options.height,
+                                            workerScript: "./vendor/gif.worker.js"
+                                        });
+                                        this.gifEncoder = Option.some(gifEncoder);
+                                        return [4, this.generator.generate(image, options, function () { return _this.state == EmojiState.Stopping; })];
+                                    case 1:
+                                        animatedImage = _a.sent();
+                                        if (this.state == EmojiState.Stopping) {
+                                            this.state = EmojiState.Idle;
+                                            resolve(false);
+                                        }
+                                        for (index = 0; index < animatedImage.timeline.length - 1; index++) {
+                                            frame = animatedImage.timeline[index];
+                                            nextFrame = animatedImage.timeline[index + 1];
+                                            delay = (nextFrame.time - frame.time) * 1000;
+                                            gifEncoder.addFrame(frame.image.toImageData(), { delay: delay });
+                                        }
+                                        gifEncoder.on("finished", function (gif) {
+                                            _this.renderedGif = Option.some(gif);
+                                            _this.state = EmojiState.Idle;
+                                            gifEncoder.freeWorkers.forEach(function (worker) { return worker.terminate(); });
+                                            resolve(true);
+                                        });
+                                        gifEncoder.render();
+                                        return [2];
                                 }
-                                gifEncoder.on("finished", function (gif) {
-                                    _this.renderedGif = Option.some(gif);
-                                    _this.afterRender();
-                                });
-                                gifEncoder.render();
-                                return [2];
-                        }
-                    });
-                }); });
-                return [2];
+                            });
+                        }); });
+                    })];
             });
         });
     };
-    Emoji.prototype.afterRender = function () {
+    Emoji.prototype.checkSize = function () {
         var _this = this;
-        this.updateAttachedImageElement();
         this.imageElement.forEach(function (imageElement) {
             _this.renderedGif.forEach(function (gif) {
                 var maxSize = 128 * 1024;

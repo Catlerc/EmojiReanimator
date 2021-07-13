@@ -52,9 +52,9 @@ var EmojiGenerator = (function () {
         canvas.clear();
         canvas.setBackgroundColor("#FFFFFF", null);
     };
-    EmojiGenerator.prototype.generate = function (image, options) {
+    EmojiGenerator.prototype.generate = function (image, options, cancelCheck) {
         return __awaiter(this, void 0, void 0, function () {
-            var timeline, relativeImage, currentImage, lastFrameTime, _loop_1, this_1, _i, _a, frame;
+            var timeline, relativeImage, currentImage, lastFrameTime, _loop_1, this_1, _i, _a, frame, state_1;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -66,6 +66,8 @@ var EmojiGenerator = (function () {
                             return __generator(this, function (_c) {
                                 switch (_c.label) {
                                     case 0:
+                                        if (cancelCheck())
+                                            return [2, "break"];
                                         index = image.timeline.indexOf(frame);
                                         if (!(frame.type !== FrameType.End)) return [3, 5];
                                         canvas_1 = Utils.createCanvas(options.width, options.height);
@@ -121,7 +123,9 @@ var EmojiGenerator = (function () {
                         frame = _a[_i];
                         return [5, _loop_1(frame)];
                     case 2:
-                        _b.sent();
+                        state_1 = _b.sent();
+                        if (state_1 === "break")
+                            return [3, 4];
                         _b.label = 3;
                     case 3:
                         _i++;

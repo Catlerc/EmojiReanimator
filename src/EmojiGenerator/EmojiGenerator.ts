@@ -28,7 +28,7 @@ export class EmojiGenerator {
     canvas.setBackgroundColor("#FFFFFF", null)
   }
 
-  async generate(image: AnimatedImage, options: Options): Promise<AnimatedImage> {
+  async generate(image: AnimatedImage, options: Options, cancelCheck: () => boolean): Promise<AnimatedImage> {
     let timeline: Array<Frame> = []
     const relativeImage = new RelativeImage(image)
 
@@ -37,6 +37,8 @@ export class EmojiGenerator {
     let currentImage: RelativeFabricImage
     let lastFrameTime: number
     for (const frame of image.timeline) {
+      if (cancelCheck()) break
+
       const index = image.timeline.indexOf(frame)
       if (frame.type !== FrameType.End) {
         const canvas = Utils.createCanvas(options.width, options.height)

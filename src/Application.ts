@@ -40,7 +40,6 @@ export class Application {
   constructor(
     private emojiNameInput: HTMLInputElement,
     private fileInput: HTMLInputElement,
-    private redrawButton: HTMLButtonElement,
     private smileSizeInput: HTMLInputElement,
     private compressionInput: HTMLInputElement,
     private forceAnimateInput: HTMLInputElement,
@@ -48,7 +47,6 @@ export class Application {
     private fpsInput: HTMLInputElement,
     private imagePreview: HTMLImageElement,
     private downloadButton: HTMLButtonElement,
-    private syncGifsButton: HTMLButtonElement,
     private anotherRotationInput: HTMLInputElement,
   ) {
     this.reloadOptions()
@@ -56,14 +54,18 @@ export class Application {
     this.emojiSizeWarning.updateRoot(document.body)
   }
 
+  inputChange() {
+    this.reloadOptions()
+    this.redraw()
+  }
+
   initializeEvents() {
-    this.emojiNameInput.onchange = () => this.reloadOptions()
-    this.redrawButton.onclick = () => this.redraw()
-    this.smileSizeInput.onchange = () => this.reloadOptions()
-    this.compressionInput.onchange = () => this.reloadOptions()
-    this.animationLengthInput.onchange = () => this.reloadOptions()
-    this.fpsInput.onchange = () => this.reloadOptions()
-    this.anotherRotationInput.onchange = () => this.reloadOptions()
+    this.emojiNameInput.onchange = () => this.inputChange()
+    this.smileSizeInput.onchange = () => this.inputChange()
+    this.compressionInput.onchange = () => this.inputChange()
+    this.animationLengthInput.onchange = () => this.inputChange()
+    this.fpsInput.onchange = () => this.inputChange()
+    this.anotherRotationInput.onchange = () => this.inputChange()
     this.forceAnimateInput.onchange = () => {
       if (this.forceAnimateInput.checked) {
         this.animationLengthInput.disabled = false
@@ -73,15 +75,14 @@ export class Application {
         this.fpsInput.disabled = true
       }
 
-      this.reloadOptions()
+      this.inputChange()
     }
     this.fileInput.onchange = (event: any) => {
 
       const fileList = event.target.files
       const file: File = fileList.item(0)
       const reader = new FileReader()
-      if (file)
-      {
+      if (file) {
         this.imagePreview.src = "resources/loading.gif"
         reader.onloadend = () => this.onFileSelection(file, reader.result as ArrayBuffer)
         setTimeout(() => reader.readAsArrayBuffer(file), 10)
@@ -89,10 +90,11 @@ export class Application {
     }
 
     this.downloadButton.onclick = () => this.downloadRenderedEmojies()
-    this.syncGifsButton.onclick = () => {
-      // noinspection SillyAssignmentJS
-      this.emojies.forEach(emoji => emoji.imageElement.forEach(imgElement => imgElement.src = imgElement.src))
-    }
+  }
+
+  syncGifs() {
+    // noinspection SillyAssignmentJS
+    this.emojies.forEach(emoji => emoji.imageElement.forEach(imgElement => imgElement.src = imgElement.src))
   }
 
   reloadOptions() {
@@ -125,13 +127,21 @@ export class Application {
   }
 
   redraw() {
-    this.options.sourceImage.forEach(imageOptions =>
-      this.emojies.forEach(emoji => {
+    this.emojies.forEach(emoji => {
+      if (this.options.sourceImage.nonEmpty()) {
         emoji.imageElement.map(element => element.src = "resources/loading.gif")
-        // noinspection JSIgnoredPromiseFromCall
-        emoji.render(this.options)
-      }))
+        emoji.stopRender().then(_ =>
+          emoji.render(this.options).then(isSuccessfully => {
+            if (isSuccessfully) {
+              emoji.checkSize()
+              emoji.updateAttachedImageElement()
+              this.syncGifs()
+            }
+          })
+        )
 
+      }
+    })
   }
 
   onFileSelection(file: File, data: ArrayBuffer) {

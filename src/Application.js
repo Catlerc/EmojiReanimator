@@ -5,10 +5,9 @@ import { Utils } from "./Utils/Utils.js";
 import { EmojiGenerator } from "./EmojiGenerator/EmojiGenerator.js";
 import { EmojiSizeWarning } from "./EmojiSizeWarning.js";
 var Application = (function () {
-    function Application(emojiNameInput, fileInput, redrawButton, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, imagePreview, downloadButton, syncGifsButton, anotherRotationInput) {
+    function Application(emojiNameInput, fileInput, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, imagePreview, downloadButton, anotherRotationInput) {
         this.emojiNameInput = emojiNameInput;
         this.fileInput = fileInput;
-        this.redrawButton = redrawButton;
         this.smileSizeInput = smileSizeInput;
         this.compressionInput = compressionInput;
         this.forceAnimateInput = forceAnimateInput;
@@ -16,7 +15,6 @@ var Application = (function () {
         this.fpsInput = fpsInput;
         this.imagePreview = imagePreview;
         this.downloadButton = downloadButton;
-        this.syncGifsButton = syncGifsButton;
         this.anotherRotationInput = anotherRotationInput;
         this.emojies = [];
         this.options = {
@@ -30,15 +28,18 @@ var Application = (function () {
         this.emojiSizeWarning = new EmojiSizeWarning();
         this.emojiSizeWarning.updateRoot(document.body);
     }
+    Application.prototype.inputChange = function () {
+        this.reloadOptions();
+        this.redraw();
+    };
     Application.prototype.initializeEvents = function () {
         var _this = this;
-        this.emojiNameInput.onchange = function () { return _this.reloadOptions(); };
-        this.redrawButton.onclick = function () { return _this.redraw(); };
-        this.smileSizeInput.onchange = function () { return _this.reloadOptions(); };
-        this.compressionInput.onchange = function () { return _this.reloadOptions(); };
-        this.animationLengthInput.onchange = function () { return _this.reloadOptions(); };
-        this.fpsInput.onchange = function () { return _this.reloadOptions(); };
-        this.anotherRotationInput.onchange = function () { return _this.reloadOptions(); };
+        this.emojiNameInput.onchange = function () { return _this.inputChange(); };
+        this.smileSizeInput.onchange = function () { return _this.inputChange(); };
+        this.compressionInput.onchange = function () { return _this.inputChange(); };
+        this.animationLengthInput.onchange = function () { return _this.inputChange(); };
+        this.fpsInput.onchange = function () { return _this.inputChange(); };
+        this.anotherRotationInput.onchange = function () { return _this.inputChange(); };
         this.forceAnimateInput.onchange = function () {
             if (_this.forceAnimateInput.checked) {
                 _this.animationLengthInput.disabled = false;
@@ -48,7 +49,7 @@ var Application = (function () {
                 _this.animationLengthInput.disabled = true;
                 _this.fpsInput.disabled = true;
             }
-            _this.reloadOptions();
+            _this.inputChange();
         };
         this.fileInput.onchange = function (event) {
             var fileList = event.target.files;
@@ -61,9 +62,9 @@ var Application = (function () {
             }
         };
         this.downloadButton.onclick = function () { return _this.downloadRenderedEmojies(); };
-        this.syncGifsButton.onclick = function () {
-            _this.emojies.forEach(function (emoji) { return emoji.imageElement.forEach(function (imgElement) { return imgElement.src = imgElement.src; }); });
-        };
+    };
+    Application.prototype.syncGifs = function () {
+        this.emojies.forEach(function (emoji) { return emoji.imageElement.forEach(function (imgElement) { return imgElement.src = imgElement.src; }); });
     };
     Application.prototype.reloadOptions = function () {
         var _this = this;
@@ -94,11 +95,19 @@ var Application = (function () {
     };
     Application.prototype.redraw = function () {
         var _this = this;
-        this.options.sourceImage.forEach(function (imageOptions) {
-            return _this.emojies.forEach(function (emoji) {
+        this.emojies.forEach(function (emoji) {
+            if (_this.options.sourceImage.nonEmpty()) {
                 emoji.imageElement.map(function (element) { return element.src = "resources/loading.gif"; });
-                emoji.render(_this.options);
-            });
+                emoji.stopRender().then(function (_) {
+                    return emoji.render(_this.options).then(function (isSuccessfully) {
+                        if (isSuccessfully) {
+                            emoji.checkSize();
+                            emoji.updateAttachedImageElement();
+                            _this.syncGifs();
+                        }
+                    });
+                });
+            }
         });
     };
     Application.prototype.onFileSelection = function (file, data) {

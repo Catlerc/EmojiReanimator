@@ -13,6 +13,11 @@ interface GifEncoderFrameOptions {
 }
 
 interface GifEncoder {
+  freeWorkers: Worker[]
+  running: string
+
+  abort(): void
+
   addFrame(imageData: ImageData, options: GifEncoderFrameOptions): void
 
   on(eventName: string, func: (event: any) => any): void
@@ -20,10 +25,17 @@ interface GifEncoder {
   render(): void
 }
 
+export enum EmojiState {
+  Idle,
+  Rendering,
+  Stopping
+}
 
 export class Emoji {
   renderedGif: Option<Blob> = Option.none<Blob>()
   imageElement: Option<HTMLImageElement> = Option.none<HTMLImageElement>()
+  state: EmojiState = EmojiState.Idle
+  gifEncoder: Option<GifEncoder> = Option.none()
 
   constructor(public generator: EmojiGenerator, private emojiSizeWarning: EmojiSizeWarning) {
   }
@@ -51,45 +63,65 @@ export class Emoji {
     )
   }
 
-  async render(options: Options) {
-    // noinspection ES6MissingAwait
-    options.sourceImage.forEach(async imageOptions => {
-      let image = imageOptions.image
-      options.expandTimeline.map(expandTimelineOptions =>
-        image = image.expandTimeline(expandTimelineOptions.length, expandTimelineOptions.fps)
-      )
-
-      const gifEncoder: GifEncoder = new GifEncoder({
-        workers: 2,
-        quality: 100,
-        background: 0xFFFFFF,
-        width: options.width,
-        height: options.height,
-        workerScript: "./vendor/gif.worker.js"
-      })
-
-      const animatedImage = await this.generator.generate(image, options)
-
-      for (let index = 0; index < animatedImage.timeline.length - 1; index++) {
-        const frame = animatedImage.timeline[index] as ImageUpdateFrame
-        const nextFrame = animatedImage.timeline[index + 1]
-        const delay = (nextFrame.time - frame.time) * 1000
-        gifEncoder.addFrame(
-          frame.image.toImageData(),
-          {delay: delay}
-        )
-      }
-
-      gifEncoder.on("finished", (gif: Blob) => {
-        this.renderedGif = Option.some(gif)
-        this.afterRender()
-      })
-      gifEncoder.render()
+  async stopRender(): Promise<void> {
+    return new Promise<void>(resolve => {
+      const refreshIntervalId = setInterval(() => {
+        this.gifEncoder.forEach(gifEncoder => gifEncoder.abort)
+        if (this.state == EmojiState.Idle) {
+          this.gifEncoder.forEach(gifEncoder => gifEncoder.freeWorkers.forEach(worker => worker.terminate()))
+          clearInterval(refreshIntervalId)
+          resolve()
+        } else this.state = EmojiState.Stopping
+      }, 100)
     })
   }
 
-  afterRender() {
-    this.updateAttachedImageElement()
+  async render(options: Options): Promise<boolean> {
+    this.state = EmojiState.Rendering
+    return new Promise<boolean>(resolve =>
+      options.sourceImage.forEach(async imageOptions => {
+        let image = imageOptions.image
+        options.expandTimeline.map(expandTimelineOptions =>
+          image = image.expandTimeline(expandTimelineOptions.length, expandTimelineOptions.fps)
+        )
+
+        const gifEncoder: GifEncoder = new GifEncoder({
+          workers: 2,
+          quality: 100,
+          background: 0xFFFFFF,
+          width: options.width,
+          height: options.height,
+          workerScript: "./vendor/gif.worker.js"
+        })
+        this.gifEncoder = Option.some(gifEncoder)
+
+        const animatedImage = await this.generator.generate(image, options, () => this.state == EmojiState.Stopping)
+        if (this.state == EmojiState.Stopping) {
+          this.state = EmojiState.Idle
+          resolve(false)
+        }
+        for (let index = 0; index < animatedImage.timeline.length - 1; index++) {
+          const frame = animatedImage.timeline[index] as ImageUpdateFrame
+          const nextFrame = animatedImage.timeline[index + 1]
+          const delay = (nextFrame.time - frame.time) * 1000
+          gifEncoder.addFrame(
+            frame.image.toImageData(),
+            {delay: delay}
+          )
+        }
+
+        gifEncoder.on("finished", (gif: Blob) => {
+          this.renderedGif = Option.some(gif)
+          this.state = EmojiState.Idle
+          gifEncoder.freeWorkers.forEach(worker => worker.terminate())
+          resolve(true)
+        })
+        gifEncoder.render()
+      })
+    )
+  }
+
+  checkSize() {
     this.imageElement.forEach(imageElement => {
       this.renderedGif.forEach(gif => {
         const maxSize = 128 * 1024 //128 Kb
