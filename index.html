@@ -1,3 +1,5 @@
+<meta charset="utf-8">
+
 <link rel="stylesheet" type="text/css" href="styles.css" media="screen"/>
 
 <script type="text/javascript" src="vendor/fabric.min.js"></script>
@@ -7,62 +9,57 @@
 
 
 <div class="verticalFlex" id="mainBlock">
-    <div class="settingsBlock horizontalFlex">
-        <div class="verticalFlex">
+    <div class="settingsBlock HorizontalFlex">
+        <div class="verticalFlex" >
             <img id="imagePreview" width="128" height="128" src="resources/transparent.png"/>
+            <button id="inputButton">
+                Выберите файл
+                <input id="fileInput" type="file" name="name"/>
+            </button>
         </div>
         <table class="optionsTable">
             <tr>
-                <th class="labelDecoration">Emoji name</th>
+                <th class="LabelDecoration">Название эмодзи</th>
                 <th>
-                    <input type="text" class="inputDecoration" id="EmojiNameInput" maxlength="96" disabled>
+                    <input type="text" class="InputDecoration" id="emojiNameInput" maxlength="96" disabled>
+                </th>
+                <th class="LabelDecoration">Добавление кадров</th>
+                <th>
+                    <input type="checkbox" class="InputDecoration" id="forceAnimateInput">
                 </th>
             </tr>
             <tr>
-                <th class="labelDecoration">Smile size (px)</th>
+                <th class="LabelDecoration">Размер эмодзи (px)</th>
                 <th>
-                    <input type="number" class="inputDecoration" id="SmileSizeInput" min="1" max="1000" value="64">
+                    <input type="number" class="InputDecoration" id="smileSizeInput" min="1" max="1000" value="64">
+                </th>
+                <th class="LabelDecoration">Длина анимации (sec)</th>
+                <th>
+                    <input type="number" class="InputDecoration" id="animationLengthInput" min="0" value="1" disabled>
                 </th>
             </tr>
             <tr>
-                <th class="labelDecoration">Compression</th>
+                <th class="LabelDecoration">Сжатие</th>
                 <th>
-                    <input type="number" class="inputDecoration" id="GifCompressionInput" min="1" max="100" value="1">
+                    <input type="number" class="InputDecoration" id="gifCompressionInput" min="1" max="100" value="1">
+                </th>
+                <th class="LabelDecoration">Кадров в секунду</th>
+                <th>
+                    <input type="number" class="InputDecoration" id="gifFpsInput" min="1" value="20" disabled>
                 </th>
             </tr>
             <tr>
-                <th class="labelDecoration">Force animate</th>
+                <th class="LabelDecoration">Другие повороты</th>
                 <th>
-                    <input type="checkbox" class="inputDecoration" id="ForceAnimateInput">
-                </th>
-            </tr>
-            <tr>
-                <th class="labelDecoration">Animation length (sec)</th>
-                <th>
-                    <input type="number" class="inputDecoration" id="AnimationLengthInput" min="0" value="1">
-                </th>
-            </tr>
-            <tr>
-                <th class="labelDecoration">Frame per second</th>
-                <th>
-                    <input type="number" class="inputDecoration" id="GifFpsInput" min="1" value="20">
-                </th>
-            </tr>
-            <tr>
-                <th class="labelDecoration">Use another rotation</th>
-                <th>
-                    <input type="checkbox" class="inputDecoration" id="AnotherRotation">
+                    <input type="checkbox" class="InputDecoration" id="anotherRotation">
                 </th>
             </tr>
         </table>
     </div>
-    <div class="horizontalFlex">
-        <button id="inputButton">
-            Choose file for reanimating<input id="file-input" type="file" name="name"/>
-        </button>
-        <button id="redrawButton"> reload</button>
-        <button id="syncGifs"> sync Gifs</button>
-    </div>
     <div id="emojiTableContainer"></div>
-    <button id="downloadButton"> download</button>
+    <div class="HorizontalFlex">
+        <button id="redrawButton"> Отрендерить анимации</button>
+        <button id="syncGifs"> Синхронизировать анимации</button>
+        <button id="downloadButton"> Скачать анимации</button>
+    </div>
 </div>

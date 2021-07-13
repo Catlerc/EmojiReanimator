@@ -10,7 +10,7 @@ body {
     flex-direction: column;
 }
 
-.horizontalFlex {
+.HorizontalFlex {
     display: flex;
     flex-wrap: nowrap;
     flex-direction: row;
@@ -18,7 +18,7 @@ body {
 
 .optionsTable {
     text-align: left;
-    height: 140pt;
+    height: 100%;
 }
 
 #mainBlock {
@@ -26,15 +26,7 @@ body {
     margin: auto;
 }
 
-#output {
-    width: 130pt;
-    height: 130pt;
-    border-style: solid;
-    border-color: #90A4AE;
-    border-width: 3pt;
-}
-
-.inputDecoration {
+.InputDecoration {
     border-style: solid;
     border-color: #90A4AE;
     border-width: 3pt;
@@ -44,11 +36,17 @@ body {
     width: 100pt;
 }
 
-.labelDecoration {
-    margin: 0 0 0 0;
+.InputDecoration[disabled] {
+    opacity: 0.8;
+    background: #e5e5f7 repeating-linear-gradient(45deg, #c4c4ff, #c4c4ff 5px, #e5e5f7 5px, #e5e5f7 10px);
 }
 
-#file-input {
+.LabelDecoration {
+    margin: 0 0 0 0;
+    height: 30px;
+}
+
+#fileInput {
     width: 150pt;
     height: 20pt;
 }
@@ -56,37 +54,31 @@ body {
 #inputButton {
     position: relative;
 
-    width: 150pt;
+    width: 128px;
 
     text-align: center;
     color: #fff;
     font-size: 15px;
     background-color: #F44336;
+    border-width: 0;
+    border-style: none;
 
     overflow: hidden;
 }
 
 input[type="file"] {
-    /* Apply absolute positioning and move it to top-left corner of parent div element */
     position: absolute;
-
-
-    /* Making the file input element to cover the whole div element */
-    right: 0px;
-    bottom: 0px;
+    right: 0;
+    bottom: 0;
     width: 136pt;
-
-    /* Hiding the tap color when it is clicked on touch devices ( this is not widely supported ) */
     -webkit-tap-highlight-color: transparent;
-    /* Make it invisible ( it is present at it's position but just invisible ) */
     opacity: 0;
-
-    /* Move it to the upper layer above the container div's layer to ensure that it is always clickable */
     z-index: 1;
 }
 
 .settingsBlock {
     padding: 5pt;
+    height: 150px;
 }
 
 .emoji[sizefailure] {
@@ -96,6 +88,8 @@ input[type="file"] {
 
 #imagePreview {
     object-fit: contain;
+    height: 128px;
+    width: 128px;
 }
 
 

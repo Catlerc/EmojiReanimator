@@ -5,7 +5,7 @@ var emojiTable = [
     ["ru", "rl", "ul", null, null, null]
 ];
 var emojiTableContainer = document.getElementById("emojiTableContainer");
-var app = new Application(document.getElementById("EmojiNameInput"), document.getElementById("file-input"), document.getElementById("redrawButton"), document.getElementById("SmileSizeInput"), document.getElementById("GifCompressionInput"), document.getElementById("ForceAnimateInput"), document.getElementById("AnimationLengthInput"), document.getElementById("GifFpsInput"), document.getElementById("imagePreview"), document.getElementById("downloadButton"), document.getElementById("syncGifs"), document.getElementById("AnotherRotation"));
+var app = new Application(document.getElementById("emojiNameInput"), document.getElementById("fileInput"), document.getElementById("redrawButton"), document.getElementById("smileSizeInput"), document.getElementById("gifCompressionInput"), document.getElementById("forceAnimateInput"), document.getElementById("animationLengthInput"), document.getElementById("gifFpsInput"), document.getElementById("imagePreview"), document.getElementById("downloadButton"), document.getElementById("syncGifs"), document.getElementById("anotherRotation"));
 app.initializeEvents();
 emojiTableContainer.append(app.generateEmojiTable(emojiTable));
 //# sourceMappingURL=Main.js.map
