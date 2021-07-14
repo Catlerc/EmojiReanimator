@@ -149,6 +149,7 @@ var Emoji = (function () {
         });
     };
     Emoji.prototype.setOverSize = function (overSize) {
+        this.overSize = overSize;
         this.imageElement.forEach(function (imageElement) {
             if (overSize)
                 imageElement.setAttribute("sizefailure", null);

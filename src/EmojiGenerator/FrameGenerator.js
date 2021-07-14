@@ -102,7 +102,7 @@ export var TurnGenerator = function (image, time) { return __awaiter(void 0, voi
         }
     });
 }); };
-var linesN = 30;
+var linesN = 20;
 export var TurnGeneratorFlex = function (image, time) { return __awaiter(void 0, void 0, void 0, function () {
     function createSlices(copies, time) {
         var sliceWidth = image.underlying.width / linesN;
@@ -160,4 +160,13 @@ export function Reverse(underlying) {
         });
     }); };
 }
+export var Shake = function (image, _) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        image.setPos(0.5 + (Math.random() - 0.5) / 10, 0.5 + (Math.random() - 0.5) / 10);
+        image.set({
+            angle: 10 * (Math.random() - 0.5)
+        });
+        return [2, [image]];
+    });
+}); };
 //# sourceMappingURL=FrameGenerator.js.map

@@ -57,18 +57,18 @@ export const TurnGenerator: FrameGenerator =
     return [copy0, copy]
   }
 
-const linesN = 30
+const linesN = 20
 export const TurnGeneratorFlex: FrameGenerator =
   async (image, time) => {
     function createSlices(copies: Array<KeyValuePair<number, RelativeFabricImage>>, time: number) {
-       // time = time - 0.002
+      // time = time - 0.002
       const sliceWidth = image.underlying.width / linesN
       return copies.map(pair => {
         const index = pair.key
         const copy = pair.value
         copy.set({
           originX: index / (linesN),
-          angle: 90 * (time + index / (linesN ))
+          angle: 90 * (time + index / (linesN))
         })
         copy.setPos(0, 1)
 
@@ -76,7 +76,7 @@ export const TurnGeneratorFlex: FrameGenerator =
           width: Math.floor(sliceWidth * 3),
           height: copy.underlying.height,
           top: -copy.underlying.height / 2,
-          left: sliceWidth * index - copy.underlying.width / 2 - sliceWidth/3*2
+          left: sliceWidth * index - copy.underlying.width / 2 - sliceWidth / 3 * 2
         })
         return copy
       })
@@ -105,3 +105,12 @@ export function Reverse(underlying: FrameGenerator): FrameGenerator {
     return await underlying(newImage, 1 - timeNormalized)
   }
 }
+
+export const Shake: FrameGenerator =
+  async (image, _) => {
+    image.setPos(0.5 + (Math.random() - 0.5) / 10, 0.5 + (Math.random() - 0.5) / 10)
+    image.set({
+      angle: 10 * (Math.random() - 0.5)
+    })
+    return [image]
+  }

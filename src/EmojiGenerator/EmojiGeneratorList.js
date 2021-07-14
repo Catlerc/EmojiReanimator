@@ -3,7 +3,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
         to[j] = from[i];
     return to;
 };
-import { LinearGenerator, Reverse, RotationGenerator, TurnGenerator, TurnGeneratorFlex } from "./FrameGenerator.js";
+import { LinearGenerator, Reverse, RotationGenerator, Shake, TurnGenerator, TurnGeneratorFlex } from "./FrameGenerator.js";
 import { FlipHorizontal, FlipVertical } from "./ImagePreprocess.js";
 import { EmojiGenerator } from "./EmojiGenerator.js";
 import { Option } from "../Utils/Option.js";
@@ -38,6 +38,7 @@ var EmojiGeneratorList = (function () {
     };
     EmojiGeneratorList.allGenerators = new Map([
         new EmojiGenerator("rotation", RotationGenerator, 0),
+        new EmojiGenerator("shake", Shake, 0),
         new EmojiGenerator("dr", TurnGeneratorFlex, 270),
         new EmojiGenerator("du", LinearGenerator, 270),
         new EmojiGenerator("ld", TurnGeneratorFlex, 0),

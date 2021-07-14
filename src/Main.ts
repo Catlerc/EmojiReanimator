@@ -3,7 +3,7 @@ import {Application} from "./Application.js"
 const emojiTable: (string | null)[][] = [
   ["dr", "lr", "ld", "rd", "dl", null],
   ["du", "rotation", "ud", "ur", "lu", null],
-  ["ru", "rl", "ul", null, null, null]
+  ["ru", "rl", "ul", "shake", null, null]
 ]
 
 const emojiTableContainer = document.getElementById("emojiTableContainer")

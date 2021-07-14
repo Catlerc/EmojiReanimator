@@ -129,6 +129,7 @@ export class Emoji {
   }
 
   setOverSize(overSize: boolean) {
+    this.overSize = overSize
     this.imageElement.forEach(imageElement => {
       if (overSize)
         imageElement.setAttribute("sizefailure", null)
