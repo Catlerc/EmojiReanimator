@@ -2,7 +2,7 @@ import {Application} from "./Application.js"
 
 const emojiTable: (string | null)[][] = [
   ["dr", "lr", "ld", "rd", "dl", null],
-  ["du", "rc", "ud", "ur", "lu", null],
+  ["du", "rotation", "ud", "ur", "lu", null],
   ["ru", "rl", "ul", null, null, null]
 ]
 
@@ -18,7 +18,10 @@ const app = new Application(
   document.getElementById("gifFpsInput") as HTMLInputElement,
   document.getElementById("imagePreview") as HTMLImageElement,
   document.getElementById("downloadButton") as HTMLButtonElement,
-  document.getElementById("anotherRotation") as HTMLInputElement
+  document.getElementById("anotherRotation") as HTMLInputElement,
+  document.getElementById("animationReverseInput") as HTMLInputElement,
+  document.getElementById("flipHorizontalInput") as HTMLInputElement,
+  document.getElementById("flipVerticalInput") as HTMLInputElement
 )
 app.initializeEvents()
 emojiTableContainer.append(app.generateEmojiTable(emojiTable))

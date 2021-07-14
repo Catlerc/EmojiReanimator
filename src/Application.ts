@@ -3,8 +3,8 @@ import {Seconds} from "./Domain.js"
 import {AnimatedImage} from "./Image/AnimatedImage.js"
 import {Option} from "./Utils/Option.js"
 import {Utils} from "./Utils/Utils.js"
-import {EmojiGenerator} from "./EmojiGenerator/EmojiGenerator.js"
 import {EmojiSizeWarning} from "./EmojiSizeWarning.js"
+import {EmojiGeneratorList} from "./EmojiGenerator/EmojiGeneratorList.js"
 
 
 export interface ImageOptions {
@@ -22,7 +22,10 @@ export interface Options {
   width: number
   height: number
   expandTimeline: Option<ExpandTimelineOptions>
-  anotherRotation: boolean
+  anotherRotation: boolean,
+  animationReverse: boolean,
+  flipHorizontal: boolean,
+  flipVertical: boolean
 }
 
 
@@ -33,9 +36,13 @@ export class Application {
     height: 64,
     sourceImage: Option.none(),
     expandTimeline: Option.none(),
-    anotherRotation: false
+    anotherRotation: false,
+    animationReverse: false,
+    flipHorizontal: false,
+    flipVertical: false
   }
   emojiSizeWarning: EmojiSizeWarning
+  emojiGeneratorList: EmojiGeneratorList
 
   constructor(
     private emojiNameInput: HTMLInputElement,
@@ -48,10 +55,14 @@ export class Application {
     private imagePreview: HTMLImageElement,
     private downloadButton: HTMLButtonElement,
     private anotherRotationInput: HTMLInputElement,
+    private animationReverseInput: HTMLInputElement,
+    private flipHorizontalInput: HTMLInputElement,
+    private flipVerticalInput: HTMLInputElement,
   ) {
     this.reloadOptions()
     this.emojiSizeWarning = new EmojiSizeWarning()
     this.emojiSizeWarning.updateRoot(document.body)
+    this.emojiGeneratorList = new EmojiGeneratorList(false, false, false, false)
   }
 
   inputChange() {
@@ -63,6 +74,9 @@ export class Application {
     this.emojiNameInput.onchange = () => this.reloadOptions()
     this.smileSizeInput.onchange = () => this.inputChange()
     this.compressionInput.onchange = () => this.inputChange()
+    this.animationReverseInput.onchange = () => this.inputChange()
+    this.flipHorizontalInput.onchange = () => this.inputChange()
+    this.flipVerticalInput.onchange = () => this.inputChange()
     this.animationLengthInput.onchange = () => this.inputChange()
     this.fpsInput.onchange = () => this.inputChange()
     this.anotherRotationInput.onchange = () => this.inputChange()
@@ -117,13 +131,18 @@ export class Application {
       width: size,
       height: size,
       expandTimeline: expandTimelineOptions,
-      anotherRotation: this.anotherRotationInput.checked
+      anotherRotation: this.anotherRotationInput.checked,
+      animationReverse: this.animationReverseInput.checked,
+      flipHorizontal: this.flipHorizontalInput.checked,
+      flipVertical: this.flipVerticalInput.checked
     }
-
-    this.emojies.forEach(emoji =>
-      emoji.generator = this.options.anotherRotation ?
-        Option.fromValue(EmojiGenerator.anotherRotationGenerators.get(emoji.generator.namePrefix)).getOrElse(emoji.generator) :
-        Option.fromValue(EmojiGenerator.allGenerators.get(emoji.generator.namePrefix)).getOrElse(emoji.generator))
+    this.emojiGeneratorList = new EmojiGeneratorList(
+      this.options.anotherRotation,
+      this.options.animationReverse,
+      this.options.flipHorizontal,
+      this.options.flipVertical
+    )
+    this.emojies.forEach(emoji => emoji.generator = this.emojiGeneratorList.getGenerator(emoji.generator.namePrefix))
   }
 
   redraw() {
@@ -169,7 +188,7 @@ export class Application {
         emojiElement.className = "emoji"
         if (emojiRendererName == null) {
         } else {
-          const newEmoji = new Emoji(EmojiGenerator.allGenerators.get(emojiRendererName), this.emojiSizeWarning)
+          const newEmoji = new Emoji(this.emojiGeneratorList.getGenerator(emojiRendererName), this.emojiSizeWarning)
           emojiElement.setAttribute("renderer", emojiRendererName)
           newEmoji.attach(emojiElement)
           emojies.push(newEmoji)

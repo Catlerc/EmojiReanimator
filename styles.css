@@ -4,7 +4,7 @@ body {
     background-color: #ffffff;
 }
 
-.verticalFlex {
+.VerticalFlex {
     display: flex;
     flex-wrap: nowrap;
     flex-direction: column;
@@ -16,7 +16,7 @@ body {
     flex-direction: row;
 }
 
-.optionsTable {
+.OptionsTable {
     text-align: left;
     height: 100%;
 }
@@ -76,12 +76,12 @@ input[type="file"] {
     z-index: 1;
 }
 
-.settingsBlock {
+.SettingsBlock {
     padding: 5pt;
     height: 150px;
 }
 
-.emoji[sizefailure] {
+.Emoji[sizefailure] {
     outline: 2pt dotted red;
     outline-offset: -1pt;
 }
@@ -93,7 +93,7 @@ input[type="file"] {
 }
 
 
-.emoji {
+.Emoji {
     width: 30px;
     height: 30px;
     padding: 0 0 0 0;

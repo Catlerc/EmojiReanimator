@@ -83,12 +83,12 @@ var Emoji = (function () {
     };
     Emoji.prototype.render = function (options) {
         return __awaiter(this, void 0, void 0, function () {
-            var thisRenderId;
+            var currentRenderId;
             var _this = this;
             return __generator(this, function (_a) {
                 this.setOverSize(false);
-                thisRenderId = Math.floor(Math.random() * 99999999999);
-                this.renderId = thisRenderId;
+                currentRenderId = Math.floor(Math.random() * 99999999999);
+                this.renderId = currentRenderId;
                 return [2, new Promise(function (resolve) {
                         return options.sourceImage.forEach(function (imageOptions) { return __awaiter(_this, void 0, void 0, function () {
                             var image, gifEncoder, animatedImage, index, frame, nextFrame, delay;
@@ -108,10 +108,10 @@ var Emoji = (function () {
                                             height: options.height,
                                             workerScript: "./vendor/gif.worker.js"
                                         });
-                                        return [4, this.generator.generate(image, options, function () { return _this.renderId != thisRenderId; })];
+                                        return [4, this.generator.generate(image, options, function () { return _this.renderId != currentRenderId; })];
                                     case 1:
                                         animatedImage = _a.sent();
-                                        if (this.renderId != thisRenderId) {
+                                        if (this.renderId != currentRenderId) {
                                             Emoji.cleanup(gifEncoder);
                                             resolve(false);
                                         }
@@ -123,7 +123,7 @@ var Emoji = (function () {
                                         }
                                         gifEncoder.on("finished", function (gif) {
                                             Emoji.cleanup(gifEncoder);
-                                            if (_this.renderId == thisRenderId) {
+                                            if (_this.renderId == currentRenderId) {
                                                 _this.renderedGif = Option.some(gif);
                                                 resolve(true);
                                             }

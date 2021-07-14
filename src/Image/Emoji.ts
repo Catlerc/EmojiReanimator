@@ -73,8 +73,8 @@ export class Emoji {
 
   async render(options: Options): Promise<boolean> {
     this.setOverSize(false)
-    const thisRenderId = Math.floor(Math.random() * 99999999999)
-    this.renderId = thisRenderId
+    const currentRenderId = Math.floor(Math.random() * 99999999999)
+    this.renderId = currentRenderId
 
     return new Promise<boolean>(resolve =>
       options.sourceImage.forEach(async imageOptions => {
@@ -92,8 +92,8 @@ export class Emoji {
           workerScript: "./vendor/gif.worker.js"
         })
 
-        const animatedImage = await this.generator.generate(image, options, () => this.renderId != thisRenderId)
-        if (this.renderId != thisRenderId) {
+        const animatedImage = await this.generator.generate(image, options, () => this.renderId != currentRenderId)
+        if (this.renderId != currentRenderId) {
           Emoji.cleanup(gifEncoder)
           resolve(false)
         }
@@ -109,7 +109,7 @@ export class Emoji {
 
         gifEncoder.on("finished", (gif: Blob) => {
           Emoji.cleanup(gifEncoder)
-          if (this.renderId == thisRenderId) {
+          if (this.renderId == currentRenderId) {
             this.renderedGif = Option.some(gif)
             resolve(true)
           } else resolve(false)

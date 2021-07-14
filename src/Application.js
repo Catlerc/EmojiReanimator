@@ -2,10 +2,10 @@ import { Emoji } from "./Image/Emoji.js";
 import { AnimatedImage } from "./Image/AnimatedImage.js";
 import { Option } from "./Utils/Option.js";
 import { Utils } from "./Utils/Utils.js";
-import { EmojiGenerator } from "./EmojiGenerator/EmojiGenerator.js";
 import { EmojiSizeWarning } from "./EmojiSizeWarning.js";
+import { EmojiGeneratorList } from "./EmojiGenerator/EmojiGeneratorList.js";
 var Application = (function () {
-    function Application(emojiNameInput, fileInput, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, imagePreview, downloadButton, anotherRotationInput) {
+    function Application(emojiNameInput, fileInput, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, imagePreview, downloadButton, anotherRotationInput, animationReverseInput, flipHorizontalInput, flipVerticalInput) {
         this.emojiNameInput = emojiNameInput;
         this.fileInput = fileInput;
         this.smileSizeInput = smileSizeInput;
@@ -16,17 +16,24 @@ var Application = (function () {
         this.imagePreview = imagePreview;
         this.downloadButton = downloadButton;
         this.anotherRotationInput = anotherRotationInput;
+        this.animationReverseInput = animationReverseInput;
+        this.flipHorizontalInput = flipHorizontalInput;
+        this.flipVerticalInput = flipVerticalInput;
         this.emojies = [];
         this.options = {
             width: 64,
             height: 64,
             sourceImage: Option.none(),
             expandTimeline: Option.none(),
-            anotherRotation: false
+            anotherRotation: false,
+            animationReverse: false,
+            flipHorizontal: false,
+            flipVertical: false
         };
         this.reloadOptions();
         this.emojiSizeWarning = new EmojiSizeWarning();
         this.emojiSizeWarning.updateRoot(document.body);
+        this.emojiGeneratorList = new EmojiGeneratorList(false, false, false, false);
     }
     Application.prototype.inputChange = function () {
         this.reloadOptions();
@@ -37,6 +44,9 @@ var Application = (function () {
         this.emojiNameInput.onchange = function () { return _this.reloadOptions(); };
         this.smileSizeInput.onchange = function () { return _this.inputChange(); };
         this.compressionInput.onchange = function () { return _this.inputChange(); };
+        this.animationReverseInput.onchange = function () { return _this.inputChange(); };
+        this.flipHorizontalInput.onchange = function () { return _this.inputChange(); };
+        this.flipVerticalInput.onchange = function () { return _this.inputChange(); };
         this.animationLengthInput.onchange = function () { return _this.inputChange(); };
         this.fpsInput.onchange = function () { return _this.inputChange(); };
         this.anotherRotationInput.onchange = function () { return _this.inputChange(); };
@@ -85,13 +95,13 @@ var Application = (function () {
             width: size,
             height: size,
             expandTimeline: expandTimelineOptions,
-            anotherRotation: this.anotherRotationInput.checked
+            anotherRotation: this.anotherRotationInput.checked,
+            animationReverse: this.animationReverseInput.checked,
+            flipHorizontal: this.flipHorizontalInput.checked,
+            flipVertical: this.flipVerticalInput.checked
         };
-        this.emojies.forEach(function (emoji) {
-            return emoji.generator = _this.options.anotherRotation ?
-                Option.fromValue(EmojiGenerator.anotherRotationGenerators.get(emoji.generator.namePrefix)).getOrElse(emoji.generator) :
-                Option.fromValue(EmojiGenerator.allGenerators.get(emoji.generator.namePrefix)).getOrElse(emoji.generator);
-        });
+        this.emojiGeneratorList = new EmojiGeneratorList(this.options.anotherRotation, this.options.animationReverse, this.options.flipHorizontal, this.options.flipVertical);
+        this.emojies.forEach(function (emoji) { return emoji.generator = _this.emojiGeneratorList.getGenerator(emoji.generator.namePrefix); });
     };
     Application.prototype.redraw = function () {
         var _this = this;
@@ -137,7 +147,7 @@ var Application = (function () {
                 if (emojiRendererName == null) {
                 }
                 else {
-                    var newEmoji = new Emoji(EmojiGenerator.allGenerators.get(emojiRendererName), _this.emojiSizeWarning);
+                    var newEmoji = new Emoji(_this.emojiGeneratorList.getGenerator(emojiRendererName), _this.emojiSizeWarning);
                     emojiElement.setAttribute("renderer", emojiRendererName);
                     newEmoji.attach(emojiElement);
                     emojies.push(newEmoji);
