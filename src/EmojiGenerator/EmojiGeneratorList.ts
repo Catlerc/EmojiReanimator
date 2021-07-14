@@ -1,4 +1,12 @@
-import {LinearGenerator, Reverse, RotationGenerator, Shake, TurnGenerator, TurnGeneratorFlex} from "./FrameGenerator.js"
+import {
+  Just,
+  LinearGenerator,
+  Reverse,
+  RotationGenerator,
+  Shake,
+  TurnGenerator,
+  TurnGeneratorFlex
+} from "./FrameGenerator.js"
 import {FlipHorizontal, FlipVertical} from "./ImagePreprocess.js"
 import {EmojiGenerator} from "./EmojiGenerator.js"
 import {Option} from "../Utils/Option.js"
@@ -7,6 +15,7 @@ export class EmojiGeneratorList {
   static allGenerators: Map<string, EmojiGenerator> = new Map([
     new EmojiGenerator("rotation", RotationGenerator, 0),
     new EmojiGenerator("shake", Shake, 0),
+    new EmojiGenerator("just", Just, 0),
     new EmojiGenerator("dr", TurnGeneratorFlex, 270),
     new EmojiGenerator("du", LinearGenerator, 270),
     new EmojiGenerator("ld", TurnGeneratorFlex, 0),

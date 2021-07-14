@@ -114,3 +114,9 @@ export const Shake: FrameGenerator =
     })
     return [image]
   }
+
+export const Just: FrameGenerator =
+  async (image, _) => {
+    image.setPos(0.5, 0.5)
+    return [image]
+  }

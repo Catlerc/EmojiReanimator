@@ -169,4 +169,10 @@ export var Shake = function (image, _) { return __awaiter(void 0, void 0, void 0
         return [2, [image]];
     });
 }); };
+export var Just = function (image, _) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        image.setPos(0.5, 0.5);
+        return [2, [image]];
+    });
+}); };
 //# sourceMappingURL=FrameGenerator.js.map
