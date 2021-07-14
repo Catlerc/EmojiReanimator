@@ -98,14 +98,12 @@ var Application = (function () {
         this.emojies.forEach(function (emoji) {
             if (_this.options.sourceImage.nonEmpty()) {
                 emoji.imageElement.map(function (element) { return element.src = "resources/loading.gif"; });
-                emoji.stopRender().then(function (_) {
-                    return emoji.render(_this.options).then(function (isSuccessfully) {
-                        if (isSuccessfully) {
-                            emoji.checkSize();
-                            emoji.updateAttachedImageElement();
-                            _this.syncGifs();
-                        }
-                    });
+                emoji.render(_this.options).then(function (isSuccessfully) {
+                    if (isSuccessfully) {
+                        emoji.checkSize();
+                        emoji.updateAttachedImageElement();
+                        _this.syncGifs();
+                    }
                 });
             }
         });

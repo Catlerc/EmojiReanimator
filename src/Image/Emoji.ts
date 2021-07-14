@@ -34,8 +34,8 @@ export enum EmojiState {
 export class Emoji {
   renderedGif: Option<Blob> = Option.none<Blob>()
   imageElement: Option<HTMLImageElement> = Option.none<HTMLImageElement>()
-  state: EmojiState = EmojiState.Idle
-  gifEncoder: Option<GifEncoder> = Option.none()
+  renderId: number = 0
+  overSize: boolean = false
 
   constructor(public generator: EmojiGenerator, private emojiSizeWarning: EmojiSizeWarning) {
   }
@@ -43,14 +43,18 @@ export class Emoji {
   attach(imageElement: HTMLImageElement) {
     this.imageElement = Option.some(imageElement)
     imageElement.onmouseenter = () => {
-      this.emojiSizeWarning.updatePosition(imageElement)
-      this.renderedGif.forEach(gif => {
-        if (gif.size > 128 * 1024)
-          this.emojiSizeWarning.setText(`Размер эмодзи превышает лимит slack'a (${Math.ceil(gif.size / 1024)} Kb > 128 kb).`)
-        else
-          this.emojiSizeWarning.hide()
-      })
-      if (!this.renderedGif.nonEmpty()) this.emojiSizeWarning.hide()
+      if (this.overSize) {
+        this.emojiSizeWarning.updatePosition(imageElement)
+        this.renderedGif.forEach(gif => {
+          if (gif.size > 128 * 1024)
+            this.emojiSizeWarning.setText(`Размер эмодзи превышает лимит slack'a (${Math.ceil(gif.size / 1024)} Kb > 128 kb).`)
+          else
+            this.emojiSizeWarning.hide()
+        })
+        if (!this.renderedGif.nonEmpty()) this.emojiSizeWarning.hide()
+      } else
+        this.emojiSizeWarning.hide()
+
     }
     imageElement.onmouseleave = () => this.emojiSizeWarning.hide()
   }
@@ -63,21 +67,15 @@ export class Emoji {
     )
   }
 
-  async stopRender(): Promise<void> {
-    return new Promise<void>(resolve => {
-      const refreshIntervalId = setInterval(() => {
-        this.gifEncoder.forEach(gifEncoder => gifEncoder.abort)
-        if (this.state == EmojiState.Idle) {
-          this.gifEncoder.forEach(gifEncoder => gifEncoder.freeWorkers.forEach(worker => worker.terminate()))
-          clearInterval(refreshIntervalId)
-          resolve()
-        } else this.state = EmojiState.Stopping
-      }, 100)
-    })
+  private static cleanup(gifEncoder: GifEncoder) {
+    gifEncoder.freeWorkers.forEach(worker => worker.terminate())
   }
 
   async render(options: Options): Promise<boolean> {
-    this.state = EmojiState.Rendering
+    this.setOverSize(false)
+    const thisRenderId = Math.floor(Math.random() * 99999999999)
+    this.renderId = thisRenderId
+
     return new Promise<boolean>(resolve =>
       options.sourceImage.forEach(async imageOptions => {
         let image = imageOptions.image
@@ -93,11 +91,10 @@ export class Emoji {
           height: options.height,
           workerScript: "./vendor/gif.worker.js"
         })
-        this.gifEncoder = Option.some(gifEncoder)
 
-        const animatedImage = await this.generator.generate(image, options, () => this.state == EmojiState.Stopping)
-        if (this.state == EmojiState.Stopping) {
-          this.state = EmojiState.Idle
+        const animatedImage = await this.generator.generate(image, options, () => this.renderId != thisRenderId)
+        if (this.renderId != thisRenderId) {
+          Emoji.cleanup(gifEncoder)
           resolve(false)
         }
         for (let index = 0; index < animatedImage.timeline.length - 1; index++) {
@@ -111,10 +108,11 @@ export class Emoji {
         }
 
         gifEncoder.on("finished", (gif: Blob) => {
-          this.renderedGif = Option.some(gif)
-          this.state = EmojiState.Idle
-          gifEncoder.freeWorkers.forEach(worker => worker.terminate())
-          resolve(true)
+          Emoji.cleanup(gifEncoder)
+          if (this.renderId == thisRenderId) {
+            this.renderedGif = Option.some(gif)
+            resolve(true)
+          } else resolve(false)
         })
         gifEncoder.render()
       })
@@ -125,10 +123,17 @@ export class Emoji {
     this.imageElement.forEach(imageElement => {
       this.renderedGif.forEach(gif => {
         const maxSize = 128 * 1024 //128 Kb
-        if (gif.size > maxSize) {
-          imageElement.setAttribute("sizefailure", null)
-        } else imageElement.removeAttribute("sizefailure")
+        this.setOverSize(gif.size > maxSize)
       })
+    })
+  }
+
+  setOverSize(overSize: boolean) {
+    this.imageElement.forEach(imageElement => {
+      if (overSize)
+        imageElement.setAttribute("sizefailure", null)
+      else
+        imageElement.removeAttribute("sizefailure")
     })
   }
 }

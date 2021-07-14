@@ -49,21 +49,25 @@ var Emoji = (function () {
         this.emojiSizeWarning = emojiSizeWarning;
         this.renderedGif = Option.none();
         this.imageElement = Option.none();
-        this.state = EmojiState.Idle;
-        this.gifEncoder = Option.none();
+        this.renderId = 0;
+        this.overSize = false;
     }
     Emoji.prototype.attach = function (imageElement) {
         var _this = this;
         this.imageElement = Option.some(imageElement);
         imageElement.onmouseenter = function () {
-            _this.emojiSizeWarning.updatePosition(imageElement);
-            _this.renderedGif.forEach(function (gif) {
-                if (gif.size > 128 * 1024)
-                    _this.emojiSizeWarning.setText("\u0420\u0430\u0437\u043C\u0435\u0440 \u044D\u043C\u043E\u0434\u0437\u0438 \u043F\u0440\u0435\u0432\u044B\u0448\u0430\u0435\u0442 \u043B\u0438\u043C\u0438\u0442 slack'a (" + Math.ceil(gif.size / 1024) + " Kb > 128 kb).");
-                else
+            if (_this.overSize) {
+                _this.emojiSizeWarning.updatePosition(imageElement);
+                _this.renderedGif.forEach(function (gif) {
+                    if (gif.size > 128 * 1024)
+                        _this.emojiSizeWarning.setText("\u0420\u0430\u0437\u043C\u0435\u0440 \u044D\u043C\u043E\u0434\u0437\u0438 \u043F\u0440\u0435\u0432\u044B\u0448\u0430\u0435\u0442 \u043B\u0438\u043C\u0438\u0442 slack'a (" + Math.ceil(gif.size / 1024) + " Kb > 128 kb).");
+                    else
+                        _this.emojiSizeWarning.hide();
+                });
+                if (!_this.renderedGif.nonEmpty())
                     _this.emojiSizeWarning.hide();
-            });
-            if (!_this.renderedGif.nonEmpty())
+            }
+            else
                 _this.emojiSizeWarning.hide();
         };
         imageElement.onmouseleave = function () { return _this.emojiSizeWarning.hide(); };
@@ -74,30 +78,17 @@ var Emoji = (function () {
             imageElement.src = Utils.imageBlobToDataUrl(gif);
         }); });
     };
-    Emoji.prototype.stopRender = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            return __generator(this, function (_a) {
-                return [2, new Promise(function (resolve) {
-                        var refreshIntervalId = setInterval(function () {
-                            _this.gifEncoder.forEach(function (gifEncoder) { return gifEncoder.abort; });
-                            if (_this.state == EmojiState.Idle) {
-                                _this.gifEncoder.forEach(function (gifEncoder) { return gifEncoder.freeWorkers.forEach(function (worker) { return worker.terminate(); }); });
-                                clearInterval(refreshIntervalId);
-                                resolve();
-                            }
-                            else
-                                _this.state = EmojiState.Stopping;
-                        }, 100);
-                    })];
-            });
-        });
+    Emoji.cleanup = function (gifEncoder) {
+        gifEncoder.freeWorkers.forEach(function (worker) { return worker.terminate(); });
     };
     Emoji.prototype.render = function (options) {
         return __awaiter(this, void 0, void 0, function () {
+            var thisRenderId;
             var _this = this;
             return __generator(this, function (_a) {
-                this.state = EmojiState.Rendering;
+                this.setOverSize(false);
+                thisRenderId = Math.floor(Math.random() * 99999999999);
+                this.renderId = thisRenderId;
                 return [2, new Promise(function (resolve) {
                         return options.sourceImage.forEach(function (imageOptions) { return __awaiter(_this, void 0, void 0, function () {
                             var image, gifEncoder, animatedImage, index, frame, nextFrame, delay;
@@ -117,12 +108,11 @@ var Emoji = (function () {
                                             height: options.height,
                                             workerScript: "./vendor/gif.worker.js"
                                         });
-                                        this.gifEncoder = Option.some(gifEncoder);
-                                        return [4, this.generator.generate(image, options, function () { return _this.state == EmojiState.Stopping; })];
+                                        return [4, this.generator.generate(image, options, function () { return _this.renderId != thisRenderId; })];
                                     case 1:
                                         animatedImage = _a.sent();
-                                        if (this.state == EmojiState.Stopping) {
-                                            this.state = EmojiState.Idle;
+                                        if (this.renderId != thisRenderId) {
+                                            Emoji.cleanup(gifEncoder);
                                             resolve(false);
                                         }
                                         for (index = 0; index < animatedImage.timeline.length - 1; index++) {
@@ -132,10 +122,13 @@ var Emoji = (function () {
                                             gifEncoder.addFrame(frame.image.toImageData(), { delay: delay });
                                         }
                                         gifEncoder.on("finished", function (gif) {
-                                            _this.renderedGif = Option.some(gif);
-                                            _this.state = EmojiState.Idle;
-                                            gifEncoder.freeWorkers.forEach(function (worker) { return worker.terminate(); });
-                                            resolve(true);
+                                            Emoji.cleanup(gifEncoder);
+                                            if (_this.renderId == thisRenderId) {
+                                                _this.renderedGif = Option.some(gif);
+                                                resolve(true);
+                                            }
+                                            else
+                                                resolve(false);
                                         });
                                         gifEncoder.render();
                                         return [2];
@@ -151,12 +144,16 @@ var Emoji = (function () {
         this.imageElement.forEach(function (imageElement) {
             _this.renderedGif.forEach(function (gif) {
                 var maxSize = 128 * 1024;
-                if (gif.size > maxSize) {
-                    imageElement.setAttribute("sizefailure", null);
-                }
-                else
-                    imageElement.removeAttribute("sizefailure");
+                _this.setOverSize(gif.size > maxSize);
             });
+        });
+    };
+    Emoji.prototype.setOverSize = function (overSize) {
+        this.imageElement.forEach(function (imageElement) {
+            if (overSize)
+                imageElement.setAttribute("sizefailure", null);
+            else
+                imageElement.removeAttribute("sizefailure");
         });
     };
     return Emoji;

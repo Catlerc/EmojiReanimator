@@ -130,16 +130,13 @@ export class Application {
     this.emojies.forEach(emoji => {
       if (this.options.sourceImage.nonEmpty()) {
         emoji.imageElement.map(element => element.src = "resources/loading.gif")
-        emoji.stopRender().then(_ =>
-          emoji.render(this.options).then(isSuccessfully => {
-            if (isSuccessfully) {
-              emoji.checkSize()
-              emoji.updateAttachedImageElement()
-              this.syncGifs()
-            }
-          })
-        )
-
+        emoji.render(this.options).then(isSuccessfully => {
+          if (isSuccessfully) {
+            emoji.checkSize()
+            emoji.updateAttachedImageElement()
+            this.syncGifs()
+          }
+        })
       }
     })
   }
