@@ -61,7 +61,6 @@ const linesN = 20
 export const TurnGeneratorFlex: FrameGenerator =
   async (image, time) => {
     function createSlices(copies: Array<KeyValuePair<number, RelativeFabricImage>>, time: number) {
-      // time = time - 0.002
       const sliceWidth = image.underlying.width / linesN
       return copies.map(pair => {
         const index = pair.key

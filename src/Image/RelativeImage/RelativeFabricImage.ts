@@ -1,6 +1,6 @@
 import {FabricImage} from "../../FabricWrapper/FabricImage.js"
 import {FabricCanvas} from "../../FabricWrapper/FabricCanvas.js"
-import {KeyValuePair} from "../../Domain.js";
+import {KeyValuePair} from "../../Domain.js"
 
 export class RelativeFabricImage {
   underlying: FabricImage
