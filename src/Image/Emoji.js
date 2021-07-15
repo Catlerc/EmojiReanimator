@@ -141,11 +141,9 @@ var Emoji = (function () {
     };
     Emoji.prototype.checkSize = function () {
         var _this = this;
-        this.imageElement.forEach(function (imageElement) {
-            _this.renderedGif.forEach(function (gif) {
-                var maxSize = 128 * 1024;
-                _this.setOverSize(gif.size > maxSize);
-            });
+        this.renderedGif.forEach(function (gif) {
+            var maxSize = 128 * 1024;
+            _this.setOverSize(gif.size > maxSize);
         });
     };
     Emoji.prototype.setOverSize = function (overSize) {

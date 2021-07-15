@@ -51,8 +51,7 @@ export class EmojiGenerator {
           this.preprocess.forEach(preprocess => {
             pixelsRaw = preprocess(pixelsRaw)
           })
-          const pixels = pixelsRaw
-          currentImage = await relativeImage.getFabricImageForFrame(pixels.toImageData())//pixels.toImageData())
+          currentImage = await relativeImage.getFabricImageForFrame(pixelsRaw.toImageData())
         }
 
         EmojiGenerator.prepareCanvas(canvas)
@@ -62,11 +61,12 @@ export class EmojiGenerator {
 
         canvas.renderAll()
 
-        const imageData = canvas.contextContainer.getImageData(0, 0, options.width, options.height)
+        const imageData = canvas.toCanvasElement().getContext("2d").getImageData(0, 0, options.width, options.height)
 
         EmojiGenerator.prepareCanvas(canvas)
 
-        const imageForRotation = await Utils.fabricImageFromDataUrl(Utils.imageDataToDataUrl(imageData))
+        const dataUrl = Utils.imageDataToDataUrl(imageData)
+        const imageForRotation = await Utils.fabricImageFromDataUrl(dataUrl)
         imageForRotation.set({
           originX: "center",
           originY: "center",
@@ -77,7 +77,7 @@ export class EmojiGenerator {
         canvas.add(imageForRotation)
         canvas.renderAll()
 
-        timeline.push(new ImageUpdateFrame(Pixels.fromImageData(canvas.contextContainer.getImageData(0, 0, options.width, options.height)), frame.time))
+        timeline.push(new ImageUpdateFrame(Pixels.fromImageData(canvas.toCanvasElement().getContext("2d").getImageData(0, 0, options.width, options.height)), frame.time))
         lastFrameTime = frame.time
       } else
         timeline.push(frame)

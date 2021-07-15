@@ -45,7 +45,7 @@ var RelativeImage = (function () {
     }
     RelativeImage.prototype.getFabricImageForFrame = function (frame) {
         return __awaiter(this, void 0, void 0, function () {
-            var fabricImage;
+            var fabricImage, scaledImage;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4, Utils.fabricImageFromDataUrl(Utils.imageDataToDataUrl(frame))];
@@ -55,7 +55,8 @@ var RelativeImage = (function () {
                             originX: "center",
                             originY: "center",
                         });
-                        return [2, new RelativeFabricImage(fabricImage.scale(this.scale), this.canvas)];
+                        scaledImage = fabricImage.scale(this.scale);
+                        return [2, new RelativeFabricImage(scaledImage, this.canvas)];
                 }
             });
         });

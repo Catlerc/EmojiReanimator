@@ -120,11 +120,9 @@ export class Emoji {
   }
 
   checkSize() {
-    this.imageElement.forEach(imageElement => {
-      this.renderedGif.forEach(gif => {
-        const maxSize = 128 * 1024 //128 Kb
-        this.setOverSize(gif.size > maxSize)
-      })
+    this.renderedGif.forEach(gif => {
+      const maxSize = 128 * 1024 //128 Kb
+      this.setOverSize(gif.size > maxSize)
     })
   }
 

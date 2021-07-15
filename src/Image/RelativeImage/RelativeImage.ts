@@ -25,7 +25,8 @@ export class RelativeImage {
       originX: "center",
       originY: "center",
     })
-    return new RelativeFabricImage(fabricImage.scale(this.scale), this.canvas)
+    const scaledImage = fabricImage.scale(this.scale)
+    return new RelativeFabricImage(scaledImage, this.canvas)
   }
 
   rescaleToFit(width: number, height: number): void {

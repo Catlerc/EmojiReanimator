@@ -60,7 +60,7 @@ var EmojiGenerator = (function () {
                         relativeImage = new RelativeImage(image);
                         relativeImage.rescaleToFit(options.width, options.height);
                         _loop_1 = function (frame) {
-                            var index, canvas_1, timeNormalized, imageUpdateFrame, pixelsRaw_1, pixels, relativeFabricImages, imageData, imageForRotation;
+                            var index, canvas_1, timeNormalized, imageUpdateFrame, pixelsRaw_1, relativeFabricImages, imageData, dataUrl, imageForRotation;
                             return __generator(this, function (_c) {
                                 switch (_c.label) {
                                     case 0:
@@ -77,8 +77,7 @@ var EmojiGenerator = (function () {
                                         this_1.preprocess.forEach(function (preprocess) {
                                             pixelsRaw_1 = preprocess(pixelsRaw_1);
                                         });
-                                        pixels = pixelsRaw_1;
-                                        return [4, relativeImage.getFabricImageForFrame(pixels.toImageData())];
+                                        return [4, relativeImage.getFabricImageForFrame(pixelsRaw_1.toImageData())];
                                     case 1:
                                         currentImage = _c.sent();
                                         _c.label = 2;
@@ -89,9 +88,10 @@ var EmojiGenerator = (function () {
                                         relativeFabricImages = _c.sent();
                                         relativeFabricImages.forEach(function (img) { return canvas_1.add(img.underlying); });
                                         canvas_1.renderAll();
-                                        imageData = canvas_1.contextContainer.getImageData(0, 0, options.width, options.height);
+                                        imageData = canvas_1.toCanvasElement().getContext("2d").getImageData(0, 0, options.width, options.height);
                                         EmojiGenerator.prepareCanvas(canvas_1);
-                                        return [4, Utils.fabricImageFromDataUrl(Utils.imageDataToDataUrl(imageData))];
+                                        dataUrl = Utils.imageDataToDataUrl(imageData);
+                                        return [4, Utils.fabricImageFromDataUrl(dataUrl)];
                                     case 4:
                                         imageForRotation = _c.sent();
                                         imageForRotation.set({
@@ -103,7 +103,7 @@ var EmojiGenerator = (function () {
                                         });
                                         canvas_1.add(imageForRotation);
                                         canvas_1.renderAll();
-                                        timeline.push(new ImageUpdateFrame(Pixels.fromImageData(canvas_1.contextContainer.getImageData(0, 0, options.width, options.height)), frame.time));
+                                        timeline.push(new ImageUpdateFrame(Pixels.fromImageData(canvas_1.toCanvasElement().getContext("2d").getImageData(0, 0, options.width, options.height)), frame.time));
                                         lastFrameTime = frame.time;
                                         return [3, 6];
                                     case 5:

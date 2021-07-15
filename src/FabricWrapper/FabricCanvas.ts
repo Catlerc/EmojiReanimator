@@ -14,6 +14,5 @@ export interface FabricCanvas {
 
   width: number
   height: number
-  contextContainer: CanvasRenderingContext2D
-  cacheCanvasEl: HTMLCanvasElement
+  toCanvasElement(): HTMLCanvasElement
 }
