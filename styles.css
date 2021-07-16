@@ -1,7 +1,8 @@
 body {
     font-family: Tahoma, "sans-serif";
     color: #263238;
-    background-color: #ffffff;
+    background-color: #F1F5FF;
+
 }
 
 .VerticalFlex {
@@ -18,12 +19,10 @@ body {
 
 .OptionsTable {
     text-align: left;
-    height: 100%;
-}
+    table-layout: fixed;
+    width: 100%;
+    height: fit-content;
 
-#mainBlock {
-    width: 800pt;
-    margin: auto;
 }
 
 .InputDecoration {
@@ -32,8 +31,13 @@ body {
     border-width: 3pt;
     background-color: #ECEFF1;
     margin: 0 0 0 0;
-    height: 100%;
-    width: 100pt;
+    height: 20pt;
+    width: 100%;
+}
+
+.InputDecoration[type="checkbox"] {
+    height: 20pt;
+    width: 20pt;
 }
 
 .InputDecoration[disabled] {
@@ -44,36 +48,29 @@ body {
 .LabelDecoration {
     margin: 0 0 0 0;
     height: 30px;
-}
-
-#fileInput {
-    width: 150pt;
-    height: 20pt;
-}
-
-#inputButton {
-    position: relative;
-
-    width: 128px;
-
-    text-align: center;
-    color: #fff;
-    font-size: 15px;
-    background-color: #F44336;
-    border-width: 0;
-    border-style: none;
-
-    overflow: hidden;
+    font-weight: normal;
 }
 
 input[type="file"] {
     position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 136pt;
+    height: 212px;
+    width: 212px;
     -webkit-tap-highlight-color: transparent;
     opacity: 0;
-    z-index: 1;
+    z-index: 3;
+}
+
+#imagePreviewLabel {
+    position: absolute;
+    height: 212px;
+    width: 212px;
+    text-align: center;
+    vertical-align: 100px;
+    background-color: #e5edfd;
+}
+
+#imagePreviewLabel > div {
+    margin: 85px auto;
 }
 
 .SettingsBlock {
@@ -88,14 +85,29 @@ input[type="file"] {
 
 #imagePreview {
     object-fit: contain;
-    height: 128px;
-    width: 128px;
+    height: 212px;
+    width: 212px;
+    z-index: 1;
 }
 
 
+#emojiTableContainer {
+    margin: 0 auto 0 auto;
+    width: fit-content;
+}
+
+.TopBlock {
+    padding: 3px 3px 3px 3px;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 15px #999DA9;
+    background-color: #ffffff;
+    margin-left: 13px;
+    margin-right: 10px;
+}
+
 .Emoji {
-    width: 30px;
-    height: 30px;
+    width: 48px;
+    height: 48px;
     padding: 0 0 0 0;
     margin: 0 0 0 0;
 }
@@ -110,9 +122,74 @@ input[type="file"] {
     padding-left: 5px;
     padding-right: 5px;
     position: absolute;
-    left: 30px;
-    top: 0;
-    height: 30px;
+    left: 48px;
+    top: 12;
+    height: 24px;
     z-index: 9999;
     background-color: #ECEFF1;
+    vertical-align: middle;
+    box-shadow: 0 5px 15px #999DA9;
+
+}
+
+#mainBlock {
+    margin: auto;
+}
+
+#mainBlock > .HorizontalFlex {
+    margin-left: auto;
+    margin-right: auto;
+    width: 750px;
+}
+
+
+#mainBlock > .VerticalFlex {
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
+}
+
+#imagePreviewBlock {
+    width: 212px;
+    height: 212px;
+}
+
+
+.OptionsTable > tbody > tr {
+    height: 40px;
+
+}
+
+#imagePreviewLight {
+    position: absolute;
+    width: 212px;
+    height: 212px;
+    background-color: #e5edfd;
+    z-index: 2;
+    opacity: 0%;
+    text-align: center;
+    vertical-align: 100px;
+}
+#imagePreviewLight > div {
+    margin: 85px auto;
+}
+#imagePreviewBox:hover  #imagePreviewLight {
+    background-color: #d5e2fa;
+    opacity: 70%;
+}
+
+
+#downloadButton {
+    width: 100%;
+    height: 40px;
+    padding: 0 0 0 0;
+    margin: 0 0 0 0;
+    border-radius: 0;
+    border-style: solid;
+    border-width: 0;
+    background-color: #e5edfd;
+}
+
+#downloadButton:hover {
+    background-color: #d5e2fa;
 }

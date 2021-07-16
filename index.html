@@ -9,27 +9,35 @@
 
 
 <div class="VerticalFlex" id="mainBlock">
-    <div class="SettingsBlock HorizontalFlex">
-        <div class="VerticalFlex" >
-            <img id="imagePreview" width="128" height="128" src="resources/transparent.png"/>
-            <button id="inputButton">
-                Выберите файл
+    <div class="HorizontalFlex" id="imageRow">
+
+        <div class="TopBlock" id="imagePreviewBlock">
+            <div class="VerticalFlex" id="imagePreviewBox">
+
                 <input id="fileInput" type="file" name="name"/>
-            </button>
+                <div id="imagePreviewLabel">
+                    <div>
+                        Выберите файл
+                        <br>
+                        (PNG, JPG, GIF)
+                    </div>
+                </div>
+                <img id="imagePreview" width="256" height="256" src="resources/transparent.png"/>
+                <div id="imagePreviewLight">
+                    <div>
+                        Выберите файл
+                        <br>
+                        (PNG, JPG, GIF)
+                    </div>
+                </div>
+            </div>
         </div>
-        <table class="OptionsTable">
+        <table class="TopBlock OptionsTable">
+            <tbody>
             <tr>
                 <th class="LabelDecoration">Название эмодзи</th>
                 <th>
                     <input type="text" class="InputDecoration" id="emojiNameInput" maxlength="96" disabled>
-                </th>
-                <th class="LabelDecoration">Добавление кадров</th>
-                <th>
-                    <input type="checkbox" class="InputDecoration" id="forceAnimateInput">
-                </th>
-                <th class="LabelDecoration">Реверс анимации</th>
-                <th>
-                    <input type="checkbox" class="InputDecoration" id="animationReverseInput">
                 </th>
             </tr>
             <tr>
@@ -37,39 +45,86 @@
                 <th>
                     <input type="number" class="InputDecoration" id="smileSizeInput" min="1" max="1000" value="64">
                 </th>
-                <th class="LabelDecoration">Длина анимации (sec)</th>
+            </tr>
+            <tr>
+                <th class="LabelDecoration">Сжатие</th>
                 <th>
-                    <input type="number" class="InputDecoration" id="animationLengthInput" min="0" value="1" disabled>
+                    <input type="number" class="InputDecoration" id="gifCompressionInput" min="1" max="100"
+                           value="1">
                 </th>
+            </tr>
+            <tr>
                 <th class="LabelDecoration">Отразить по горизонтали</th>
                 <th>
                     <input type="checkbox" class="InputDecoration" id="flipHorizontalInput">
                 </th>
             </tr>
             <tr>
-                <th class="LabelDecoration">Сжатие</th>
-                <th>
-                    <input type="number" class="InputDecoration" id="gifCompressionInput" min="1" max="100" value="1">
-                </th>
-                <th class="LabelDecoration">Кадров в секунду</th>
-                <th>
-                    <input type="number" class="InputDecoration" id="gifFpsInput" min="1" value="20" disabled>
-                </th>
                 <th class="LabelDecoration">Отразить по вертикали</th>
                 <th>
                     <input type="checkbox" class="InputDecoration" id="flipVerticalInput">
                 </th>
             </tr>
-            <tr>
-                <th class="LabelDecoration">Другие повороты</th>
-                <th>
-                    <input type="checkbox" class="InputDecoration" id="anotherRotation">
-                </th>
-            </tr>
+            </tbody>
         </table>
     </div>
-    <div id="emojiTableContainer"></div>
-    <div class="HorizontalFlex">
-        <button id="downloadButton"> Скачать эмодзи</button>
+    <div class="HorizontalFlex" id="optionsRow">
+        <div class="TopBlock">
+            <table class="OptionsTable">
+                <tbody>
+
+                <tr>
+                    <th class="LabelDecoration">Добавление кадров</th>
+                    <th>
+                        <input type="checkbox" class="InputDecoration" id="forceAnimateInput">
+                    </th>
+                </tr>
+                <tr>
+                    <th class="LabelDecoration">Реверс анимации</th>
+                    <th>
+                        <input type="checkbox" class="InputDecoration" id="animationReverseInput">
+                    </th>
+                </tr>
+                <tr>
+                    <th class="LabelDecoration">Длина анимации (sec)</th>
+                    <th>
+                        <input type="number" class="InputDecoration" id="animationLengthInput" min="0" value="1"
+                               disabled>
+                    </th>
+                </tr>
+                <tr>
+                    <th class="LabelDecoration">Кадров в секунду</th>
+                    <th>
+                        <input type="number" class="InputDecoration" id="gifFpsInput" min="1" value="20" disabled>
+                    </th>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="TopBlock">
+            <table class="OptionsTable">
+                <tbody>
+                <tr>
+                    <th class="LabelDecoration">Другие повороты</th>
+                    <th>
+                        <input type="checkbox" class="InputDecoration" id="anotherRotation">
+                    </th>
+                </tr>
+                <tr></tr>
+                <tr></tr>
+                <tr></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="VerticalFlex" id="emojiColumn">
+        <div class="TopBlock">
+            <div id="emojiTableContainer"></div>
+        </div>
+        <div class="TopBlock">
+            <button id="downloadButton"> Скачать эмодзи</button>
+        </div>
     </div>
 </div>
