@@ -102,26 +102,42 @@ export var TurnGenerator = function (image, time) { return __awaiter(void 0, voi
         }
     });
 }); };
-var linesN = 20;
+var linesN = 24;
 export var TurnGeneratorFlex = function (image, time) { return __awaiter(void 0, void 0, void 0, function () {
     function createSlices(copies, time) {
+        time = time - 0.005;
         var sliceWidth = image.underlying.width / linesN;
-        return copies.map(function (pair) {
+        var computedCopies = copies.map(function (pair) {
             var index = pair.key;
             var copy = pair.value;
             copy.set({
                 originX: index / (linesN),
-                angle: 90 * (time + index / (linesN))
+                angle: 90 * (time + index / (linesN - .5))
             });
             copy.setPos(0, 1);
-            copy.underlying.clipPath = new fabric.Rect({
-                width: Math.floor(sliceWidth * 3),
-                height: copy.underlying.height,
-                top: -copy.underlying.height / 2,
-                left: sliceWidth * index - copy.underlying.width / 2 - sliceWidth / 3 * 2
-            });
+            var rate = 1;
+            var w = sliceWidth * rate;
+            var h = copy.underlying.height;
+            var upXR = 1.4;
+            var upYR = 0.99;
+            var leftXR = 1;
+            var leftYR = 0.5;
+            var footXR = 0.3;
+            copy.underlying.clipPath =
+                new fabric.Path("M " + w * footXR + " 0 L " + -w * footXR + " 0 L " + -w * leftXR + " " + -h * leftYR + " L " + -w * upXR + " " + -h * upYR + " L 0 " + -h + " L " + w * upXR + " " + -h * upYR + " L " + w * leftXR + " " + -h * leftYR + " L " + w * footXR + " 0 z", {
+                    originX: 0.5,
+                    top: -copy.underlying.height / 2,
+                    left: sliceWidth * index - copy.underlying.width / 2
+                });
             return copy;
         });
+        var tmp = [];
+        var linesHalfN = linesN / 2;
+        for (var i = 0; i < linesHalfN; i++) {
+            var otherSideIndex = linesHalfN * 2 - i - 1;
+            tmp = __spreadArray(__spreadArray([], tmp), [computedCopies[i], computedCopies[otherSideIndex]]);
+        }
+        return tmp.reverse();
     }
     var copies1, copies2, layers1, layers2;
     return __generator(this, function (_a) {

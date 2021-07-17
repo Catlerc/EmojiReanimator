@@ -1,4 +1,4 @@
-import {AnimatedImage, ImageUpdateFrame} from "../AnimatedImage.js"
+import {AnimatedImage} from "../AnimatedImage.js"
 import {Utils} from "../../Utils/Utils.js"
 import {RelativeFabricImage} from "./RelativeFabricImage.js"
 import {FabricCanvas} from "../../FabricWrapper/FabricCanvas.js"

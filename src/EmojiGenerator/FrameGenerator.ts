@@ -57,28 +57,48 @@ export const TurnGenerator: FrameGenerator =
     return [copy0, copy]
   }
 
-const linesN = 20
+const linesN = 24
+
 export const TurnGeneratorFlex: FrameGenerator =
   async (image, time) => {
     function createSlices(copies: Array<KeyValuePair<number, RelativeFabricImage>>, time: number) {
+      time = time - 0.005
       const sliceWidth = image.underlying.width / linesN
-      return copies.map(pair => {
+      const computedCopies = copies.map(pair => {
         const index = pair.key
         const copy = pair.value
         copy.set({
           originX: index / (linesN),
-          angle: 90 * (time + index / (linesN))
+          angle: 90 * (time + index / (linesN - .5))
         })
+
         copy.setPos(0, 1)
 
-        copy.underlying.clipPath = new fabric.Rect({
-          width: Math.floor(sliceWidth * 3),
-          height: copy.underlying.height,
-          top: -copy.underlying.height / 2,
-          left: sliceWidth * index - copy.underlying.width / 2 - sliceWidth / 3 * 2
-        })
+        const rate = 1
+        const w = sliceWidth * rate
+        const h = copy.underlying.height
+
+
+        const upXR = 1.4
+        const upYR = 0.99
+        const leftXR = 1
+        const leftYR = 0.5
+        const footXR = 0.3
+        copy.underlying.clipPath =
+          new fabric.Path(`M ${w * footXR} 0 L ${-w * footXR} 0 L ${-w * leftXR} ${-h * leftYR} L ${-w * upXR} ${-h * upYR} L 0 ${-h} L ${w * upXR} ${-h * upYR} L ${w * leftXR} ${-h * leftYR} L ${w * footXR} 0 z`, {
+            originX: 0.5,
+            top: -copy.underlying.height / 2,
+            left: sliceWidth * index - copy.underlying.width / 2
+          })
         return copy
       })
+      let tmp: RelativeFabricImage[] = []
+      let linesHalfN = linesN / 2
+      for (let i = 0; i < linesHalfN; i++) {
+        const otherSideIndex = linesHalfN * 2 - i - 1
+        tmp = [...tmp, computedCopies[i], computedCopies[otherSideIndex]]
+      }
+      return tmp.reverse()
     }
 
     image.setPos(0, 1)

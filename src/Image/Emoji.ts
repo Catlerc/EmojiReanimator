@@ -1,5 +1,5 @@
 import {GifEncoder} from "../Vendor.js"
-import {AnimatedImage, FrameType, ImageUpdateFrame, Pixels} from "./AnimatedImage.js"
+import {ImageUpdateFrame} from "./AnimatedImage.js"
 import {Milliseconds} from "../Domain.js"
 import {Option} from "../Utils/Option.js"
 import {Options} from "../Application.js"

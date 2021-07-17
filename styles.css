@@ -2,7 +2,6 @@ body {
     font-family: Tahoma, "sans-serif";
     color: #263238;
     background-color: #F1F5FF;
-    overflow: hidden;
 }
 
 .VerticalFlex {
@@ -38,6 +37,8 @@ body {
 .InputDecoration[type="checkbox"] {
     height: 20pt;
     width: 20pt;
+    border-radius: 0;
+    border-style: none;
 }
 
 .InputDecoration[disabled] {

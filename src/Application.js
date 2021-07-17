@@ -112,7 +112,7 @@ var Application = (function () {
                     if (isSuccessfully) {
                         emoji.checkSize();
                         emoji.updateAttachedImageElement();
-                        _this.syncGifs();
+                        setTimeout(function () { return _this.syncGifs(); }, 300);
                     }
                 });
             }

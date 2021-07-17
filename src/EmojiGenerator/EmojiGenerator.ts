@@ -12,7 +12,7 @@ import {RelativeImage} from "../Image/RelativeImage/RelativeImage.js"
 import {Utils} from "../Utils/Utils.js"
 import {RelativeFabricImage} from "../Image/RelativeImage/RelativeFabricImage.js"
 import {FabricCanvas} from "../FabricWrapper/FabricCanvas.js"
-import {FlipHorizontal, FlipVertical, ImagePreprocess} from "./ImagePreprocess.js"
+import {ImagePreprocess} from "./ImagePreprocess.js"
 
 export class EmojiGenerator {
   constructor(
