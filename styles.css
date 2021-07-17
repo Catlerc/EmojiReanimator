@@ -201,9 +201,11 @@ input[type="file"] {
     flex-wrap: wrap;
     position: absolute;
     width: 90%;
+    pointer-events: none;
 }
 
 .loader span {
+    pointer-events: none;
     z-index: -1;
     width: 100px;
     height: 100px;
