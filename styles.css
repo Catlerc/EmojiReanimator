@@ -123,7 +123,7 @@ input[type="file"] {
     padding-right: 5px;
     position: absolute;
     left: 48px;
-    top: 12;
+    top: 12px;
     height: 24px;
     z-index: 9999;
     background-color: #ECEFF1;
@@ -192,4 +192,42 @@ input[type="file"] {
 
 #downloadButton:hover {
     background-color: #d5e2fa;
+}
+
+.loader {
+    text-align: center;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    position: absolute;
+    width: 90%;
+}
+
+.loader span {
+    z-index: -1;
+    width: 100px;
+    height: 100px;
+    background: url("resources/emojies/peka.png");
+    opacity: 0;
+    animation: loader 20s infinite linear;
+    animation-timing-function: ease-in-out;
+}
+
+@keyframes loader {
+    0% {
+        opacity: 0;
+        -webkit-transform: translate(0, 0vh) rotateZ(0deg);
+    }
+    10% {
+        opacity: .05;
+    }
+    70% {
+        opacity: .05;
+    }
+    90% {
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: translate(0, 80vh) rotateZ(460deg);
+    }
 }
