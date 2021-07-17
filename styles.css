@@ -33,6 +33,7 @@ body {
     height: 20pt;
     width: 100%;
 }
+
 .InputDecoration:invalid {
     border-color: #c21b42;
 }
@@ -176,10 +177,12 @@ input[type="file"] {
     text-align: center;
     vertical-align: 100px;
 }
+
 #imagePreviewLight > div {
     margin: 85px auto;
 }
-#imagePreviewBox:hover  #imagePreviewLight {
+
+#imagePreviewBox:hover #imagePreviewLight {
     background-color: #d5e2fa;
     opacity: 70%;
 }
@@ -271,11 +274,23 @@ input[type="file"] {
     text-shadow: 0 0 15px #868e9c;
     color: #404755;
 }
+
 #topTitle1 {
     font-size: 95px;
     width: 212px;
     padding-right: 40px;
 }
+
 #topTitle2 {
     font-size: 95px;
+}
+
+#githubLabel {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    color: #d6dae3
+}
+#githubLabel > a{
+    color: #d6dae3;
 }
