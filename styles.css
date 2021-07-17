@@ -33,6 +33,9 @@ body {
     height: 20pt;
     width: 100%;
 }
+.InputDecoration:invalid {
+    border-color: #c21b42;
+}
 
 .InputDecoration[type="checkbox"] {
     height: 20pt;
@@ -82,7 +85,7 @@ input[type="file"] {
 }
 
 .Emoji[sizefailure] {
-    outline: 2pt dotted red;
+    outline: 2pt dashed #c21b42;
     outline-offset: -1pt;
 }
 

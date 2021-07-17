@@ -36,7 +36,7 @@ export class Application {
     height: 64,
     sourceImage: Option.none(),
     expandTimeline: Option.none(),
-    SmoothRotation: false,
+    SmoothRotation: true,
     animationReverse: false,
     flipHorizontal: false,
     flipVertical: false
@@ -62,7 +62,6 @@ export class Application {
     this.reloadOptions()
     this.emojiSizeWarning = new EmojiSizeWarning()
     this.emojiSizeWarning.updateRoot(document.body)
-    this.emojiGeneratorList = new EmojiGeneratorList(false, false, false, false)
   }
 
   inputChange() {
