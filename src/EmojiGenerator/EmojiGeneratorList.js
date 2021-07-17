@@ -8,19 +8,19 @@ import { FlipHorizontal, FlipVertical } from "./ImagePreprocess.js";
 import { EmojiGenerator } from "./EmojiGenerator.js";
 import { Option } from "../Utils/Option.js";
 var EmojiGeneratorList = (function () {
-    function EmojiGeneratorList(anotherRotation, animationReverse, flipHorizontal, flipVertical) {
-        this.anotherRotation = anotherRotation;
+    function EmojiGeneratorList(smoothRotation, animationReverse, flipHorizontal, flipVertical) {
+        this.smoothRotation = smoothRotation;
         this.animationReverse = animationReverse;
         this.flipHorizontal = flipHorizontal;
         this.flipVertical = flipVertical;
     }
     EmojiGeneratorList.prototype.getGenerator = function (name) {
         var resultEmojiGenerator;
-        if (this.anotherRotation) {
-            resultEmojiGenerator = Option.fromValue(EmojiGeneratorList.anotherRotationGenerators.get(name)).getOrElse(EmojiGeneratorList.allGenerators.get(name));
+        if (this.smoothRotation) {
+            resultEmojiGenerator = Option.fromValue(EmojiGeneratorList.allGenerators.get(name)).getOrElse(EmojiGeneratorList.smoothRotationGenerators.get(name));
         }
         else {
-            resultEmojiGenerator = Option.fromValue(EmojiGeneratorList.allGenerators.get(name)).getOrElse(EmojiGeneratorList.anotherRotationGenerators.get(name));
+            resultEmojiGenerator = Option.fromValue(EmojiGeneratorList.smoothRotationGenerators.get(name)).getOrElse(EmojiGeneratorList.allGenerators.get(name));
         }
         if (this.animationReverse)
             resultEmojiGenerator = new EmojiGenerator(resultEmojiGenerator.namePrefix, Reverse(resultEmojiGenerator.frameGenerator), resultEmojiGenerator.rotation, resultEmojiGenerator.preprocess);
@@ -53,7 +53,7 @@ var EmojiGeneratorList = (function () {
         new EmojiGenerator("rd", Reverse(TurnGeneratorFlex), 270, [FlipHorizontal, FlipVertical]),
         new EmojiGenerator("ur", Reverse(TurnGeneratorFlex), 180, [FlipHorizontal, FlipVertical])
     ].map(function (renderer) { return [renderer.namePrefix, renderer]; }));
-    EmojiGeneratorList.anotherRotationGenerators = new Map([
+    EmojiGeneratorList.smoothRotationGenerators = new Map([
         new EmojiGenerator("ld", TurnGenerator, 0),
         new EmojiGenerator("ul", TurnGenerator, 90),
         new EmojiGenerator("ru", TurnGenerator, 180),

@@ -27,7 +27,7 @@ body {
 .InputDecoration {
     border-style: solid;
     border-color: #90A4AE;
-    border-width: 3pt;
+    border-width: 2pt;
     background-color: #ECEFF1;
     margin: 0 0 0 0;
     height: 20pt;
@@ -39,6 +39,7 @@ body {
     width: 20pt;
     border-radius: 0;
     border-style: none;
+    cursor: pointer;
 }
 
 .InputDecoration[disabled] {
@@ -59,6 +60,7 @@ input[type="file"] {
     -webkit-tap-highlight-color: transparent;
     opacity: 0;
     z-index: 3;
+    cursor: pointer;
 }
 
 #imagePreviewLabel {
@@ -167,7 +169,7 @@ input[type="file"] {
     height: 212px;
     background-color: #e5edfd;
     z-index: 2;
-    opacity: 0%;
+    opacity: 0;
     text-align: center;
     vertical-align: 100px;
 }
@@ -189,6 +191,8 @@ input[type="file"] {
     border-style: solid;
     border-width: 0;
     background-color: #e5edfd;
+    font-size: 20px;
+    cursor: pointer;
 }
 
 #downloadButton:hover {
@@ -243,4 +247,32 @@ input[type="file"] {
     100% {
         -webkit-transform: translate(0, 1000px) rotateZ(460deg);
     }
+}
+
+#topTitle {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+
+
+    margin-left: auto;
+    margin-right: auto;
+
+    padding-bottom: 25px;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-shadow: 0 0 15px #868e9c;
+    color: #404755;
+}
+#topTitle1 {
+    font-size: 95px;
+    width: 212px;
+    padding-right: 40px;
+}
+#topTitle2 {
+    font-size: 95px;
 }

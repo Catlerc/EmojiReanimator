@@ -22,7 +22,7 @@ export interface Options {
   width: number
   height: number
   expandTimeline: Option<ExpandTimelineOptions>
-  anotherRotation: boolean,
+  SmoothRotation: boolean,
   animationReverse: boolean,
   flipHorizontal: boolean,
   flipVertical: boolean
@@ -30,13 +30,13 @@ export interface Options {
 
 
 export class Application {
-  emojies: Emoji[] = []
+  emojis: Emoji[] = []
   options: Options = {
     width: 64,
     height: 64,
     sourceImage: Option.none(),
     expandTimeline: Option.none(),
-    anotherRotation: false,
+    SmoothRotation: false,
     animationReverse: false,
     flipHorizontal: false,
     flipVertical: false
@@ -54,7 +54,7 @@ export class Application {
     private fpsInput: HTMLInputElement,
     private imagePreview: HTMLImageElement,
     private downloadButton: HTMLButtonElement,
-    private anotherRotationInput: HTMLInputElement,
+    private smoothRotationInput: HTMLInputElement,
     private animationReverseInput: HTMLInputElement,
     private flipHorizontalInput: HTMLInputElement,
     private flipVerticalInput: HTMLInputElement,
@@ -79,7 +79,7 @@ export class Application {
     this.flipVerticalInput.onchange = () => this.inputChange()
     this.animationLengthInput.onchange = () => this.inputChange()
     this.fpsInput.onchange = () => this.inputChange()
-    this.anotherRotationInput.onchange = () => this.inputChange()
+    this.smoothRotationInput.onchange = () => this.inputChange()
     this.forceAnimateInput.onchange = () => {
       if (this.forceAnimateInput.checked) {
         this.animationLengthInput.disabled = false
@@ -103,12 +103,12 @@ export class Application {
       }
     }
 
-    this.downloadButton.onclick = () => this.downloadRenderedEmojies()
+    this.downloadButton.onclick = () => this.downloadRenderedEmojis()
   }
 
   syncGifs() {
     // noinspection SillyAssignmentJS
-    this.emojies.forEach(emoji => emoji.imageElement.forEach(imgElement => imgElement.src = imgElement.src))
+    this.emojis.forEach(emoji => emoji.imageElement.forEach(imgElement => imgElement.src = imgElement.src))
   }
 
   reloadOptions() {
@@ -131,22 +131,22 @@ export class Application {
       width: size,
       height: size,
       expandTimeline: expandTimelineOptions,
-      anotherRotation: this.anotherRotationInput.checked,
+      SmoothRotation: this.smoothRotationInput.checked,
       animationReverse: this.animationReverseInput.checked,
       flipHorizontal: this.flipHorizontalInput.checked,
       flipVertical: this.flipVerticalInput.checked
     }
     this.emojiGeneratorList = new EmojiGeneratorList(
-      this.options.anotherRotation,
+      this.options.SmoothRotation,
       this.options.animationReverse,
       this.options.flipHorizontal,
       this.options.flipVertical
     )
-    this.emojies.forEach(emoji => emoji.generator = this.emojiGeneratorList.getGenerator(emoji.generator.namePrefix))
+    this.emojis.forEach(emoji => emoji.generator = this.emojiGeneratorList.getGenerator(emoji.generator.namePrefix))
   }
 
   redraw() {
-    this.emojies.forEach(emoji => {
+    this.emojis.forEach(emoji => {
       if (this.options.sourceImage.nonEmpty()) {
         emoji.imageElement.map(element => element.src = "resources/loading.gif")
         emoji.render(this.options).then(isSuccessfully => {
@@ -182,7 +182,7 @@ export class Application {
   generateEmojiTable(map: (string | null)[][]): HTMLTableElement {
     const table = document.createElement("table")
     table.className = "emojiTable"
-    const emojies: Emoji[] = []
+    const emojis: Emoji[] = []
     map.forEach(row => {
       const rowElement = document.createElement("tr")
       row.forEach(emojiRendererName => {
@@ -194,14 +194,14 @@ export class Application {
           const newEmoji = new Emoji(this.emojiGeneratorList.getGenerator(emojiRendererName), this.emojiSizeWarning)
           emojiElement.setAttribute("renderer", emojiRendererName)
           newEmoji.attach(emojiElement)
-          emojies.push(newEmoji)
+          emojis.push(newEmoji)
         }
         rowElement.append(emojiElement)
       })
       table.append(rowElement)
     })
 
-    this.emojies = emojies
+    this.emojis = emojis
     return table
   }
 
@@ -216,9 +216,9 @@ export class Application {
     fakeElement.dispatchEvent(fakeMouseEvent)
   }
 
-  downloadRenderedEmojies() {
+  downloadRenderedEmojis() {
     let time = 0
-    this.emojies.forEach(emoji => {
+    this.emojis.forEach(emoji => {
       time += .2
       emoji.renderedGif.forEach(gifBlob =>
         this.options.sourceImage.forEach(imageOptions => {

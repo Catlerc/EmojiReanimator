@@ -18,7 +18,7 @@ const app = new Application(
   document.getElementById("gifFpsInput") as HTMLInputElement,
   document.getElementById("imagePreview") as HTMLImageElement,
   document.getElementById("downloadButton") as HTMLButtonElement,
-  document.getElementById("anotherRotation") as HTMLInputElement,
+  document.getElementById("smoothRotation") as HTMLInputElement,
   document.getElementById("animationReverseInput") as HTMLInputElement,
   document.getElementById("flipHorizontalInput") as HTMLInputElement,
   document.getElementById("flipVerticalInput") as HTMLInputElement

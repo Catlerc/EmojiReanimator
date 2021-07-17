@@ -30,7 +30,7 @@ export class EmojiGeneratorList {
     new EmojiGenerator("ur", Reverse(TurnGeneratorFlex), 180, [FlipHorizontal, FlipVertical])
   ].map(renderer => [renderer.namePrefix, renderer]))
 
-  static anotherRotationGenerators: Map<string, EmojiGenerator> = new Map([
+  static smoothRotationGenerators: Map<string, EmojiGenerator> = new Map([
     new EmojiGenerator("ld", TurnGenerator, 0),
     new EmojiGenerator("ul", TurnGenerator, 90),
     new EmojiGenerator("ru", TurnGenerator, 180),
@@ -42,7 +42,7 @@ export class EmojiGeneratorList {
   ].map(renderer => [renderer.namePrefix, renderer]))
 
   constructor(
-    private anotherRotation: boolean,
+    private smoothRotation: boolean,
     private animationReverse: boolean,
     private flipHorizontal: boolean,
     private flipVertical: boolean
@@ -51,10 +51,10 @@ export class EmojiGeneratorList {
 
   getGenerator(name: string): EmojiGenerator {
     let resultEmojiGenerator: EmojiGenerator
-    if (this.anotherRotation) {
-      resultEmojiGenerator = Option.fromValue(EmojiGeneratorList.anotherRotationGenerators.get(name)).getOrElse(EmojiGeneratorList.allGenerators.get(name))
+    if (this.smoothRotation) {
+      resultEmojiGenerator = Option.fromValue(EmojiGeneratorList.allGenerators.get(name)).getOrElse(EmojiGeneratorList.smoothRotationGenerators.get(name))
     } else {
-      resultEmojiGenerator = Option.fromValue(EmojiGeneratorList.allGenerators.get(name)).getOrElse(EmojiGeneratorList.anotherRotationGenerators.get(name))
+      resultEmojiGenerator = Option.fromValue(EmojiGeneratorList.smoothRotationGenerators.get(name)).getOrElse(EmojiGeneratorList.allGenerators.get(name))
     }
     if (this.animationReverse) resultEmojiGenerator = new EmojiGenerator(
       resultEmojiGenerator.namePrefix,

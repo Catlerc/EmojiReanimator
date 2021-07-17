@@ -5,7 +5,7 @@ import { Utils } from "./Utils/Utils.js";
 import { EmojiSizeWarning } from "./EmojiSizeWarning.js";
 import { EmojiGeneratorList } from "./EmojiGenerator/EmojiGeneratorList.js";
 var Application = (function () {
-    function Application(emojiNameInput, fileInput, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, imagePreview, downloadButton, anotherRotationInput, animationReverseInput, flipHorizontalInput, flipVerticalInput) {
+    function Application(emojiNameInput, fileInput, smileSizeInput, compressionInput, forceAnimateInput, animationLengthInput, fpsInput, imagePreview, downloadButton, smoothRotationInput, animationReverseInput, flipHorizontalInput, flipVerticalInput) {
         this.emojiNameInput = emojiNameInput;
         this.fileInput = fileInput;
         this.smileSizeInput = smileSizeInput;
@@ -15,17 +15,17 @@ var Application = (function () {
         this.fpsInput = fpsInput;
         this.imagePreview = imagePreview;
         this.downloadButton = downloadButton;
-        this.anotherRotationInput = anotherRotationInput;
+        this.smoothRotationInput = smoothRotationInput;
         this.animationReverseInput = animationReverseInput;
         this.flipHorizontalInput = flipHorizontalInput;
         this.flipVerticalInput = flipVerticalInput;
-        this.emojies = [];
+        this.emojis = [];
         this.options = {
             width: 64,
             height: 64,
             sourceImage: Option.none(),
             expandTimeline: Option.none(),
-            anotherRotation: false,
+            SmoothRotation: false,
             animationReverse: false,
             flipHorizontal: false,
             flipVertical: false
@@ -49,7 +49,7 @@ var Application = (function () {
         this.flipVerticalInput.onchange = function () { return _this.inputChange(); };
         this.animationLengthInput.onchange = function () { return _this.inputChange(); };
         this.fpsInput.onchange = function () { return _this.inputChange(); };
-        this.anotherRotationInput.onchange = function () { return _this.inputChange(); };
+        this.smoothRotationInput.onchange = function () { return _this.inputChange(); };
         this.forceAnimateInput.onchange = function () {
             if (_this.forceAnimateInput.checked) {
                 _this.animationLengthInput.disabled = false;
@@ -71,10 +71,10 @@ var Application = (function () {
                 setTimeout(function () { return reader.readAsArrayBuffer(file); }, 10);
             }
         };
-        this.downloadButton.onclick = function () { return _this.downloadRenderedEmojies(); };
+        this.downloadButton.onclick = function () { return _this.downloadRenderedEmojis(); };
     };
     Application.prototype.syncGifs = function () {
-        this.emojies.forEach(function (emoji) { return emoji.imageElement.forEach(function (imgElement) { return imgElement.src = imgElement.src; }); });
+        this.emojis.forEach(function (emoji) { return emoji.imageElement.forEach(function (imgElement) { return imgElement.src = imgElement.src; }); });
     };
     Application.prototype.reloadOptions = function () {
         var _this = this;
@@ -95,17 +95,17 @@ var Application = (function () {
             width: size,
             height: size,
             expandTimeline: expandTimelineOptions,
-            anotherRotation: this.anotherRotationInput.checked,
+            SmoothRotation: this.smoothRotationInput.checked,
             animationReverse: this.animationReverseInput.checked,
             flipHorizontal: this.flipHorizontalInput.checked,
             flipVertical: this.flipVerticalInput.checked
         };
-        this.emojiGeneratorList = new EmojiGeneratorList(this.options.anotherRotation, this.options.animationReverse, this.options.flipHorizontal, this.options.flipVertical);
-        this.emojies.forEach(function (emoji) { return emoji.generator = _this.emojiGeneratorList.getGenerator(emoji.generator.namePrefix); });
+        this.emojiGeneratorList = new EmojiGeneratorList(this.options.SmoothRotation, this.options.animationReverse, this.options.flipHorizontal, this.options.flipVertical);
+        this.emojis.forEach(function (emoji) { return emoji.generator = _this.emojiGeneratorList.getGenerator(emoji.generator.namePrefix); });
     };
     Application.prototype.redraw = function () {
         var _this = this;
-        this.emojies.forEach(function (emoji) {
+        this.emojis.forEach(function (emoji) {
             if (_this.options.sourceImage.nonEmpty()) {
                 emoji.imageElement.map(function (element) { return element.src = "resources/loading.gif"; });
                 emoji.render(_this.options).then(function (isSuccessfully) {
@@ -140,7 +140,7 @@ var Application = (function () {
         var _this = this;
         var table = document.createElement("table");
         table.className = "emojiTable";
-        var emojies = [];
+        var emojis = [];
         map.forEach(function (row) {
             var rowElement = document.createElement("tr");
             row.forEach(function (emojiRendererName) {
@@ -153,13 +153,13 @@ var Application = (function () {
                     var newEmoji = new Emoji(_this.emojiGeneratorList.getGenerator(emojiRendererName), _this.emojiSizeWarning);
                     emojiElement.setAttribute("renderer", emojiRendererName);
                     newEmoji.attach(emojiElement);
-                    emojies.push(newEmoji);
+                    emojis.push(newEmoji);
                 }
                 rowElement.append(emojiElement);
             });
             table.append(rowElement);
         });
-        this.emojies = emojies;
+        this.emojis = emojis;
         return table;
     };
     Application.prototype.downloadBlobAsFile = function (blob, filename) {
@@ -171,10 +171,10 @@ var Application = (function () {
         fakeMouseEvent.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
         fakeElement.dispatchEvent(fakeMouseEvent);
     };
-    Application.prototype.downloadRenderedEmojies = function () {
+    Application.prototype.downloadRenderedEmojis = function () {
         var _this = this;
         var time = 0;
-        this.emojies.forEach(function (emoji) {
+        this.emojis.forEach(function (emoji) {
             time += .2;
             emoji.renderedGif.forEach(function (gifBlob) {
                 return _this.options.sourceImage.forEach(function (imageOptions) {
