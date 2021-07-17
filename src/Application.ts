@@ -153,7 +153,10 @@ export class Application {
           if (isSuccessfully) {
             emoji.checkSize()
             emoji.updateAttachedImageElement()
-            setTimeout(() => this.syncGifs(), 300) // иногда не синхронизируются сгенеренные эмодзи
+            this.syncGifs()
+            setTimeout(() => {
+              this.syncGifs()// иногда не синхронизируются сгенеренные эмодзи
+            }, 100)
           }
         })
       }
