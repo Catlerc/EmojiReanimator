@@ -230,6 +230,6 @@ input[type="file"] {
         opacity: 0;
     }
     100% {
-        -webkit-transform: translate(0, 80vh) rotateZ(460deg);
+        -webkit-transform: translate(0, 90vh) rotateZ(460deg);
     }
 }
