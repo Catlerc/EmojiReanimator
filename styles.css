@@ -2,7 +2,7 @@ body {
     font-family: Tahoma, "sans-serif";
     color: #263238;
     background-color: #F1F5FF;
-
+    overflow: hidden;
 }
 
 .VerticalFlex {
@@ -195,16 +195,26 @@ input[type="file"] {
 }
 
 .loader {
+    position: absolute;
     text-align: center;
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
-    position: absolute;
-    width: 90%;
     pointer-events: none;
+
+    left: 50%;
+    right: 50%;
+    transform: translate(-50%, -150px);
+    width: 1250px;
+
+    height: 2000px;
+    z-index: -1;
+    overflow-y: hidden;
 }
 
 .loader span {
+    overflow-y: hidden;
+    position: relative;
     pointer-events: none;
     z-index: -1;
     width: 100px;
@@ -217,7 +227,7 @@ input[type="file"] {
 
 @keyframes loader {
     0% {
-        opacity: 0;
+        opacity: .05;
         -webkit-transform: translate(0, 0vh) rotateZ(0deg);
     }
     10% {
@@ -230,6 +240,6 @@ input[type="file"] {
         opacity: 0;
     }
     100% {
-        -webkit-transform: translate(0, 90vh) rotateZ(460deg);
+        -webkit-transform: translate(0, 1000px) rotateZ(460deg);
     }
 }
