@@ -21,7 +21,8 @@ const app = new Application(
   document.getElementById("smoothRotation") as HTMLInputElement,
   document.getElementById("animationReverseInput") as HTMLInputElement,
   document.getElementById("flipHorizontalInput") as HTMLInputElement,
-  document.getElementById("flipVerticalInput") as HTMLInputElement
+  document.getElementById("flipVerticalInput") as HTMLInputElement,
+  document.getElementById("imagePreviewLightUrl") as HTMLInputElement
 )
 app.initializeEvents()
 emojiTableContainer.append(app.generateEmojiTable(emojiTable))

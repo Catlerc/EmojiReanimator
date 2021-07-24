@@ -58,6 +58,7 @@ export class Application {
     private animationReverseInput: HTMLInputElement,
     private flipHorizontalInput: HTMLInputElement,
     private flipVerticalInput: HTMLInputElement,
+    private imageByUrlDiv: HTMLInputElement,
   ) {
     this.reloadOptions()
     this.emojiSizeWarning = new EmojiSizeWarning()
@@ -90,8 +91,28 @@ export class Application {
 
       this.inputChange()
     }
-    this.fileInput.onchange = (event: any) => {
+    this.imageByUrlDiv.onclick = async () => {
+      const url = await navigator.clipboard.readText()
+      const request = await fetch(url, {
+        mode: "no-cors",
+        cache: "no-cache",
+        method: "GET",
+        referrerPolicy: "no-referrer"
+      })
+      const arrayBuffer = await request.arrayBuffer()
+      const maybeImageArrayBuffer: Option<ArrayBuffer> = request.ok ? Option.some<ArrayBuffer>(arrayBuffer) : Option.none<ArrayBuffer>()
+      // const arrayBuffer = await r.arrayBuffer()
 
+      //   .catch((e  ) => {
+      //   console.log(e)
+      //   Option.none<ArrayBuffer>()
+      // })
+      maybeImageArrayBuffer.fold(
+        () => alert(`Изображение с url '${url}' не удалось получить`),
+        arrayBuffer => this.useNewInputImage(arrayBuffer, url.match(/.+\/(.+)$/)[1])
+      )
+    }
+    this.fileInput.onchange = (event: any) => {
       const fileList = event.target.files
       const file: File = fileList.item(0)
       const reader = new FileReader()
@@ -164,7 +185,11 @@ export class Application {
   }
 
   onFileSelection(file: File, data: ArrayBuffer) {
-    const fileName = file.name.split(".")
+    this.useNewInputImage(data, file.name)
+  }
+
+  useNewInputImage(data: ArrayBuffer, fullFileName: string) {
+    const fileName = fullFileName.split(".")
     const fileExtension = fileName.pop()
 
     AnimatedImage.fromImage(data, fileExtension).then(image => {

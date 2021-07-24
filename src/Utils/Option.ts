@@ -38,4 +38,11 @@ export class Option<T> {
     if (this.value != null) return func(this.value)
     return Option.none()
   }
+
+  fold<B>(ifEmpty: () => B, ifNonEmpty: (value: T) => B) {
+    if (this.nonEmpty())
+      return ifNonEmpty(this.value)
+    else
+      return ifEmpty()
+  }
 }

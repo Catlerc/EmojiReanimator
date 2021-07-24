@@ -34,6 +34,12 @@ var Option = (function () {
             return func(this.value);
         return Option.none();
     };
+    Option.prototype.fold = function (ifEmpty, ifNonEmpty) {
+        if (this.nonEmpty())
+            return ifNonEmpty(this.value);
+        else
+            return ifEmpty();
+    };
     return Option;
 }());
 export { Option };

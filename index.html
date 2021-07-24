@@ -38,23 +38,38 @@
     <div class="HorizontalFlex" id="imageRow">
         <div class="TopBlock" id="imagePreviewBlock">
             <div class="VerticalFlex" id="imagePreviewBox">
+                <div id="imagePreviewLabelBelow">
+                    <div id="imagePreviewLabel">
+                        <div>
+                            Выберите файл
+                            <br>
+                            (PNG, JPG, GIF)
+                        </div>
+                    </div>
+                    <div id="imagePreviewLabelUrl">
+                        <div>
+                            Достать картинку по скопированному Url
+                        </div>
+                    </div>
+                </div>
 
-                <input id="fileInput" type="file" name="name"/>
-                <div id="imagePreviewLabel">
-                    <div>
-                        Выберите файл
-                        <br>
-                        (PNG, JPG, GIF)
-                    </div>
-                </div>
                 <img id="imagePreview" width="256" height="256" src="resources/transparent.png"/>
-                <div id="imagePreviewLight">
-                    <div>
-                        Выберите файл
-                        <br>
-                        (PNG, JPG, GIF)
+                <div id="imagePreviewLabelTop">
+                    <input id="fileInput" type="file" name="name"/>
+                    <div id="imagePreviewLight">
+                        <div>
+                            Выберите файл
+                            <br>
+                            (PNG, JPG, GIF)
+                        </div>
+                    </div>
+                    <div id="imagePreviewLightUrl">
+                        <div>
+                            Достать картинку по скопированному Url
+                        </div>
                     </div>
                 </div>
+
             </div>
         </div>
         <table class="TopBlock OptionsTable">
