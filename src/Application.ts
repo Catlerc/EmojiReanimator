@@ -100,6 +100,7 @@ export class Application {
         reader.onloadend = () => this.onFileSelection(file, reader.result as ArrayBuffer)
         setTimeout(() => reader.readAsArrayBuffer(file), 10)
       }
+      this.fileInput.value = ""
     }
 
     this.downloadButton.onclick = () => this.downloadRenderedEmojis()
