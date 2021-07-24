@@ -69,6 +69,7 @@ var Application = (function () {
                 reader.onloadend = function () { return _this.onFileSelection(file, reader.result); };
                 setTimeout(function () { return reader.readAsArrayBuffer(file); }, 10);
             }
+            _this.fileInput.value = "";
         };
         this.downloadButton.onclick = function () { return _this.downloadRenderedEmojis(); };
     };
