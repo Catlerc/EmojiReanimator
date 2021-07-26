@@ -5,6 +5,8 @@ import {Option} from "./Utils/Option.js"
 import {Utils} from "./Utils/Utils.js"
 import {EmojiSizeWarning} from "./EmojiSizeWarning.js"
 import {EmojiGeneratorList} from "./EmojiGenerator/EmojiGeneratorList.js"
+import {BlobFetcher} from "./BlobFetcher.js"
+import {FileName} from "./FileName.js"
 
 
 export interface ImageOptions {
@@ -93,32 +95,24 @@ export class Application {
     }
     this.imageByUrlDiv.onclick = async () => {
       const url = await navigator.clipboard.readText()
-      const request = await fetch(url, {
-        mode: "no-cors",
-        cache: "no-cache",
-        method: "GET",
-        referrerPolicy: "no-referrer"
-      })
-      const arrayBuffer = await request.arrayBuffer()
-      const maybeImageArrayBuffer: Option<ArrayBuffer> = request.ok ? Option.some<ArrayBuffer>(arrayBuffer) : Option.none<ArrayBuffer>()
-      // const arrayBuffer = await r.arrayBuffer()
+      const maybeBlob = await BlobFetcher.fetch(url)
 
-      //   .catch((e  ) => {
-      //   console.log(e)
-      //   Option.none<ArrayBuffer>()
-      // })
-      maybeImageArrayBuffer.fold(
-        () => alert(`Изображение с url '${url}' не удалось получить`),
-        arrayBuffer => this.useNewInputImage(arrayBuffer, url.match(/.+\/(.+)$/)[1])
-      )
+
+      const blobWithName = maybeBlob.flatMap(blob =>
+        FileName.fromBlobAndUrl(blob, url).map(async (filename: FileName) => this.useNewInputImage(blob, filename)))
+
+      if (blobWithName.isEmpty()) alert(`Не удалось получить изображение по адресу '${url}'`)
     }
     this.fileInput.onchange = (event: any) => {
       const fileList = event.target.files
       const file: File = fileList.item(0)
       const reader = new FileReader()
       if (file) {
-        this.imagePreview.src = "resources/loading.gif"
-        reader.onloadend = () => this.onFileSelection(file, reader.result as ArrayBuffer)
+        reader.onloadend = async () => FileName.fromBlobAndUrl(file, file.name)
+          .fold(
+            () => alert(`Не удалось распарсить название '${file.name}'`),
+            (filename: FileName) => this.useNewInputImage(file, filename)
+          )
         setTimeout(() => reader.readAsArrayBuffer(file), 10)
       }
       this.fileInput.value = ""
@@ -184,24 +178,22 @@ export class Application {
     })
   }
 
-  onFileSelection(file: File, data: ArrayBuffer) {
-    this.useNewInputImage(data, file.name)
-  }
-
-  useNewInputImage(data: ArrayBuffer, fullFileName: string) {
-    const fileName = fullFileName.split(".")
-    const fileExtension = fileName.pop()
-
-    AnimatedImage.fromImage(data, fileExtension).then(image => {
-      this.imagePreview.src = Utils.arrayBufferToUrl(data, fileExtension)
-      this.emojiNameInput.value = fileName[0].substr(0, 96)
-      this.emojiNameInput.disabled = false
-      this.options.sourceImage = Option.some({
-        name: fileName[0],
-        image: image.right
-      })
-      this.redraw()
-    })
+  useNewInputImage(blob: Blob, fileName: FileName) {
+    this.imagePreview.src = "resources/loading.gif"
+    AnimatedImage.fromImage(blob).then(maybeImage => maybeImage.fold(error => {
+        this.imagePreview.src = "resources/transparent.png"
+        alert(error)
+      },
+      image => {
+        this.imagePreview.src = Utils.imageBlobToDataUrl(blob)
+        this.emojiNameInput.value = fileName.name.substr(0, 96)
+        this.emojiNameInput.disabled = false
+        this.options.sourceImage = Option.some({
+          name: fileName.name,
+          image: image
+        })
+        this.redraw()
+      }))
   }
 
   generateEmojiTable(map: (string | null)[][]): HTMLTableElement {

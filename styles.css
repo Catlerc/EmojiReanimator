@@ -186,6 +186,10 @@ input[type="file"] {
     opacity: 70%;
 }
 
+#imagePreviewLightUrl:hover {
+    background-color: #d5e2fa;
+    opacity: 70%;
+}
 
 #downloadButton {
     width: 100%;
@@ -308,7 +312,9 @@ input[type="file"] {
     opacity: 0;
     text-align: center;
     vertical-align: 100px;
-    top: 106px
+    top: 106px;
+    height: 106px;
+    cursor: pointer;
 }
 
 #imagePreviewLightUrl > div {
