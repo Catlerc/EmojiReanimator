@@ -2,6 +2,7 @@ import {GifFile} from "../Vendor.js"
 import {Either, Left, Right} from "../Utils/Either.js"
 import {ImageType, Seconds, StaticImageType} from "../Domain.js"
 import {Utils} from "../Utils/Utils.js"
+import {FileName} from "../FileName.js"
 
 
 export enum FrameType {
@@ -150,14 +151,17 @@ export class AnimatedImage {
     return new AnimatedImage(gifFile.canvasWidth, gifFile.canvasHeight, newTimeline)
   }
 
-  static fromImage(imageBuffer: ArrayBuffer, extension: string): Promise<Either<Error, AnimatedImage>> {
+  static async fromImage(blob: Blob): Promise<Either<Error, AnimatedImage>> {
+    const imageBuffer = await blob.arrayBuffer()
     return new Promise(async resolve => {
+
+      const extension = FileName.blobExtension(blob)
       if (extension == "gif")
         resolve(new Right(AnimatedImage.fromGIF(imageBuffer)))
       else if (extension in StaticImageType)
         resolve(new Right(await AnimatedImage.fromStaticImage(imageBuffer, extension as unknown as StaticImageType)))
       else
-        resolve(new Left(new Error(`unsupported file extension '${extension}'`)))
+        resolve(new Left(new Error(`Неподдерживаемый формат '${extension}'`)))
     })
   }
 

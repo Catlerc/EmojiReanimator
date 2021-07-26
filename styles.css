@@ -60,7 +60,7 @@ body {
 
 input[type="file"] {
     position: absolute;
-    height: 212px;
+    height: 106px;
     width: 212px;
     -webkit-tap-highlight-color: transparent;
     opacity: 0;
@@ -69,8 +69,7 @@ input[type="file"] {
 }
 
 #imagePreviewLabel {
-    position: absolute;
-    height: 212px;
+    height: 106px;
     width: 212px;
     text-align: center;
     vertical-align: 100px;
@@ -78,7 +77,7 @@ input[type="file"] {
 }
 
 #imagePreviewLabel > div {
-    margin: 85px auto;
+    padding-top: 32px;
 }
 
 .SettingsBlock {
@@ -169,9 +168,8 @@ input[type="file"] {
 }
 
 #imagePreviewLight {
-    position: absolute;
+    height: 106px;
     width: 212px;
-    height: 212px;
     background-color: #e5edfd;
     z-index: 2;
     opacity: 0;
@@ -180,14 +178,18 @@ input[type="file"] {
 }
 
 #imagePreviewLight > div {
-    margin: 85px auto;
+    padding-top: 32px;
 }
 
-#imagePreviewBox:hover #imagePreviewLight {
+#fileInput:hover ~ #imagePreviewLight {
     background-color: #d5e2fa;
     opacity: 70%;
 }
 
+#imagePreviewLightUrl:hover {
+    background-color: #d5e2fa;
+    opacity: 70%;
+}
 
 #downloadButton {
     width: 100%;
@@ -297,4 +299,42 @@ input[type="file"] {
 
 #githubLabel > a {
     color: #d6dae3;
+}
+#imagePreviewLabelTop {
+    position: absolute;
+    width: 212px;
+    height: 212px;
+    z-index: 2;
+}
+
+#imagePreviewLightUrl {
+    background-color: #e5edfd;
+    opacity: 0;
+    text-align: center;
+    vertical-align: 100px;
+    top: 106px;
+    height: 106px;
+    cursor: pointer;
+}
+
+#imagePreviewLightUrl > div {
+    padding-top: 32px;
+}
+
+#imagePreviewLabelBelow {
+    position: absolute;
+    width: 212px;
+    height: 212px;
+}
+
+#imagePreviewLabelUrl {
+    height: 106px;
+    width: 212px;
+    text-align: center;
+    vertical-align: 100px;
+    background-color: #e5edfd;
+}
+
+#imagePreviewLabelUrl > div {
+    padding-top: 32px;
 }
