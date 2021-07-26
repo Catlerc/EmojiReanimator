@@ -2,6 +2,7 @@ body {
     font-family: Tahoma, "sans-serif";
     color: #263238;
     background-color: #F1F5FF;
+    margin: 0 0 0 0;
 }
 
 .VerticalFlex {
@@ -206,7 +207,7 @@ input[type="file"] {
 }
 
 .loader {
-    position: absolute;
+    position: fixed;
     text-align: center;
     display: flex;
     justify-content: space-around;
@@ -215,16 +216,15 @@ input[type="file"] {
 
     left: 50%;
     right: 50%;
-    transform: translate(-50%, -150px);
+    transform: translate(-50%, 0);
     width: 1250px;
 
-    height: 2000px;
+    height: 1000px;
     z-index: -1;
-    overflow-y: hidden;
+    overflow: hidden;
 }
 
 .loader span {
-    overflow-y: hidden;
     position: relative;
     pointer-events: none;
     z-index: -1;
@@ -234,12 +234,14 @@ input[type="file"] {
     opacity: 0;
     animation: loader 20s infinite linear;
     animation-timing-function: ease-in-out;
+    overflow: hidden;
 }
 
 @keyframes loader {
     0% {
         opacity: .05;
-        -webkit-transform: translate(0, 0vh) rotateZ(0deg);
+        -webkit-transform: rotateZ(0deg);
+        top: -150px;
     }
     10% {
         opacity: .05;
@@ -251,7 +253,8 @@ input[type="file"] {
         opacity: 0;
     }
     100% {
-        -webkit-transform: translate(0, 1000px) rotateZ(460deg);
+        -webkit-transform: rotateZ(460deg);
+        top: 800px;
     }
 }
 
@@ -291,6 +294,7 @@ input[type="file"] {
     left: 10px;
     color: #d6dae3
 }
-#githubLabel > a{
+
+#githubLabel > a {
     color: #d6dae3;
 }
