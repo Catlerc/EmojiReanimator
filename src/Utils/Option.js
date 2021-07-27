@@ -20,6 +20,9 @@ var Option = (function () {
     Option.prototype.getOrElse = function (defaultValue) {
         return this.value === null ? defaultValue : this.value;
     };
+    Option.prototype.orElse = function (elseOption) {
+        return this.value === null ? elseOption : this;
+    };
     Option.prototype.forEach = function (func) {
         if (this.value != null)
             func(this.value);
@@ -33,6 +36,15 @@ var Option = (function () {
         if (this.value != null)
             return func(this.value);
         return Option.none();
+    };
+    Option.prototype.fold = function (ifEmpty, ifNonEmpty) {
+        if (this.nonEmpty())
+            return ifNonEmpty(this.value);
+        else
+            return ifEmpty();
+    };
+    Option.prototype.isEmpty = function () {
+        return !this.nonEmpty();
     };
     return Option;
 }());

@@ -2,6 +2,7 @@ import {GifFile} from "../Vendor.js"
 import {Either, Left, Right} from "../Utils/Either.js"
 import {ImageType, Seconds, StaticImageType} from "../Domain.js"
 import {Utils} from "../Utils/Utils.js"
+import {FileName} from "../FileName.js"
 
 
 export enum FrameType {
@@ -105,11 +106,28 @@ export class AnimatedImage {
   }
 
   expandTimeline(length: Seconds, fps: number) {
-    const lastFrame = this.timeline[this.timeline.length - 1]
-    if (length <= lastFrame.time) return this
+    const lastFrameTime = this.timeline[this.timeline.length - 1].time
+    length = Math.max(length, lastFrameTime)
 
     let newTimeline = this.timeline.slice()
     newTimeline.pop() // remove EndFrame
+
+    if (newTimeline.length > 1) {
+      const timeLineCopy = newTimeline.slice()
+      for (let i = 1; i < Math.ceil(length / lastFrameTime); i++) {
+        timeLineCopy.forEach(frame => {
+          const newFrameTime = frame.time + lastFrameTime * i
+          switch (frame.type) {
+            case FrameType.Update:
+              newTimeline.push(new UpdateFrame(newFrameTime))
+              break;
+            case FrameType.ImageUpdate:
+              newTimeline.push(new ImageUpdateFrame((frame as ImageUpdateFrame).image, newFrameTime))
+              break;
+          }
+        })
+      }
+    }
 
     const step = 1 / fps
     let timer = 0
@@ -150,14 +168,17 @@ export class AnimatedImage {
     return new AnimatedImage(gifFile.canvasWidth, gifFile.canvasHeight, newTimeline)
   }
 
-  static fromImage(imageBuffer: ArrayBuffer, extension: string): Promise<Either<Error, AnimatedImage>> {
+  static async fromImage(blob: Blob): Promise<Either<Error, AnimatedImage>> {
+    const imageBuffer = await blob.arrayBuffer()
     return new Promise(async resolve => {
+
+      const extension = FileName.blobExtension(blob)
       if (extension == "gif")
         resolve(new Right(AnimatedImage.fromGIF(imageBuffer)))
       else if (extension in StaticImageType)
         resolve(new Right(await AnimatedImage.fromStaticImage(imageBuffer, extension as unknown as StaticImageType)))
       else
-        resolve(new Left(new Error(`unsupported file extension '${extension}'`)))
+        resolve(new Left(new Error(`Неподдерживаемый формат '${extension}'`)))
     })
   }
 

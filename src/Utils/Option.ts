@@ -25,6 +25,10 @@ export class Option<T> {
     return this.value === null ? defaultValue : this.value
   }
 
+  orElse(elseOption: Option<T>): Option<T> {
+    return this.value === null ? elseOption : this
+  }
+
   forEach<B>(func: (a: T) => B): void {
     if (this.value != null) func(this.value)
   }
@@ -37,5 +41,16 @@ export class Option<T> {
   flatMap<B>(func: (a: T) => Option<B>): Option<B> {
     if (this.value != null) return func(this.value)
     return Option.none()
+  }
+
+  fold<B>(ifEmpty: () => B, ifNonEmpty: (value: T) => B) {
+    if (this.nonEmpty())
+      return ifNonEmpty(this.value)
+    else
+      return ifEmpty()
+  }
+
+  isEmpty() {
+    return !this.nonEmpty()
   }
 }

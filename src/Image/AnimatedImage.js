@@ -43,6 +43,7 @@ import { GifFile } from "../Vendor.js";
 import { Left, Right } from "../Utils/Either.js";
 import { ImageType, StaticImageType } from "../Domain.js";
 import { Utils } from "../Utils/Utils.js";
+import { FileName } from "../FileName.js";
 export var FrameType;
 (function (FrameType) {
     FrameType[FrameType["ImageUpdate"] = 0] = "ImageUpdate";
@@ -125,11 +126,29 @@ var AnimatedImage = (function () {
         this.height = height;
     }
     AnimatedImage.prototype.expandTimeline = function (length, fps) {
-        var lastFrame = this.timeline[this.timeline.length - 1];
-        if (length <= lastFrame.time)
-            return this;
+        var lastFrameTime = this.timeline[this.timeline.length - 1].time;
+        length = Math.max(length, lastFrameTime);
         var newTimeline = this.timeline.slice();
         newTimeline.pop();
+        if (newTimeline.length > 1) {
+            var timeLineCopy = newTimeline.slice();
+            var _loop_1 = function (i) {
+                timeLineCopy.forEach(function (frame) {
+                    var newFrameTime = frame.time + lastFrameTime * i;
+                    switch (frame.type) {
+                        case FrameType.Update:
+                            newTimeline.push(new UpdateFrame(newFrameTime));
+                            break;
+                        case FrameType.ImageUpdate:
+                            newTimeline.push(new ImageUpdateFrame(frame.image, newFrameTime));
+                            break;
+                    }
+                });
+            };
+            for (var i = 1; i < Math.ceil(length / lastFrameTime); i++) {
+                _loop_1(i);
+            }
+        }
         var step = 1 / fps;
         var timer = 0;
         for (var i = 0; i < Math.floor(length * fps) - 1; i++) {
@@ -171,31 +190,42 @@ var AnimatedImage = (function () {
         newTimeline.push(new EndFrame(timer));
         return new AnimatedImage(gifFile.canvasWidth, gifFile.canvasHeight, newTimeline);
     };
-    AnimatedImage.fromImage = function (imageBuffer, extension) {
-        var _this = this;
-        return new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
-            var _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        if (!(extension == "gif")) return [3, 1];
-                        resolve(new Right(AnimatedImage.fromGIF(imageBuffer)));
-                        return [3, 4];
+    AnimatedImage.fromImage = function (blob) {
+        return __awaiter(this, void 0, void 0, function () {
+            var imageBuffer;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, blob.arrayBuffer()];
                     case 1:
-                        if (!(extension in StaticImageType)) return [3, 3];
-                        _a = resolve;
-                        _b = Right.bind;
-                        return [4, AnimatedImage.fromStaticImage(imageBuffer, extension)];
-                    case 2:
-                        _a.apply(void 0, [new (_b.apply(Right, [void 0, _c.sent()]))()]);
-                        return [3, 4];
-                    case 3:
-                        resolve(new Left(new Error("unsupported file extension '" + extension + "'")));
-                        _c.label = 4;
-                    case 4: return [2];
+                        imageBuffer = _a.sent();
+                        return [2, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                                var extension, _a, _b;
+                                return __generator(this, function (_c) {
+                                    switch (_c.label) {
+                                        case 0:
+                                            extension = FileName.blobExtension(blob);
+                                            if (!(extension == "gif")) return [3, 1];
+                                            resolve(new Right(AnimatedImage.fromGIF(imageBuffer)));
+                                            return [3, 4];
+                                        case 1:
+                                            if (!(extension in StaticImageType)) return [3, 3];
+                                            _a = resolve;
+                                            _b = Right.bind;
+                                            return [4, AnimatedImage.fromStaticImage(imageBuffer, extension)];
+                                        case 2:
+                                            _a.apply(void 0, [new (_b.apply(Right, [void 0, _c.sent()]))()]);
+                                            return [3, 4];
+                                        case 3:
+                                            resolve(new Left(new Error("\u041D\u0435\u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0435\u043C\u044B\u0439 \u0444\u043E\u0440\u043C\u0430\u0442 '" + extension + "'")));
+                                            _c.label = 4;
+                                        case 4: return [2];
+                                    }
+                                });
+                            }); })];
                 }
             });
-        }); });
+        });
     };
     AnimatedImage.fromStaticImage = function (imageBuffer, type) {
         var imageUrl = Utils.arrayBufferToUrl(imageBuffer, type.toString());

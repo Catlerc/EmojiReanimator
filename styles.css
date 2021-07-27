@@ -2,6 +2,7 @@ body {
     font-family: Tahoma, "sans-serif";
     color: #263238;
     background-color: #F1F5FF;
+    margin: 0 0 0 0;
 }
 
 .VerticalFlex {
@@ -59,7 +60,7 @@ body {
 
 input[type="file"] {
     position: absolute;
-    height: 212px;
+    height: 106px;
     width: 212px;
     -webkit-tap-highlight-color: transparent;
     opacity: 0;
@@ -68,8 +69,7 @@ input[type="file"] {
 }
 
 #imagePreviewLabel {
-    position: absolute;
-    height: 212px;
+    height: 106px;
     width: 212px;
     text-align: center;
     vertical-align: 100px;
@@ -77,7 +77,7 @@ input[type="file"] {
 }
 
 #imagePreviewLabel > div {
-    margin: 85px auto;
+    padding-top: 32px;
 }
 
 .SettingsBlock {
@@ -168,9 +168,8 @@ input[type="file"] {
 }
 
 #imagePreviewLight {
-    position: absolute;
+    height: 106px;
     width: 212px;
-    height: 212px;
     background-color: #e5edfd;
     z-index: 2;
     opacity: 0;
@@ -179,14 +178,18 @@ input[type="file"] {
 }
 
 #imagePreviewLight > div {
-    margin: 85px auto;
+    padding-top: 32px;
 }
 
-#imagePreviewBox:hover #imagePreviewLight {
+#fileInput:hover ~ #imagePreviewLight {
     background-color: #d5e2fa;
     opacity: 70%;
 }
 
+#imagePreviewLightUrl:hover {
+    background-color: #d5e2fa;
+    opacity: 70%;
+}
 
 #downloadButton {
     width: 100%;
@@ -206,7 +209,7 @@ input[type="file"] {
 }
 
 .loader {
-    position: absolute;
+    position: fixed;
     text-align: center;
     display: flex;
     justify-content: space-around;
@@ -215,16 +218,15 @@ input[type="file"] {
 
     left: 50%;
     right: 50%;
-    transform: translate(-50%, -150px);
+    transform: translate(-50%, 0);
     width: 1250px;
 
-    height: 2000px;
+    height: 1000px;
     z-index: -1;
-    overflow-y: hidden;
+    overflow: hidden;
 }
 
 .loader span {
-    overflow-y: hidden;
     position: relative;
     pointer-events: none;
     z-index: -1;
@@ -234,12 +236,14 @@ input[type="file"] {
     opacity: 0;
     animation: loader 20s infinite linear;
     animation-timing-function: ease-in-out;
+    overflow: hidden;
 }
 
 @keyframes loader {
     0% {
         opacity: .05;
-        -webkit-transform: translate(0, 0vh) rotateZ(0deg);
+        -webkit-transform: rotateZ(0deg);
+        top: -150px;
     }
     10% {
         opacity: .05;
@@ -251,7 +255,8 @@ input[type="file"] {
         opacity: 0;
     }
     100% {
-        -webkit-transform: translate(0, 1000px) rotateZ(460deg);
+        -webkit-transform: rotateZ(460deg);
+        top: 800px;
     }
 }
 
@@ -291,6 +296,45 @@ input[type="file"] {
     left: 10px;
     color: #d6dae3
 }
-#githubLabel > a{
+
+#githubLabel > a {
     color: #d6dae3;
+}
+#imagePreviewLabelTop {
+    position: absolute;
+    width: 212px;
+    height: 212px;
+    z-index: 2;
+}
+
+#imagePreviewLightUrl {
+    background-color: #e5edfd;
+    opacity: 0;
+    text-align: center;
+    vertical-align: 100px;
+    top: 106px;
+    height: 106px;
+    cursor: pointer;
+}
+
+#imagePreviewLightUrl > div {
+    padding-top: 32px;
+}
+
+#imagePreviewLabelBelow {
+    position: absolute;
+    width: 212px;
+    height: 212px;
+}
+
+#imagePreviewLabelUrl {
+    height: 106px;
+    width: 212px;
+    text-align: center;
+    vertical-align: 100px;
+    background-color: #e5edfd;
+}
+
+#imagePreviewLabelUrl > div {
+    padding-top: 32px;
 }
