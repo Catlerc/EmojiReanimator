@@ -126,11 +126,29 @@ var AnimatedImage = (function () {
         this.height = height;
     }
     AnimatedImage.prototype.expandTimeline = function (length, fps) {
-        var lastFrame = this.timeline[this.timeline.length - 1];
-        if (length <= lastFrame.time)
-            return this;
+        var lastFrameTime = this.timeline[this.timeline.length - 1].time;
+        length = Math.max(length, lastFrameTime);
         var newTimeline = this.timeline.slice();
         newTimeline.pop();
+        if (newTimeline.length > 1) {
+            var timeLineCopy = newTimeline.slice();
+            var _loop_1 = function (i) {
+                timeLineCopy.forEach(function (frame) {
+                    var newFrameTime = frame.time + lastFrameTime * i;
+                    switch (frame.type) {
+                        case FrameType.Update:
+                            newTimeline.push(new UpdateFrame(newFrameTime));
+                            break;
+                        case FrameType.ImageUpdate:
+                            newTimeline.push(new ImageUpdateFrame(frame.image, newFrameTime));
+                            break;
+                    }
+                });
+            };
+            for (var i = 1; i < Math.ceil(length / lastFrameTime); i++) {
+                _loop_1(i);
+            }
+        }
         var step = 1 / fps;
         var timer = 0;
         for (var i = 0; i < Math.floor(length * fps) - 1; i++) {

@@ -106,11 +106,28 @@ export class AnimatedImage {
   }
 
   expandTimeline(length: Seconds, fps: number) {
-    const lastFrame = this.timeline[this.timeline.length - 1]
-    if (length <= lastFrame.time) return this
+    const lastFrameTime = this.timeline[this.timeline.length - 1].time
+    length = Math.max(length, lastFrameTime)
 
     let newTimeline = this.timeline.slice()
     newTimeline.pop() // remove EndFrame
+
+    if (newTimeline.length > 1) {
+      const timeLineCopy = newTimeline.slice()
+      for (let i = 1; i < Math.ceil(length / lastFrameTime); i++) {
+        timeLineCopy.forEach(frame => {
+          const newFrameTime = frame.time + lastFrameTime * i
+          switch (frame.type) {
+            case FrameType.Update:
+              newTimeline.push(new UpdateFrame(newFrameTime))
+              break;
+            case FrameType.ImageUpdate:
+              newTimeline.push(new ImageUpdateFrame((frame as ImageUpdateFrame).image, newFrameTime))
+              break;
+          }
+        })
+      }
+    }
 
     const step = 1 / fps
     let timer = 0
