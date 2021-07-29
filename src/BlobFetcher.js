@@ -38,40 +38,12 @@ import { Option } from "./Utils/Option.js";
 var BlobFetcher = (function () {
     function BlobFetcher() {
     }
-    BlobFetcher.justFetch = function (url) {
+    BlobFetcher.fetch = function (url) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2, fetch(url)
                         .then(function (response) { return response.blob(); })
                         .then(Option.some)["catch"](function (_) { return Option.none(); })];
-            });
-        });
-    };
-    BlobFetcher.proxyFetch = function (url) {
-        return __awaiter(this, void 0, void 0, function () {
-            var request;
-            return __generator(this, function (_a) {
-                request = new Request("https://cors-anywhere.herokuapp.com/" + url, {
-                    headers: [["Origin", "*"]]
-                });
-                return [2, fetch(request)
-                        .then(function (response) { return response.blob(); })
-                        .then(Option.some)["catch"](function (_) { return Option.none(); })];
-            });
-        });
-    };
-    BlobFetcher.fetch = function (url) {
-        return __awaiter(this, void 0, void 0, function () {
-            var maybeBlob, _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0: return [4, this.justFetch(url)];
-                    case 1:
-                        maybeBlob = _c.sent();
-                        _b = (_a = maybeBlob).orElse;
-                        return [4, this.proxyFetch(url)];
-                    case 2: return [2, _b.apply(_a, [_c.sent()])];
-                }
             });
         });
     };
