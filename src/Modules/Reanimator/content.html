@@ -1,0 +1,61 @@
+<div>
+    <div class="HorizontalFlex" id="optionsRow">
+        <div class="TopBlock">
+            <table class="OptionsTable">
+                <tbody>
+                <tr>
+                    <th class="LabelDecoration">Реверс анимации</th>
+                    <th>
+                        <input type="checkbox" class="InputDecoration" id="animationReverseInput">
+                    </th>
+                </tr>
+                <tr>
+                    <th class="LabelDecoration">Добавить кадров</th>
+                    <th>
+                        <input type="checkbox" class="InputDecoration" id="forceAnimateInput">
+                    </th>
+                </tr>
+                <tr>
+                    <th class="LabelDecoration">Длина анимации (сек)</th>
+                    <th>
+                        <input type="number" class="InputDecoration" id="animationLengthInput" min="0" value="1"
+                               step="0.1"
+                               disabled>
+                    </th>
+                </tr>
+                <tr>
+                    <th class="LabelDecoration">Кадров в секунду</th>
+                    <th>
+                        <input type="number" class="InputDecoration" id="gifFpsInput" min="1" value="20" disabled>
+                    </th>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="TopBlock">
+            <table class="OptionsTable">
+                <tbody>
+                <tr>
+                    <th class="LabelDecoration">Плавные повороты</th>
+                    <th>
+                        <input type="checkbox" class="InputDecoration" id="smoothRotation" checked>
+                    </th>
+                </tr>
+                <tr></tr>
+                <tr></tr>
+                <tr></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="VerticalFlex" id="emojiColumn">
+        <div class="TopBlock">
+            <div id="emojiTableContainer"></div>
+        </div>
+        <div class="TopBlock">
+            <button id="downloadButton"> Скачать все эмодзи</button>
+        </div>
+    </div>
+</div>

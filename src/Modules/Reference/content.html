@@ -1,0 +1,73 @@
+<div class="HorizontalFlex" id="imageRow">
+    <div class="TopBlock" id="imagePreviewBlock">
+        <div class="VerticalFlex" id="imagePreviewBox">
+            <div id="imagePreviewLabelBelow">
+                <div id="imagePreviewLabel">
+                    <div>
+                        Выберите файл
+                        <br>
+                        (PNG, JPG, GIF)
+                    </div>
+                </div>
+                <div id="imagePreviewLabelUrl">
+                    <div>
+                        Достать картинку по скопированному URL
+                    </div>
+                </div>
+            </div>
+
+            <img id="imagePreview" width="256" height="256" src="resources/transparent.png"/>
+            <div id="imagePreviewLabelTop">
+                <input id="fileInput" type="file" name="name"/>
+                <div id="imagePreviewLight">
+                    <div>
+                        Выберите файл
+                        <br>
+                        (PNG, JPG, GIF)
+                    </div>
+                </div>
+                <div id="imagePreviewLightUrl">
+                    <div>
+                        Достать картинку по скопированному URL
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <table class="TopBlock OptionsTable">
+        <tbody>
+        <tr>
+            <th class="LabelDecoration">Название эмодзи</th>
+            <th>
+                <input type="text" class="InputDecoration" id="emojiNameInput" maxlength="96" disabled>
+            </th>
+        </tr>
+        <tr>
+            <th class="LabelDecoration">Размер эмодзи (пикс)</th>
+            <th>
+                <input type="number" class="InputDecoration" id="smileSizeInput" min="1" max="1024" value="64">
+            </th>
+        </tr>
+        <tr>
+            <th class="LabelDecoration">Сжатие</th>
+            <th>
+                <input type="number" class="InputDecoration" id="gifCompressionInput" min="1" max="100"
+                       value="1">
+            </th>
+        </tr>
+        <tr>
+            <th class="LabelDecoration">Отразить по горизонтали</th>
+            <th>
+                <input type="checkbox" class="InputDecoration CheckboxDecoration" id="flipHorizontalInput">
+            </th>
+        </tr>
+        <tr>
+            <th class="LabelDecoration">Отразить по вертикали</th>
+            <th>
+                <input type="checkbox" class="InputDecoration CheckboxDecoration" id="flipVerticalInput">
+            </th>
+        </tr>
+        </tbody>
+    </table>
+</div>
